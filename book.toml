@@ -1,0 +1,45 @@
+[book]
+title = "rust計算物理学チュートリアル"
+authors = ["sakuraba07"]
+language = "ja"
+src = "src"
+
+[preprocessor.mermaid]
+
+[preprocessor.typst-math]
+
+[preprocessor.admonish]
+command = "mdbook-admonish"
+assets_version = "3.1.0"  # do not edit: managed by `mdbook-admonish install`
+
+[output]
+[output.html]
+additional-css = ["./mdbook-admonish.css"]
+default-theme = "light"
+preferred-dark-theme = "navy"
+git-repository-url = "https://github.com/sakuraba07/rust-computational-physics-tutorial"
+git-repository-icon = "fa-github"
+edit-url-template = "https://github.com/sakuraba07/rust-computational-physics-tutorial/edit/main/src/{path}"
+theme = "theme"
+
+[output.html.search]
+enable = false
+
+[output.linkcheck]
+# リンク切れをチェックする際の設定
+# CI/CD用の厳密なチェック設定
+
+# 外部リンク（http/https）もチェックする
+follow-web-links = true
+# HTTPリクエストのタイムアウト（秒）
+# GitHubは通常高速なので短めに設定
+timeout = 15
+# キャッシュの有効期限（秒）
+# CI環境では毎回新鮮な状態でチェックするため短めに設定
+cache-timeout = 3600  # 1時間
+# 警告レベル
+# CI/CDで使用するため、リンク切れがあればビルドを失敗させる
+warning-policy = "error"
+# User-Agent設定（オプション）
+# GitHubのレート制限を避けるため、適切なUser-Agentを設定
+user-agent = "mdbook-linkcheck"

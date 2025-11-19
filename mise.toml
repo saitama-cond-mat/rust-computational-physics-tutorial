@@ -1,0 +1,22 @@
+[tools]
+"cargo:mdbook" = "latest"
+"cargo:mdbook-admonish" = "latest"
+"cargo:mdbook-mermaid" = "latest"
+"cargo:mdbook-linkcheck" = "latest"
+"cargo:mdbook-typst-math" = "latest"
+"cargo:pagefind" = { version = "latest", features = "extended" }
+
+[tasks.clean]
+description = "Clean build artifacts"
+run = "rm -rf book"
+
+[tasks.build]
+description = "Build mdbook and generate search index"
+run = """
+mdbook build
+pagefind --site book
+"""
+
+[tasks.server]
+description = "Serve the book with a static server"
+run = "mdbook server"
