@@ -1,6 +1,5 @@
 [tools]
 "cargo:mdbook" = "latest"
-"cargo:mdbook-admonish" = "latest"
 "cargo:mdbook-mermaid" = "latest"
 "cargo:mdbook-linkcheck" = "latest"
 "cargo:mdbook-typst-math" = "latest"
