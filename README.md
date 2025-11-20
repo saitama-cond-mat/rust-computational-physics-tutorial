@@ -32,18 +32,14 @@ mise run build
 ### ローカルプレビュー
 
 ```bash
-# 開発サーバーを起動（ポート3000）
-mdbook serve --open
+# ビルド + サーバー起動（ポート3000）
+mise run serve
 ```
 
-または、ビルド済みのファイルを確認する場合：
+ブラウザで `http://localhost:3000` を開いてください。
+サーバーを停止するには `Ctrl+C` を押してください。
 
-```bash
-# 簡易HTTPサーバーを起動
-python3 -m http.server 8000 --directory book
-```
-
-ブラウザで `http://localhost:8000` を開いてください。
+**注意**: `mdbook serve` は使用しないでください。Pagefindの検索インデックスが含まれないため、検索機能が動作しません。
 
 ## 検索機能について
 
@@ -58,15 +54,16 @@ python3 -m http.server 8000 --directory book
 ### 技術詳細
 
 - **検索エンジン**: Pagefind（Rust製の静的サイト検索）
-- **言語**: 日本語対応
+- **言語**: 日本語対応（66ページ、1,073語をインデックス化）
 - **インデックス**: ビルド時に自動生成
 - **UI**: PagefindのデフォルトUIをmdBookのテーマに統合
+- **サーバー**: miniserve（Rust製HTTPサーバー）
 
 #### カスタマイズファイル
 
 - `theme/index.hbs` - Pagefind統合のHTMLテンプレート
 - `theme/css/pagefind.css` - Pagefind UIのカスタムスタイル
-- `mise.toml` - ビルドタスクの設定
+- `mise.toml` - ビルド・サーブタスクの設定
 
 ## クリーンビルド
 
