@@ -13,7 +13,7 @@ src = "src"
 default-theme = "light"
 preferred-dark-theme = "navy"
 git-repository-url = "https://github.com/sakuraba07/rust-computational-physics-tutorial"
-edit-url-template = "https://github.com/sakuraba07/rust-computational-physics-tutorial/edit/main/src/{path}"
+edit-url-template = "https://github.com/sakuraba07/rust-computational-physics-tutorial/edit/main/{path}"
 
 [output.html.search]
 enable = false
