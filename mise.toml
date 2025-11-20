@@ -1,9 +1,9 @@
 [tools]
 "cargo:mdbook" = "latest"
 "cargo:mdbook-mermaid" = "latest"
-"cargo:mdbook-linkcheck" = "latest"
 "cargo:mdbook-typst-math" = "latest"
 "cargo:pagefind" = { version = "latest", features = "extended" }
+"cargo:lychee" = "latest"
 
 [tasks.clean]
 description = "Clean build artifacts"
@@ -14,6 +14,7 @@ description = "Build mdbook and generate search index"
 run = """
 mdbook build
 pagefind --site book
+lychee book/
 """
 
 [tasks.server]
