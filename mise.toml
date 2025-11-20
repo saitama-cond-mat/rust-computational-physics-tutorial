@@ -26,7 +26,3 @@ echo "✅ Links checked\n"
 
 echo "🎉 Done!"
 """
-
-[tasks.server]
-description = "Serve the book with a static server"
-run = "mdbook server"
