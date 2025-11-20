@@ -2,6 +2,7 @@
 "cargo:mdbook" = "latest"
 "cargo:mdbook-mermaid" = "latest"
 "cargo:mdbook-typst-math" = "latest"
+"cargo:mdbook-last-changed" = "latest"
 "cargo:pagefind" = { version = "latest", features = "extended" }
 "cargo:lychee" = "latest"
 "cargo:miniserve" = "latest"

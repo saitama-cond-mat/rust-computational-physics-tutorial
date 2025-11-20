@@ -1,0 +1,34 @@
+footer#last-change {
+  margin-top: 3rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--theme-popup-border);
+  color: var(--fg);
+  font-size: 0.85em;
+  text-align: right;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+footer#last-change:hover {
+  opacity: 1;
+}
+
+footer#last-change time {
+  font-weight: 500;
+  color: var(--fg);
+}
+
+footer#last-change a {
+  color: var(--links);
+  text-decoration: none;
+  font-family: monospace;
+  padding: 0.2em 0.4em;
+  background: var(--inline-code-bg);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+footer#last-change a:hover {
+  background: var(--theme-hover);
+  text-decoration: underline;
+}
