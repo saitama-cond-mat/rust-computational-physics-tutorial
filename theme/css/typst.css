@@ -1,0 +1,24 @@
+/* Typst math styling */
+
+.typst-inline {
+  display: inline-flex;
+  vertical-align: -0.1em;
+  overflow: visible;
+}
+
+.typst-inline > svg,
+.typst-inline > .typst-doc {
+  overflow: visible;
+}
+
+.typst-display {
+  display: flex;
+  justify-content: center;
+  overflow: visible;
+  margin: 1em 0;
+}
+
+.typst-display > svg,
+.typst-display > .typst-doc {
+  overflow: visible;
+}
