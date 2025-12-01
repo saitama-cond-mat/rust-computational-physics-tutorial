@@ -1,0 +1,7 @@
+# Lychee configuration file
+exclude_all_private = true
+
+# Exclude links matching any of these patterns
+exclude = [
+    ".*adobe\\.com.*"
+]
