@@ -7,6 +7,7 @@ src = "src"
 [preprocessor.mermaid]
 
 [preprocessor.typst-math]
+fonts = ["Fira Math"]
 preamble = """
 #set page(width: auto, height: auto, margin: 0.2em)
 #set text(size: 15pt)
