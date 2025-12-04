@@ -7,6 +7,7 @@
 - [Rustと計算物理学](./ch01-introduction/README.md)
   - [なぜRustなのか](./ch01-introduction/why-rust.md)
   - [開発環境のセットアップ](./ch01-introduction/setup.md)
+  - [数値計算の結果の描画](./ch01-introduction/plotting.md)]
   - [本書の使い方](./ch01-introduction/how-to-use.md)
 
 - [数値計算の基礎](./ch02-basics/README.md)
@@ -72,15 +73,10 @@
   - [SIMD最適化](./ch12-parallel/simd.md)
   - [パフォーマンス測定とプロファイリング](./ch12-parallel/profiling.md)
 
-- [可視化](./ch13-visualization/README.md)
-  - [plottersによる2Dプロット](./ch13-visualization/plotters.md)
-  - [データの保存と読み込み](./ch13-visualization/data-io.md)
-  - [アニメーション作成](./ch13-visualization/animation.md)
-
-- [FFT（高速フーリエ変換）](./ch14-fft/README.md)
-  - [離散フーリエ変換の基礎](./ch14-fft/dft-basics.md)
-  - [FFTの実装と応用](./ch14-fft/fft-application.md)
-  - [スペクトル解析](./ch14-fft/spectral-analysis.md)
+- [FFT（高速フーリエ変換）](./ch13-fft/README.md)
+  - [離散フーリエ変換の基礎](./ch13-fft/dft-basics.md)
+  - [FFTの実装と応用](./ch13-fft/fft-application.md)
+  - [スペクトル解析](./ch13-fft/spectral-analysis.md)
 
 # 付録
 
