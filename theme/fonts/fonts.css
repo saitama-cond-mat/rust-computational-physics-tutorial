@@ -1,5 +1,21 @@
 /* Inter and Noto Sans JP from Google Fonts */
 /* Source Code Pro is under the Open Font License. See https://scripts.sil.org/cms/scripts/page.php?site_id=nrsi&id=OFL */
+/* HackGen is under the SIL Open Font License. See https://github.com/yuru7/HackGen */
+
+/* HackGenConsoleNF - Japanese programming font */
+@font-face {
+  font-family: 'HackGenConsoleNF';
+  font-style: normal;
+  font-weight: 400;
+  src: url('{{ resource "fonts/HackGenConsoleNF-Regular.woff2" }}') format('woff2');
+}
+
+@font-face {
+  font-family: 'HackGenConsoleNF';
+  font-style: normal;
+  font-weight: 700;
+  src: url('{{ resource "fonts/HackGenConsoleNF-Bold.woff2" }}') format('woff2');
+}
 
 /* Google Fonts - Inter (Latin) */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
