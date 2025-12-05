@@ -1,1 +1,11 @@
 # 流体力学
+
+> [!NOTE]
+> **この章を読む前に**
+>
+> この章を読むには、以下の章を先に読んでおく必要があります。
+>
+> - [ch02: 数値計算の基礎](../ch02-basics/README.md)
+> - [ch05: 線形代数](../ch05-linear-algebra/README.md)
+> - [ch07: 常微分方程式](../ch07-ode/README.md)
+> - [ch08: 偏微分方程式](../ch08-pde/README.md)

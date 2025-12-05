@@ -14,69 +14,82 @@
   - [浮動小数点演算と誤差](./ch02-basics/floating-point.md)
   - [配列とベクトル演算](./ch02-basics/arrays-vectors.md)
   - [外部クレートの活用（ndarray入門）](./ch02-basics/ndarray.md)
-  - [高精度演算（xprec-rs）](./ch02-basics/xprec.md)
+  - [高精度演算（double-double型とxprec-rs）](./ch02-basics/high-precision.md)
 
 # 第2部: 数値計算手法
 
 - [数値微分と数値積分](./ch03-calculus/README.md)
   - [数値微分](./ch03-calculus/differentiation.md)
   - [数値積分（台形則・シンプソン則）](./ch03-calculus/integration.md)
-  - [モンテカルロ積分](./ch03-calculus/monte-carlo.md)
+  - [ガウス求積法](./ch03-calculus/gaussian-quadrature.md)
+  - [適応型積分](./ch03-calculus/adaptive-integration.md)
 
-- [線形代数](./ch04-linear-algebra/README.md)
-  - [行列演算の基礎](./ch04-linear-algebra/matrix-ops.md)
-  - [連立一次方程式（ガウスの消去法）](./ch04-linear-algebra/linear-systems.md)
-  - [固有値問題](./ch04-linear-algebra/eigenvalue.md)
+- [非線形方程式と最適化](./ch04-nonlinear/README.md)
+  - [二分法とニュートン法](./ch04-nonlinear/root-finding.md)
+  - [多変数のニュートン法](./ch04-nonlinear/multivariable-newton.md)
+  - [最急降下法と共役勾配法](./ch04-nonlinear/optimization.md)
 
-- [常微分方程式](./ch05-ode/README.md)
-  - [オイラー法](./ch05-ode/euler.md)
-  - [ルンゲ=クッタ法](./ch05-ode/runge-kutta.md)
-  - [応用例：単振動と減衰振動](./ch05-ode/oscillation.md)
+- [線形代数](./ch05-linear-algebra/README.md)
+  - [行列演算の基礎](./ch05-linear-algebra/matrix-ops.md)
+  - [連立一次方程式（ガウスの消去法・LU分解）](./ch05-linear-algebra/linear-systems.md)
+  - [固有値問題](./ch05-linear-algebra/eigenvalue.md)
+  - [スパース行列](./ch05-linear-algebra/sparse.md)
 
-- [偏微分方程式](./ch06-pde/README.md)
-  - [差分法の基礎](./ch06-pde/finite-difference.md)
-  - [拡散方程式](./ch06-pde/diffusion.md)
-  - [波動方程式](./ch06-pde/wave.md)
+- [フーリエ解析](./ch06-fourier/README.md)
+  - [離散フーリエ変換の基礎](./ch06-fourier/dft-basics.md)
+  - [高速フーリエ変換（FFT）](./ch06-fourier/fft.md)
+  - [スペクトル解析と応用](./ch06-fourier/spectral-analysis.md)
+
+- [常微分方程式](./ch07-ode/README.md)
+  - [オイラー法](./ch07-ode/euler.md)
+  - [ルンゲ＝クッタ法](./ch07-ode/runge-kutta.md)
+  - [適応型刻み幅制御](./ch07-ode/adaptive-step.md)
+  - [境界値問題（シューティング法）](./ch07-ode/boundary-value.md)
+
+- [偏微分方程式](./ch08-pde/README.md)
+  - [差分法の基礎](./ch08-pde/finite-difference.md)
+  - [拡散方程式（熱伝導）](./ch08-pde/diffusion.md)
+  - [波動方程式](./ch08-pde/wave.md)
+  - [ラプラス方程式とポアソン方程式](./ch08-pde/elliptic.md)
+
+- [モンテカルロ法](./ch09-monte-carlo/README.md)
+  - [乱数生成](./ch09-monte-carlo/random-numbers.md)
+  - [モンテカルロ積分](./ch09-monte-carlo/integration.md)
+  - [重点サンプリング](./ch09-monte-carlo/importance-sampling.md)
+  - [マルコフ連鎖モンテカルロ法（MCMC）](./ch09-monte-carlo/mcmc.md)
 
 # 第3部: 物理シミュレーション
 
-- [古典力学シミュレーション](./ch07-classical-mechanics/README.md)
-  - [質点系の運動](./ch07-classical-mechanics/particle-motion.md)
-  - [惑星運動（ケプラー問題）](./ch07-classical-mechanics/kepler.md)
-  - [剛体の運動](./ch07-classical-mechanics/rigid-body.md)
-
-- [モンテカルロ法](./ch08-monte-carlo/README.md)
-  - [乱数生成とランダムウォーク](./ch08-monte-carlo/random-walk.md)
-  - [モンテカルロ積分の詳細](./ch08-monte-carlo/integration.md)
-  - [重点サンプリング](./ch08-monte-carlo/importance-sampling.md)
-  - [マルコフ連鎖モンテカルロ法](./ch08-monte-carlo/mcmc.md)
-
-- [統計力学シミュレーション](./ch09-statistical-mechanics/README.md)
-  - [イジング模型の基礎](./ch09-statistical-mechanics/ising-basics.md)
-  - [メトロポリス法](./ch09-statistical-mechanics/metropolis.md)
-  - [相転移とクリティカル現象](./ch09-statistical-mechanics/phase-transition.md)
-  - [その他の格子模型](./ch09-statistical-mechanics/other-models.md)
-
-- [量子力学](./ch10-quantum-mechanics/README.md)
-  - [シュレーディンガー方程式の数値解法](./ch10-quantum-mechanics/schrodinger.md)
-  - [調和振動子](./ch10-quantum-mechanics/harmonic-oscillator.md)
-  - [ポテンシャル井戸問題](./ch10-quantum-mechanics/potential-well.md)
+- [古典力学シミュレーション](./ch10-classical-mechanics/README.md)
+  - [質点系の運動](./ch10-classical-mechanics/particle-motion.md)
+  - [惑星運動（ケプラー問題）](./ch10-classical-mechanics/kepler.md)
+  - [シンプレクティック積分法](./ch10-classical-mechanics/symplectic.md)
+  - [分子動力学入門](./ch10-classical-mechanics/molecular-dynamics.md)
 
 - [流体力学](./ch11-fluid-dynamics/README.md)
-  - [格子ボルツマン法入門](./ch11-fluid-dynamics/lattice-boltzmann.md)
-  - [ナビエ-ストークス方程式](./ch11-fluid-dynamics/navier-stokes.md)
+  - [ナビエ＝ストークス方程式の基礎](./ch11-fluid-dynamics/navier-stokes.md)
+  - [差分法による流体シミュレーション](./ch11-fluid-dynamics/finite-difference-cfd.md)
+  - [格子ボルツマン法](./ch11-fluid-dynamics/lattice-boltzmann.md)
+
+- [統計力学シミュレーション](./ch12-statistical-mechanics/README.md)
+  - [イジング模型の基礎](./ch12-statistical-mechanics/ising-basics.md)
+  - [メトロポリス法](./ch12-statistical-mechanics/metropolis.md)
+  - [相転移とクリティカル現象](./ch12-statistical-mechanics/phase-transition.md)
+  - [その他の格子模型](./ch12-statistical-mechanics/other-models.md)
+
+- [量子力学](./ch13-quantum-mechanics/README.md)
+  - [シュレーディンガー方程式の数値解法](./ch13-quantum-mechanics/schrodinger.md)
+  - [1次元束縛状態（調和振動子・井戸型ポテンシャル）](./ch13-quantum-mechanics/bound-states.md)
+  - [時間発展とスプリット演算子法](./ch13-quantum-mechanics/time-evolution.md)
+  - [散乱問題](./ch13-quantum-mechanics/scattering.md)
 
 # 第4部: 高度なトピック
 
-- [並列計算](./ch12-parallel/README.md)
-  - [RayonによるCPU並列化](./ch12-parallel/rayon.md)
-  - [SIMD最適化](./ch12-parallel/simd.md)
-  - [パフォーマンス測定とプロファイリング](./ch12-parallel/profiling.md)
-
-- [FFT（高速フーリエ変換）](./ch13-fft/README.md)
-  - [離散フーリエ変換の基礎](./ch13-fft/dft-basics.md)
-  - [FFTの実装と応用](./ch13-fft/fft-application.md)
-  - [スペクトル解析](./ch13-fft/spectral-analysis.md)
+- [並列計算](./ch14-parallel/README.md)
+  - [Rayonによるデータ並列化](./ch14-parallel/rayon.md)
+  - [SIMD最適化](./ch14-parallel/simd.md)
+  - [パフォーマンス測定とプロファイリング](./ch14-parallel/profiling.md)
+  - [GPU計算への展望](./ch14-parallel/gpu-outlook.md)
 
 # 付録
 
