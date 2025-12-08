@@ -1,7 +1,20 @@
 # Lychee configuration file
 exclude_all_private = true
 
+# Enable caching to check each URL only once
+cache = true
+
+# Cache duration: 1 day
+max_cache_age = "1d"
+
+# Accept 429 (Too Many Requests) as valid
+# The root repository URL is checked once and cached
+accept = [200, 429]
+
 # Exclude links matching any of these patterns
 exclude = [
-    ".*adobe\\.com.*"
+    ".*adobe\\.com.*",
+    # Exclude GitHub repository sub-paths (edit, commit, blob, tree, etc.)
+    # Only the root repository URL will be checked
+    "^https://github\\.com/sakuraba07/rust-computational-physics-tutorial/.+"
 ]

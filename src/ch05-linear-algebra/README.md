@@ -5,5 +5,5 @@
 >
 > この章を読むには、以下の章を先に読んでおく必要があります。
 >
-> - [ch01: Rustと計算物理学](../ch01-introduction/README.md)
-> - [ch02: 数値計算の基礎](../ch02-basics/README.md)
+> - [ch01: Rustと計算物理学](../ch01-introduction/)
+> - [ch02: 数値計算の基礎](../ch02-basics/)

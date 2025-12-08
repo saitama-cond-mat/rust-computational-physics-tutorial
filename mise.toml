@@ -24,7 +24,7 @@ pagefind --site book --force-language ja --exclude-selectors "nav,.sidebar,.menu
 echo "✅ Index generated\n"
 
 echo "🔗 Checking links..."
-lychee book/
+lychee --root-dir book book/
 echo "✅ Links checked\n"
 
 echo "🎉 Done!"

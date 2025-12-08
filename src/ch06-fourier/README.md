@@ -5,9 +5,9 @@
 >
 > この章を読むには、以下の章を先に読んでおく必要があります。
 >
-> - [ch01: Rustと計算物理学](../ch01-introduction/README.md)
-> - [ch02: 数値計算の基礎](../ch02-basics/README.md)
+> - [ch01: Rustと計算物理学](../ch01-introduction/)
+> - [ch02: 数値計算の基礎](../ch02-basics/)
 >
 > また、以下の章を読んでおくと、より理解が深まります。
 >
-> - [ch03: 数値微分と数値積分](../ch03-calculus/README.md)
+> - [ch03: 数値微分と数値積分](../ch03-calculus/)
