@@ -26,7 +26,7 @@ preferred-dark-theme = "navy"
 git-repository-url = "https://github.com/sakuraba07/rust-computational-physics-tutorial"
 edit-url-template = "https://github.com/sakuraba07/rust-computational-physics-tutorial/edit/main/{path}"
 additional-css = ["theme/css/pagefind.css", "theme/css/last-changed.css", "theme/css/typst.css", "theme/css/japanese.css"]
-additional-js = ["theme/budoux-loader.js", "mermaid.min.js", "mermaid-init.js"]
+additional-js = ["theme/budoux-loader.js"]
 
 [output.html.search]
 enable = false
