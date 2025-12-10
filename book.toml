@@ -1,5 +1,5 @@
 [book]
-title = "rust計算物理学チュートリアル"
+title = "Rust計算物理学チュートリアル"
 authors = ["sakuraba07"]
 language = "ja"
 src = "src"
