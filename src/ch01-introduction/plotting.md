@@ -48,6 +48,7 @@ fn main() -> std::io::Result<()> {
 ### Pythonでの可視化例
 
 ```python
+import japanize_matplotlib  # noqa
 import pandas as pd
 import matplotlib.pyplot as plt
 
