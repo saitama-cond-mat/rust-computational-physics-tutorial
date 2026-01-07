@@ -314,7 +314,12 @@ async fn main() {
 }
 ```
 
-実行するとウィンドウが開き、青い立方体がY軸を中心に回転する様子が表示されます。ウィンドウを閉じるとプログラムは終了します。
+実行すると、以下のように青い立方体がY軸を中心に回転するウィンドウが表示されます。ウィンドウを閉じるとプログラムは終了します。
+
+<video autoplay loop muted playsinline width="400">
+  <source src="../videos/three-d-video.webm" type="video/webm">
+  お使いのブラウザは動画タグをサポートしていません。
+</video>
 
 ### カメラ操作
 
