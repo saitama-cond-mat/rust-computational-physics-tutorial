@@ -13,6 +13,7 @@ fonts = ["Fira Math"]
 preamble = """
 #set page(width: auto, height: auto, margin: 0.2em, fill: none)
 #set text(size: 15pt)
+#import "@preview/physica:0.9.8": *
 """
 
 [preprocessor.last-changed]
