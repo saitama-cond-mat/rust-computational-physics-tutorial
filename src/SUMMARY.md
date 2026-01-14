@@ -12,7 +12,7 @@
 
 - [数値計算の基礎](./ch02-basics/README.md)
   - [浮動小数点演算と誤差](./ch02-basics/floating-point.md)
-  - [配列とベクトル演算](./ch02-basics/arrays-vectors.md)
+  - [配列・スライス・ベクタの基礎](./ch02-basics/arrays-vectors.md)
   - [外部クレートの活用（ndarray入門）](./ch02-basics/ndarray.md)
   - [高精度演算（double-double型とxprec-rs）](./ch02-basics/high-precision.md)
 
