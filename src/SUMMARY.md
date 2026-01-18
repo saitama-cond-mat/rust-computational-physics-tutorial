@@ -62,8 +62,8 @@
 
 - [古典力学シミュレーション](./ch10-classical-mechanics/README.md)
   - [質点系の運動](./ch10-classical-mechanics/particle-motion.md)
-  - [惑星運動（ケプラー問題）](./ch10-classical-mechanics/kepler.md)
   - [シンプレクティック積分法](./ch10-classical-mechanics/symplectic.md)
+  - [惑星運動（ケプラー問題）](./ch10-classical-mechanics/kepler.md)
   - [分子動力学入門](./ch10-classical-mechanics/molecular-dynamics.md)
 
 - [流体力学](./ch11-fluid-dynamics/README.md)
