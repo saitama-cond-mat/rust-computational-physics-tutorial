@@ -8,7 +8,7 @@ MDは、原子や分子の動きをニュートンの運動方程式に従って
 希ガス（アルゴンなど）の原子間相互作用としてよく用いられるのが、**レナード・ジョーンズ (Lennard-Jones, LJ) ポテンシャル**です。
 粒子間距離を $r$ として、ポテンシャルエネルギー $V(r)$ は次のように表されます。
 
-$ V(r) = 4 epsilon [ (sigma/r)^12 - (sigma/r)^6 ] $
+$$ V(r) = 4 epsilon [ (sigma/r)^12 - (sigma/r)^6 ] $$
 
 ![レナード・ジョーンズ・ポテンシャル](../images/ch10/lennard_jones.svg)
 
@@ -17,7 +17,7 @@ $ V(r) = 4 epsilon [ (sigma/r)^12 - (sigma/r)^6 ] $
 
 粒子 $i$ が粒子 $j$ から受ける力 $vb(F)_(i j)$ は、ポテンシャルの勾配の逆符号です。
 
-$ vb(F)_(i j) = - nabla V(r_(i j)) = 24 epsilon / r_(i j)^2 [ 2(sigma/r_(i j))^12 - (sigma/r_(i j))^6 ] vb(r)_(i j) $
+$$ vb(F)_(i j) = - nabla V(r_(i j)) = 24 epsilon / r_(i j)^2 [ 2(sigma/r_(i j))^12 - (sigma/r_(i j))^6 ] vb(r)_(i j) $$
 
 （ここで $vb(r)_(i j) = vb(r)_i - vb(r)_j$ です）
 

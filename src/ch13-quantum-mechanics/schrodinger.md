@@ -9,12 +9,12 @@
 
 ### 時間依存シュレーディンガー方程式 (TDSE)
 
-$ i hbar pdv(psi, t) = hat(H) psi = [ - hbar^2 / (2m) nabla^2 + V(vb(x)) ] psi $
+$$ i hbar pdv(psi, t) = hat(H) psi = [ - hbar^2 / (2m) nabla^2 + V(vb(x)) ] psi $$
 
 ### 時間非依存シュレーディンガー方程式 (TISE)
 
 エネルギー固有状態（定常状態）を求めるための固有値方程式です。
-$ hat(H) psi = E psi $
+$$ hat(H) psi = E psi $$
 
 ここで $hat(H)$ はハミルトニアン演算子、$V(vb(x))$ はポテンシャルエネルギー、$hbar$ はプランク定数（ディラック定数）です。
 数値計算では、通常 $hbar = 1, m = 1$ となる単位系（原子単位系など）を採用して式を簡略化します。
@@ -24,26 +24,26 @@ $ hat(H) psi = E psi $
 1次元空間 $x$ を格子間隔 $Delta x$ で離散化し、格子点 $x_j = j Delta x$ 上の波動関数の値を $psi_j$ とします。
 運動エネルギー項（2階微分）を第2中心差分で近似すると以下のようになります。
 
-$ pdv(psi, x, 2) approx (psi_(j+1) - 2 psi_j + psi_(j-1)) / (Delta x)^2 $
+$$ pdv(psi, x, 2) approx (psi_(j+1) - 2 psi_j + psi_(j-1)) / (Delta x)^2 $$
 
 これを用いると、ハミルトニアン $hat(H) psi$ の第 $j$ 成分は次のように書けます（$hbar=m=1$ とする）。
 
-$ (hat(H) psi)_j = - 1/2 (psi_(j+1) - 2 psi_j + psi_(j-1)) / (Delta x)^2 + V_j psi_j $
+$$ (hat(H) psi)_j = - 1/2 (psi_(j+1) - 2 psi_j + psi_(j-1)) / (Delta x)^2 + V_j psi_j $$
 
 これを整理すると、隣接する3点に関係する式となります。
 
-$ (hat(H) psi)_j = - 1 / (2 (Delta x)^2) psi_(j+1) + ( 1 / (Delta x)^2 + V_j ) psi_j - 1 / (2 (Delta x)^2) psi_(j-1) $
+$$ (hat(H) psi)_j = - 1 / (2 (Delta x)^2) psi_(j+1) + ( 1 / (Delta x)^2 + V_j ) psi_j - 1 / (2 (Delta x)^2) psi_(j-1) $$
 
 ## 行列形式
 
 上記の式は、ハミルトニアンを行列 $vb(H)$、波動関数をベクトル $vb(psi)$ と見なせば、行列ベクトル積として表現できます。
 
-$ vb(H) = mat(
+$$ vb(H) = mat(
 d_0, t, 0, dots.c;
 t, d_1, t, 0;
 0, t, d_2, dots.down;
 dots.v, 0, dots.down, dots.down
-) $
+) $$
 
 ここで、
 
@@ -68,7 +68,7 @@ use num_complex::Complex64; // 複素数型 (実部・虚部がf64)
 fn main() {
     let z = Complex64::new(1.0, 2.0); // 1 + 2i
     let i = Complex64::i();
-    
+
     println!("z * i = {}", z * i); // (-2 + 1i)
 }
 ```

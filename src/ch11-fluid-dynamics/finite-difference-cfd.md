@@ -24,19 +24,19 @@
 1. **仮の速度の計算**:
    現在の速度場 $vb(u)^n$ を用いて、粘性項と移流項のみを考慮し、仮の速度 $vb(u)^(*)$ を計算します（オイラー法などの時間積分）。
 
-   $ vb(u)^(*) = vb(u)^n + Delta t [ - (vb(u)^n dot nabla) vb(u)^n + nu nabla^2 vb(u)^n ] $
+   $$ vb(u)^(*) = vb(u)^n + Delta t [ - (vb(u)^n dot nabla) vb(u)^n + nu nabla^2 vb(u)^n ] $$
 
 2. **圧力のポアソン方程式を解く**:
    連続の式 $div(vb(u)^(n+1)) = 0$ を満たすように圧力 $p$ を決定します。
 
-   $ nabla^2 p = rho / (Delta t) div(vb(u)^(*)) $
+   $$ nabla^2 p = rho / (Delta t) div(vb(u)^(*)) $$
 
    これをSOR法（逐次過緩和法）などで反復計算して解きます。
 
 3. **速度の修正**:
    求めた圧力勾配を使って、仮の速度を修正し、次のステップの速度 $vb(u)^(n+1)$ とします。
 
-   $ vb(u)^(n+1) = vb(u)^(*) - (Delta t) / rho nabla p $
+   $$ vb(u)^(n+1) = vb(u)^(*) - (Delta t) / rho nabla p $$
 
 ## Rustによる実装例
 

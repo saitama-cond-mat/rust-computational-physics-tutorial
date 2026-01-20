@@ -35,17 +35,17 @@
 // 仮想的なコード（疑似コードに近い）
 fn main() {
     let target_b = 0.0; // x(t_1) = 0
-    
+
     // 目的関数: 初期速度 v0 を与えると、終端での誤差を返す
     let error_func = |v0: f64| -> f64 {
         let state = solve_ode_ivp(v0); // RK4などで t_0 -> t_1 まで計算
         let x_final = state.x;
         x_final - target_b
     };
-    
+
     // 二分法などで error_func(v0) = 0 となる v0 を探す
     let v0_solution = bisection_method(error_func, -10.0, 10.0);
-    
+
     println!("求める初期速度: {}", v0_solution);
 }
 ```
@@ -59,4 +59,4 @@ fn main() {
 
 ---
 
-第7章はこれで終わりです。次は[第8章: 偏微分方程式](../ch08-pde/README.md)に進みましょう。
+第7章はこれで終わりです。次は[第8章: 偏微分方程式](../ch08-pde/)に進みましょう。

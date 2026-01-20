@@ -11,7 +11,7 @@
 
 流体が湧き出したり消滅したりしないことを表します。非圧縮性流体では、速度場の発散がゼロになることを意味します。
 
-$ div(vb(u)) = 0 $
+$$ div(vb(u)) = 0 $$
 
 ここで $vb(u)$ は流速ベクトルです。
 
@@ -19,7 +19,7 @@ $ div(vb(u)) = 0 $
 
 流体微小要素に対する運動方程式 $F = m a$ です。
 
-$ pdv(vb(u), t) + (vb(u) dot nabla) vb(u) = - 1/rho nabla p + nu nabla^2 vb(u) + vb(f) $
+$$ pdv(vb(u), t) + (vb(u) dot nabla) vb(u) = - 1/rho nabla p + nu nabla^2 vb(u) + vb(f) $$
 
 各項の意味は以下の通りです。
 
@@ -37,6 +37,6 @@ $ pdv(vb(u), t) + (vb(u) dot nabla) vb(u) = - 1/rho nabla p + nu nabla^2 vb(u) +
 
 次節で紹介する **MAC法** などの数値解法では、ポアソン方程式を解くことで、この条件を満たす圧力を計算します。
 
-$ nabla^2 p = - rho div((vb(u) dot nabla) vb(u)) $
+$$ nabla^2 p = - rho div((vb(u) dot nabla) vb(u)) $$
 
 この「速度と圧力の連成」をどのように解くかが、CFD（数値流体力学）の核心部分となります。

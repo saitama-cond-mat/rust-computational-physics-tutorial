@@ -9,11 +9,11 @@
 
 **クランク・ニコルソン法 (Crank-Nicolson Method)** は、陰解法の一種で、ユニタリ性と2次の精度を持ち、無条件安定です。
 
-$ (1 + i Delta t / 2 H) psi^(n+1) = (1 - i Delta t / 2 H) psi^n $
+$$ (1 + i Delta t / 2 H) psi^(n+1) = (1 - i Delta t / 2 H) psi^n $$
 
 あるいは、
 
-$ psi^(n+1) = 1 / (1 + i Delta t / 2 H) (1 - i Delta t / 2 H) psi^n $
+$$ psi^(n+1) = 1 / (1 + i Delta t / 2 H) (1 - i Delta t / 2 H) psi^n $$
 
 これを解くには、各ステップで連立一次方程式 $A vb(x) = vb(b)$ を解く必要があります。ここで行列 $A$ は三重対角行列になるため、トーマス法（TDMA）を使って $O(N)$ で高速に解くことができます。
 
@@ -22,7 +22,7 @@ $ psi^(n+1) = 1 / (1 + i Delta t / 2 H) (1 - i Delta t / 2 H) psi^n $
 より高速で高精度な手法として、**スプリット演算子法**があります。
 ハミルトニアンを運動エネルギー $T$ とポテンシャル $V$ に分け、時間発展演算子 $e^(-i Delta t (T+V))$ を近似的に分解します（トロッター分解）。
 
-$ e^(-i Delta t (T+V)) approx e^(-i Delta t / 2 V) e^(-i Delta t T) e^(-i Delta t / 2 V) $
+$$ e^(-i Delta t (T+V)) approx e^(-i Delta t / 2 V) e^(-i Delta t T) e^(-i Delta t / 2 V) $$
 
 - $e^(-i Delta t / 2 V)$ は座標空間では単なる位相回転（対角行列）です。
 - $e^(-i Delta t T)$ は運動量空間では単なる位相回転です。
@@ -39,23 +39,23 @@ FFTを利用するため、計算量は $O(N log N)$ となり非常に高速で
 
 ## Rustによる実装方針
 
-スプリット演算子法を実装するには、[第6章](../ch06-fourier/README.md)で紹介した `rustfft` クレートを使用します。
+スプリット演算子法を実装するには、[第6章](../ch06-fourier/)で紹介した `rustfft` クレートを使用します。
 
 ```rust
 // 擬似コード
 fn step(psi: &mut Vec<Complex64>) {
     // 1. Potential half-step
     apply_potential(psi, 0.5 * dt);
-    
+
     // 2. FFT
     fft_planner.process(psi);
-    
+
     // 3. Kinetic step (in k-space)
     apply_kinetic_in_k_space(psi, dt);
-    
+
     // 4. IFFT
     ifft_planner.process(psi);
-    
+
     // 5. Potential half-step
     apply_potential(psi, 0.5 * dt);
 }

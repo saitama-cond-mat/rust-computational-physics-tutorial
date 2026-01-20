@@ -9,7 +9,7 @@
 2. **スピンの選択**: ランダムに1つのスピン $s_i$ を選びます。
 3. **フリップの試行**: そのスピンを反転させた状態（$s'_i = -s_i$）を考え、その時のエネルギー変化 $Delta E$ を計算します。
 
-   $ Delta E = E_text(new) - E_text(old) = 2 s_i ( J sum_(j in text(neighbor)) s_j + h ) $
+   $$ Delta E = E_"new" - E_"old" = 2 s_i ( J sum_(j in "neighbor") s_j + h ) $$
 
    （計算に必要なのは局所的な変化分だけなので、全エネルギーを再計算する必要はありません）
 
@@ -92,7 +92,7 @@ impl IsingModel {
     fn magnetization(&self) -> f64 {
         self.spins.iter().sum::<i32>() as f64
     }
-    
+
     /// 総エネルギー
     fn energy(&self) -> f64 {
         let mut e = 0.0;

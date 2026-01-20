@@ -81,7 +81,7 @@ $$
 $$
 
 $$
- vb(x)_(k+1) arrow vb(x)_(k+1) / norm(vb(x)_(k+1)) quad text("正規化")
+ vb(x)_(k+1) arrow vb(x)_(k+1) / norm(vb(x)_(k+1)) quad "正規化"
 $$
 
 ### Rustによる実装

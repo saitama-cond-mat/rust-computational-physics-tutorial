@@ -36,7 +36,7 @@ $$ J(vb(x)) Delta vb(x) = -vb(F)(vb(x)) $$
 
 これを解いて $vb(x)$ を更新します。
 
-$$ vb(x) leftarrow vb(x) + Delta vb(x) $$
+$$ vb(x) -> vb(x) + Delta vb(x) $$
 
 ## Rustによる実装
 
@@ -76,7 +76,7 @@ fn main() {
     // 初期値 (x, y) = (1.0, 2.0)
     // 解に近い適切な初期値を選ぶ必要があります
     let mut x = arr1(&[1.0, 2.0]);
-    
+
     let tolerance = 1e-8;
     let max_iter = 100;
 

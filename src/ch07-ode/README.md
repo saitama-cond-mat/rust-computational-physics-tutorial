@@ -10,9 +10,9 @@
 
 物理法則の多くは、時間や空間に対する変化率（微分）を含む**微分方程式 (Differential Equations)** として記述されます。
 
-$$ m dv(x, t, 2) = F(x, v, t) quad (text("ニュートンの運動方程式")) $$
+$$ m dv(x, t, 2) = F(x, v, t) quad ("ニュートンの運動方程式") $$
 
-$$ L dv(I, t) + R I = V(t) quad (text("回路方程式")) $$
+$$ L dv(I, t) + R I = V(t) quad ("回路方程式") $$
 
 本章では、時間変数 $t$ の関数である $x(t)$ に対する**常微分方程式 (Ordinary Differential Equation, ODE)** の初期値問題を数値的に解く手法を学びます。
 

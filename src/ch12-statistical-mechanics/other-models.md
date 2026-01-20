@@ -8,7 +8,7 @@
 各スピン $s_i$ は $1, 2, ..., q$ のいずれかの値を持ちます。
 ハミルトニアンは以下のように定義されます（クロネッカーのデルタ $delta$ を使用）。
 
-$ H = - J sum_((i, j)) delta(s_i, s_j) $
+$$ H = - J sum_((i, j)) delta(s_i, s_j) $$
 
 つまり、隣り合うスピンが「同じ状態」であればエネルギーが下がり、「異なる状態」であればエネルギーは変化しません（あるいは高くなります）。
 
@@ -20,7 +20,7 @@ $ H = - J sum_((i, j)) delta(s_i, s_j) $
 スピンが2次元ベクトル $vb(s)_i = (cos theta_i, sin theta_i)$ であるモデルです。
 スピンは円周上の任意の角度 $theta_i in [0, 2 pi)$ をとることができます（連続自由度）。
 
-$ H = - J sum_((i, j)) vb(s)_i dot vb(s)_j = - J sum_((i, j)) cos(theta_i - theta_j) $
+$$ H = - J sum_((i, j)) vb(s)_i dot vb(s)_j = - J sum_((i, j)) cos(theta_i - theta_j) $$
 
 2次元XY模型は、通常の相転移とは異なる**ベレゾフスキー・コステリッツ・サウレス (BKT) 転移**というトポロジカルな相転移を示すことで有名です（2016年ノーベル物理学賞）。
 
@@ -29,7 +29,7 @@ $ H = - J sum_((i, j)) vb(s)_i dot vb(s)_j = - J sum_((i, j)) cos(theta_i - thet
 スピンが3次元ベクトル $vb(s)_i$ （単位ベクトル）であるモデルです。
 現実の磁性体（鉄など）のモデルとして重要です。
 
-$ H = - J sum_((i, j)) vb(s)_i dot vb(s)_j $
+$$ H = - J sum_((i, j)) vb(s)_i dot vb(s)_j $$
 
 ## Rustによる実装の工夫
 

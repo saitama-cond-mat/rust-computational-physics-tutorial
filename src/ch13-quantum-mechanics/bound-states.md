@@ -106,7 +106,7 @@ fn main() {
 上記のコード例では、逆べき乗法の代わりに**虚時間発展法 (Imaginary Time Evolution)** を使用しました。
 シュレーディンガー方程式の時間を $t -> -i tau$ と置換すると、拡散方程式になります。
 
-$ pdv(psi, tau) = - hat(H) psi $
+$$ pdv(psi, tau) = - hat(H) psi $$
 
 解は $psi(tau) = sum c_n e^(- E_n tau) phi_n$ となり、$tau -> infinity$ で最小のエネルギー $E_0$ を持つ項（基底状態）以外は指数関数的に減衰して消滅します。
 これは基底状態を求めるための非常に汎用的で強力な手法です。

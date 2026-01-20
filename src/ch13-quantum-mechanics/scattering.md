@@ -30,7 +30,7 @@ fn main() {
         let x0 = L / 4.0;
         let sigma = 5.0;
         let k0 = 2.0; // 平均運動量
-        
+
         // exp(-(x-x0)^2 / 2sigma^2) * exp(i k0 x)
         let envelope = (-(x - x0).powi(2) / (2.0 * sigma.powi(2))).exp();
         let phase = Complex64::from_polar(1.0, k0 * x);
@@ -47,7 +47,7 @@ fn main() {
     for t in 0..200 {
         if t % 20 == 0 {
             // ここで |psi|^2 を出力してプロットすると、波束の動きが見える
-            println!("Step {}: max probability = {:.4}", t, 
+            println!("Step {}: max probability = {:.4}", t,
                 psi.iter().map(|z| z.norm_sqr()).fold(0.0/0.0, f64::max));
         }
 
@@ -58,7 +58,7 @@ fn main() {
             let kinetic = -0.5 * (psi[i+1] - 2.0*psi[i] + psi[i-1]) / (DX*DX);
             let potential = v[i] * psi[i];
             let h_psi = kinetic + potential;
-            
+
             next_psi[i] = psi[i] - Complex64::i() * DT * h_psi;
         }
         psi = next_psi;
@@ -75,6 +75,6 @@ fn main() {
 
 壁の向こう側（透過領域）における確率密度の積分値が**透過係数 (Transmission Coefficient)** です。
 
-$ T = integral_("barrier end")^infinity |psi(x, t)|^2 dx $
+$$ T = integral_("barrier end")^infinity |psi(x, t)|^2 dd(x) $$
 
 十分に時間が経過した後、この $T$ は定数値に収束します。解析解と比較することで、シミュレーションの精度を検証できます。

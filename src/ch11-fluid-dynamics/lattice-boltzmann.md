@@ -5,9 +5,9 @@
 
 ## 基本概念
 
-### 分布関数 $f_i(vb(x), t)$
+### 分布関数
 
-位置 $vb(x)$、時刻 $t$ において、離散速度 $vb(e)_i$ で移動している粒子の密度（確率分布）を表します。
+分布関数 $f_i (vb(x), t)$ は、位置 $vb(x)$、時刻 $t$ において、離散速度 $vb(e)_i$ で移動している粒子の密度（確率分布）を表します。
 
 ### D2Q9モデル
 
@@ -24,7 +24,7 @@
 
 時間発展は「衝突」と「並進（ストリーミング）」の2段階で記述されます。
 
-$ f_i(vb(x) + vb(e)_i Delta t, t + Delta t) = f_i(vb(x), t) - 1/tau [ f_i(vb(x), t) - f_i^(eq)(vb(x), t) ] $
+$$ f_i(vb(x) + vb(e)_i Delta t, t + Delta t) = f_i(vb(x), t) - 1/tau [ f_i(vb(x), t) - f_i^(eq)(vb(x), t) ] $$
 
 右辺第2項はBGK衝突項と呼ばれ、分布関数 $f_i$ が緩和時間 $tau$ で局所平衡分布 $f_i^(eq)$ に近づいていく過程を表しています。この $tau$ が流体の粘性率に関係します。
 
@@ -39,8 +39,8 @@ $ f_i(vb(x) + vb(e)_i Delta t, t + Delta t) = f_i(vb(x), t) - 1/tau [ f_i(vb(x),
 3. **巨視的変数の計算**:
    密度 $rho$ と流速 $vb(u)$ は、分布関数のモーメント（和）として求まります。
 
-   $ rho = sum_i f_i $
-   $ rho vb(u) = sum_i f_i vb(e)_i $
+   $$ rho = sum_i f_i $$
+   $$ rho vb(u) = sum_i f_i vb(e)_i $$
 
 ## Rustによる実装 (D2Q9)
 
@@ -80,21 +80,21 @@ impl LBMSolver {
                 let rho = self.rho[[y, x]];
                 let ux = self.ux[[y, x]];
                 let uy = self.uy[[y, x]];
-                
+
                 for i in 0..9 {
                     let feq = self.equilibrium(i, rho, ux, uy);
                     // 衝突後の値
                     let f_out = self.f[[y, x, i]] - (self.f[[y, x, i]] - feq) / self.tau;
-                    
+
                     // ストリーミング先の座標
                     let next_x = (x as isize + self.ex[i]).rem_euclid(nx as isize) as usize;
                     let next_y = (y as isize + self.ey[i]).rem_euclid(ny as isize) as usize;
-                    
+
                     f_next[[next_y, next_x, i]] = f_out;
                 }
             }
         }
-        
+
         self.f = f_next;
         // 境界条件処理、巨視的変数の更新など...
     }

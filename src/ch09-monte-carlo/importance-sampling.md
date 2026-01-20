@@ -10,7 +10,7 @@ $$ I = integral [f(x) / p(x)] p(x) dd(x) $$
 
 これは、**確率分布 $p(x)$ に従って $x$ をサンプリングし、その点での値 $f(x) / p(x)$ の平均をとる**ことに相当します。
 
-$$ I approx 1/N sum_(i=1)^N f(x_i) / p(x_i), quad x_i sim p(x) $$
+$$ I approx 1/N sum_(i=1)^N f(x_i) / p(x_i), quad x_i tilde.op p(x) $$
 
 ## なぜ誤差が減るのか
 
@@ -37,10 +37,10 @@ use rand_distr::{Distribution, Exp};
 fn main() {
     let n = 100_000;
     let mut rng = thread_rng();
-    
+
     // 積分対象の関数 f(x)
     let f = |x: f64| (-x).exp() / (1.0 + x * x);
-    
+
     // 1. 単純なモンテカルロ積分 (比較用)
     // [0, 10] の範囲で一様サンプリング (10以降は無視)
     let mut sum_simple = 0.0;

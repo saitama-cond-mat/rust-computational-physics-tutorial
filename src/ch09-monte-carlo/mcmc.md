@@ -14,7 +14,7 @@ MCMCの最も基本的かつ強力なアルゴリズムが**メトロポリス�
    a. 現在の状態 $x$ の近くにある候補状態 $x'$ をランダムに選ぶ（提案分布）。
    b. 受理確率 $w$ を計算する：
    $$ w = min(1, P(x') / P(x)) $$
-   c. $[0, 1]$ の一様乱数 $r$ を生成し、$r < w$ なら新しい状態を採用し $x leftarrow x'$ とする。そうでなければ現在の状態 $x$ を維持する。
+   c. $[0, 1]$ の一様乱数 $r$ を生成し、$r < w$ なら新しい状態を採用し $x -> x'$ とする。そうでなければ現在の状態 $x$ を維持する。
    d. 現在の状態 $x$ を記録する。
 
 ### なぜこれでうまくいくのか
@@ -25,7 +25,7 @@ MCMCの最も基本的かつ強力なアルゴリズムが**メトロポリス�
 
 ## Rustによる実装例
 
-1次元の正規分布 $P(x) propto exp(-x^2 / 2)$ からのサンプリングをメトロポリス法で行います。
+1次元の正規分布 $P(x) prop exp(-x^2 / 2)$ からのサンプリングをメトロポリス法で行います。
 
 ```rust
 use rand::prelude::*;
@@ -34,7 +34,7 @@ fn main() {
     let mut rng = thread_rng();
     let mut x = 0.0; // 初期値
     let delta = 0.5; // 提案の幅
-    
+
     let p = |x: f64| (-x * x / 2.0).exp(); // 目的の分布（規格化不要）
 
     let n_steps = 100_000;
@@ -43,18 +43,18 @@ fn main() {
     for _ in 0..n_steps {
         // 1. 候補 x' を提案
         let x_next = x + rng.gen_range(-delta..delta);
-        
+
         // 2. 受理確率の計算
         let acceptance_prob = (p(x_next) / p(x)).min(1.0);
-        
+
         // 3. 受理判定
         if rng.gen::<f64>() < acceptance_prob {
             x = x_next;
         }
-        
+
         samples.push(x);
     }
-    
+
     // 最初の数千ステップ（バーンイン期間）を除いた平均
     let mean: f64 = samples.iter().skip(1000).sum::<f64>() / (n_steps - 1000) as f64;
     println!("Estimated mean = {:.6}", mean);

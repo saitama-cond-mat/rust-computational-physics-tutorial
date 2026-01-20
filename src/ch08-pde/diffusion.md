@@ -20,7 +20,7 @@ $$ u_i^(n+1) = u_i^n + (D Delta t / Delta x^2) (u_(i+1)^n - 2u_i^n + u_(i-1)^n) 
 
 FTCS法が安定であるためには、以下の条件を満たす必要があります。
 
-$$ r = D Delta t / Delta x^2 leq 1/2 $$
+$$ r = D Delta t / Delta x^2 lt.eq 1/2 $$
 
 空間を細かく（$Delta x$ を小さく）すると、時間刻み $Delta t$ はその2乗に比例して極端に小さくしなければならず、計算効率が悪くなるという弱点があります。
 
@@ -41,7 +41,7 @@ fn main() {
     let dx = 1.0;
     let dt = 0.2;
     let d_coeff = 1.0;  // 拡散係数
-    
+
     let r = d_coeff * dt / (dx * dx);
     println!("r = {}", r);
     if r > 0.5 {
@@ -61,7 +61,7 @@ fn main() {
         // 境界条件 (固定境界)
         u_next[0] = 0.0;
         u_next[nx-1] = 0.0;
-        
+
         u = u_next;
     }
 }

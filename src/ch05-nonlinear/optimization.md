@@ -42,7 +42,7 @@ fn main() {
     for i in 0..max_iter {
         let current_val = f(&x);
         let g = grad(&x);
-        
+
         // 勾配の大きさが十分小さくなったら終了
         let g_norm: f64 = g.iter().map(|v| v.powi(2)).sum::<f64>().sqrt();
         if g_norm < 1e-6 {
@@ -54,7 +54,7 @@ fn main() {
         for j in 0..2 {
             x[j] -= alpha * g[j];
         }
-        
+
         println!("iter {}: x={:?}, f(x)={:.6}", i, x, current_val);
     }
 }
@@ -83,4 +83,4 @@ Rustには [`argmin`](https://crates.io/crates/argmin) のような最適化ラ�
 
 ---
 
-第5章はこれで終わりです。次は[第6章: フーリエ変換](../ch06-fourier/README.md)に進みましょう。
+第5章はこれで終わりです。次は[第6章: フーリエ変換](../ch06-fourier/)に進みましょう。

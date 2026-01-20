@@ -7,29 +7,31 @@
 
 質量 $m$ の質点にかかる力を $vb(F)$、位置を $vb(x)$ とすると、運動方程式は以下のように記述されます。
 
-$ m dv(vb(x), t, n: 2) = vb(F)(vb(x), vb(v), t) $
+$$ m dv(vb(x), t, n: 2) = vb(F)(vb(x), vb(v), t) $$
 
 ここで、$vb(v) = dv(vb(x), t)$ は速度です。
 数値計算でこの方程式を解くためには、2階の微分方程式を「1階の連立微分方程式」に書き直すのが一般的です。
 
 状態ベクトルを $vb(y) = (vb(x), vb(v))$ と定義すると、以下のように書けます。
 
-$ dv(vb(x), t) = vb(v) $
-$ dv(vb(v), t) = (vb(F)(vb(x), vb(v), t)) / m $
+$$ dv(vb(x), t) = vb(v) $$
 
-これをまとまると、一般化された形式 $dv(vb(y), t) = vb(f)(t, vb(y))$ となり、[第7章](../ch07-ode/README.md)で学んだオイラー法やルンゲ＝クッタ法をそのまま適用できることがわかります。
+$$ dv(vb(v), t) = (vb(F)(vb(x), vb(v), t)) / m $$
+
+これをまとまると、一般化された形式 $dv(vb(y), t) = vb(f)(t, vb(y))$ となり、[第7章](../ch07-ode/)で学んだオイラー法やルンゲ＝クッタ法をそのまま適用できることがわかります。
 
 ## 自由落下と空気抵抗
 
 例として、空気抵抗がある場合の自由落下を考えます。
 重力加速度を $vb(g) = (0, -g)$、空気抵抗が速度に比例すると仮定します（係数 $k$）。
 
-$ vb(F) = m vb(g) - k vb(v) $
+$$ vb(F) = m vb(g) - k vb(v) $$
 
 運動方程式は以下のようになります。
 
-$ dv(vb(x), t) = vb(v) $
-$ dv(vb(v), t) = vb(g) - k/m vb(v) $
+$$ dv(vb(x), t) = vb(v) $$
+
+$$ dv(vb(v), t) = vb(g) - k/m vb(v) $$
 
 ### Rustによるモデル化の例
 
@@ -41,21 +43,21 @@ $ dv(vb(v), t) = vb(g) - k/m vb(v) $
 fn falling_body_dynamics(_t: f64, state: &[f64]) -> Vec<f64> {
     let vx = state[2];
     let vy = state[3];
-    
+
     let g = 9.8;
     let k = 0.1;
     let m = 1.0;
-    
+
     // dx/dt = vx
     let dx_dt = vx;
     // dy/dt = vy
     let dy_dt = vy;
-    
+
     // dvx/dt = - (k/m) * vx
     let dvx_dt = -(k / m) * vx;
     // dvy/dt = -g - (k/m) * vy
     let dvy_dt = -g - (k / m) * vy;
-    
+
     vec![dx_dt, dy_dt, dvx_dt, dvy_dt]
 }
 ```
@@ -69,8 +71,9 @@ fn falling_body_dynamics(_t: f64, state: &[f64]) -> Vec<f64> {
 
 ハミルトニアン $H(vb(q), vb(p))$ （全エネルギーに対応）を用いると、運動方程式は以下のように美しく対称的な形になります。
 
-$ dv(vb(q), t) = pdv(H, vb(p)) $
-$ dv(vb(p), t) = - pdv(H, vb(q)) $
+$$ dv(vb(q), t) = pdv(H, vb(p)) $$
+
+$$ dv(vb(p), t) = - pdv(H, vb(q)) $$
 
 ここで $vb(q)$ は一般化座標、$vb(p)$ は一般化運動量です。
 次節では、このハミルトン力学の性質を利用した、より高度で安定した積分法について学びます。

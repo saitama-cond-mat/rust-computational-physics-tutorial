@@ -9,7 +9,7 @@
 
 ![Scalar演算とSIMD演算の比較](../images/ch14/simd_concept.svg)
 
-$ vb(a) + vb(b) = (a_0 + b_0, a_1 + b_1, dots.c, a_7 + b_7) $
+$$ vb(a) + vb(b) = (a_0 + b_0, a_1 + b_1, dots.c, a_7 + b_7) $$
 
 ## RustでのSIMD
 

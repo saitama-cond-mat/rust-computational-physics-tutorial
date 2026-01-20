@@ -40,50 +40,50 @@ fn main() {
     let n = 50; // グリッドサイズ 50x50
     let max_iter = 10000;
     let tolerance = 1e-4; // 収束判定の閾値
-    
+
     // 2次元グリッドの初期化 (0.0)
     // phi[y][x] としてアクセス
     let mut phi = vec![vec![0.0; n]; n];
-    
+
     // 境界条件の設定
     // 上辺 (y=0) を 100.0 に固定
     for x in 0..n {
         phi[0][x] = 100.0;
     }
     // 左辺、右辺、下辺は 0.0 のまま
-    
+
     for iter in 0..max_iter {
         let mut max_diff = 0.0;
-        
+
         // グリッド内部の更新
         for y in 1..n-1 {
             for x in 1..n-1 {
                 let old_val = phi[y][x];
-                
+
                 // ガウス＝ザイデル法: 最新の値をすぐに使う
                 // phi[y][x] = 0.25 * (phi[y][x+1] + phi[y][x-1] + phi[y+1][x] + phi[y-1][x])
                 let new_val = 0.25 * (phi[y][x+1] + phi[y][x-1] + phi[y+1][x] + phi[y-1][x]);
-                
+
                 phi[y][x] = new_val;
-                
+
                 let diff = (new_val - old_val).abs();
                 if diff > max_diff {
                     max_diff = diff;
                 }
             }
         }
-        
+
         // 収束判定
         if max_diff < tolerance {
             println!("収束しました: 反復回数 {}", iter + 1);
             break;
         }
-        
+
         if iter == max_iter - 1 {
              println!("最大反復回数に達しました (max_diff = {:.6})", max_diff);
         }
     }
-    
+
     // 結果の確認（中心付近の値）
     println!("phi[25][25] = {:.2}", phi[n/2][n/2]);
 }
@@ -91,4 +91,4 @@ fn main() {
 
 ---
 
-第8章はこれで終わりです。次は[第9章: モンテカルロ法](../ch09-monte-carlo/README.md)に進みましょう。
+第8章はこれで終わりです。次は[第9章: モンテカルロ法](../ch09-monte-carlo/)に進みましょう。

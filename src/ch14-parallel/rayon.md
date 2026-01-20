@@ -46,7 +46,7 @@ fn main() {
     let start = std::time::Instant::now();
     let pi = estimate_pi(n);
     let duration = start.elapsed();
-    
+
     println!("Estimated Pi: {}, Time: {:?}", pi, duration);
 }
 ```
@@ -55,7 +55,7 @@ fn main() {
 
 ## 数値計算への応用：多粒子系の力計算
 
-[第11章の分子動力学](./ch11-fluid-dynamics/README.md)などで、全粒子ペアに対して力を計算する場面を考えます。
+[第11章の分子動力学](../ch11-fluid-dynamics/)などで、全粒子ペアに対して力を計算する場面を考えます。
 
 ```rust
 use rayon::prelude::*;
@@ -63,7 +63,7 @@ use ndarray::Array2;
 
 fn compute_forces_parallel(positions: &Array2<f64>, forces: &mut Array2<f64>) {
     let n = positions.nrows();
-    
+
     // 各粒子の力を独立に計算（実際には作用反作用の利用などで工夫が必要）
     // ここでは各粒子の更新ループを並列化する例
     forces.axis_iter_mut(Axis(0))

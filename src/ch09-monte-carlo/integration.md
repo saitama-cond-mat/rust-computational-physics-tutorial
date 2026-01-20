@@ -12,13 +12,13 @@ $$ I = integral_V f(vb(x)) dd(vb(x)) $$
 
 $$ I approx V/N sum_(i=1)^N f(vb(x)_i) $$
 
-## 具体例：円周率 $pi$ の推定
+## 具体例：円周率πの推定
 
 最も有名な例は、単位正方形内の $1/4$ 円の面積を求めることで $pi$ を計算する手法です。
 
 1. 領域 $[0, 1] times [0, 1]$ 内に一様に乱数のペア $(x, y)$ を打つ。
-2. $x^2 + y^2 leq 1$ を満たせば「命中 (Hit)」、そうでなければ「外れ (Miss)」とする。
-3. $pi approx 4 times (text("命中数")) / (text("全試行数"))$
+2. $x^2 + y^2 lt.eq 1$ を満たせば「命中 (Hit)」、そうでなければ「外れ (Miss)」とする。
+3. $pi approx 4 times ("命中数") / ("全試行数")$
 
 ![](../images/ch09/monte_carlo_pi.svg)
 
@@ -35,7 +35,7 @@ fn main() {
     for _ in 0..n {
         let x: f64 = rng.gen();
         let y: f64 = rng.gen();
-        
+
         if x * x + y * y <= 1.0 {
             hits += 1;
         }
@@ -59,16 +59,16 @@ fn main() {
     let f = |x: f64| x.sin();
     let a = 0.0;
     let b = std::f64::consts::PI;
-    
+
     let n = 100_000;
     let mut sum = 0.0;
     let mut rng = thread_rng();
-    
+
     for _ in 0..n {
         let x = rng.gen_range(a..b);
         sum += f(x);
     }
-    
+
     let area = (b - a) * sum / (n as f64);
     println!("Integral result = {:.6}", area);
 }
