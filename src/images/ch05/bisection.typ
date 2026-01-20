@@ -1,55 +1,59 @@
 #import "@preview/cetz:0.4.2"
 
-#set page(width: auto, height: auto, margin: 1cm)
+#set page(width: auto, height: auto, margin: 10pt)
+#set text(size: 16pt)
 
 #cetz.canvas({
     import cetz.draw: *
-    
+
+    let s = 2
+
     // Function definition
     let f(x) = 0.5 * (x - 2) * (x - 2) * (x - 2) + 0.5 * (x - 2) + 1
-    
+
     // Plotting range
     let x_min = 0
     let x_max = 4.5
-    
+
     // Points
     let a = 0.5
     let b = 3.5
     let c = (a + b) / 2
-    
+
     // Axis
-    line((x_min, 0), (x_max, 0), mark: (end: ">"), name: "axis")
-    content("axis.end", anchor: "north-west", padding: .1)[$x$]
-    
+    line((x_min, 0), (x_max * s, 0), mark: (end: ">", size: 0.5), name: "axis", stroke: 1.5pt)
+    content("axis.end", anchor: "west", padding: .2)[$x$]
+
     // Curve
     let domain = range(0, 45).map(x => x/10)
-    line(..domain.map(x => (x, f(x))), stroke: blue, name: "f")
-    content((4, f(4)), anchor: "west")[$f(x)$]
-    
+    line(..domain.map(x => (x * s, f(x) * s)), stroke: blue + 3pt, name: "f")
+    content((4 * s, f(4) * s), anchor: "west", padding: 0.2)[$f(x)$]
+
     // Points and vertical lines
-    let draw_point(x, label_text, color) = {
+    // Added parameters for label position to customize for a, b, and c
+    let draw_point(x, label_text, color, label_y: -0.4, label_anchor: "north") = {
         let y = f(x)
-        line((x, 0), (x, y), stroke: (dash: "dashed", paint: gray))
-        circle((x, y), radius: 0.08, fill: color, stroke: none)
-        line((x, 0.1), (x, -0.1), stroke: gray)
-        content((x, -0.3))[#label_text]
+        line((x * s, 0), (x * s, y * s), stroke: (dash: "dashed", paint: gray, thickness: 1.5pt))
+        circle((x * s, y * s), radius: 0.15, fill: color, stroke: none)
+        line((x * s, 0.1 * s), (x * s, -0.1 * s), stroke: gray + 1.5pt)
+        content((x * s, label_y * s), anchor: label_anchor)[#label_text]
     }
-    
-    draw_point(a, $a$, red)
+
+    // a: dashed line goes down, so put label ABOVE axis
+    draw_point(a, $a$, red, label_y: 0.4, label_anchor: "south")
+
+    // b, c: dashed line goes up, so put label BELOW axis (default)
     draw_point(b, $b$, red)
     draw_point(c, $c$, green)
-    
-    // Intervals
-    // line((a, -0.8), (b, -0.8), mark: (start: "|", end: "|"))
-    // content(((a+b)/2, -1.0))[Range]
-    
+
     // Signs
-    content((a, f(a) - 0.5))[$f(a) < 0$]
-    content((b, f(b) + 0.5))[$f(b) > 0$]
-    content((c, f(c) + 0.5))[$f(c) > 0$]
-    
+    content((a * s + 0.15 * s, f(a) * s), anchor: "west")[$f(a) < 0$]
+    content((b * s + 0.1 * s, f(b) * s), anchor: "west", padding: 0.1)[$f(b) > 0$]
+    content((c * s - 0.5 * s, f(c) * s + 0.2 * s), anchor: "south")[$f(c) > 0$]
+
     // New interval arrow
-    line((a, -0.8), (c, -0.8), mark: (start: "|", end: ">"), stroke: red)
-    content(((a+c)/2, -1.1))[Next Interval]
+    let arrow_y = -2.2
+    line((a * s, arrow_y * s), (c * s, arrow_y * s), mark: (start: "|", end: ">", size: 0.5), stroke: red + 2.5pt)
+    content(((a+c)/2 * s, arrow_y * s - 0.2 * s), anchor: "north")[Next Interval]
 
 })
