@@ -47,4 +47,5 @@ ndarray-linalg = "0.18" # BLASバックエンドが必要
 
 > [!WARNING]
 > **ndarray-linalgとBLAS**
-> `ndarray-linalg`を使用するには、システムにBLAS/LAPACKライブラリ（OpenBLAS, Intel MKLなど）がインストールされている必要があります。macOSではAccelerateフレームワークが標準で利用可能ですが、LinuxやWindowsではOpenBLASなどを別途インストールする必要がある場合があります。
+> `ndarray-linalg`を使用するには、システムにBLAS/LAPACKライブラリ（OpenBLAS, Intel MKLなど）がインストールされている必要があります。macOSではAccelerateフレームワークが標準で利用可能ですが、執筆時点では`ndarray-linalg`が対応していません。
+> その為、各OSでOpenBLASなどを別途インストールする必要がある場合があります。

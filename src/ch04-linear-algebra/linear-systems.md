@@ -22,7 +22,7 @@ fn main() {
     // 係数行列 A
     let a = arr2(&[[3.0, 1.0],
                    [1.0, 2.0]]);
-    
+
     // 右辺ベクトル b
     let b = arr1(&[9.0, 8.0]);
 
@@ -49,12 +49,12 @@ $$ L (U vb(x)) = vb(b) $$
 
 ```rust,noplayground
 use ndarray::{arr1, arr2};
-use ndarray_linalg::Factorize; // LU分解のために必要
+use ndarray_linalg::{Factorize, Solve}; // LU分解のために必要
 
 fn main() {
     let a = arr2(&[[3.0, 1.0],
                    [1.0, 2.0]]);
-    
+
     // LU分解を実行
     let f = a.factorize().expect("Factorization failed");
 
@@ -77,7 +77,7 @@ fn main() {
 
 ### コレスキー分解 (Cholesky Decomposition)
 
-$A$ が**エルミート行列（実対称行列）**かつ**正定値（Positive Definite）**である場合、コレスキー分解が利用できます。
+$A$ が**エルミート行列（実対称行列）** かつ**正定値（Positive Definite）** である場合、コレスキー分解が利用できます。
 
 $$ A = L L^T quad ("または " L L^*) $$
 
@@ -97,8 +97,9 @@ fn main() {
     let l = a.cholesky(UPLO::Lower).expect("Cholesky failed");
 
     println!("L =\n{}", l);
+    println!("L * L^T =\n{}", l.dot(&l.t()));
     // L * L^T = A となるはず
-    
+
     // 分解結果を使って方程式を解くことも可能
     // (APIの詳細はバージョンによりますが、通常 solve メソッドなどが提供されます)
 }

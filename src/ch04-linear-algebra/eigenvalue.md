@@ -24,7 +24,6 @@ $$
 ```rust,noplayground
 use ndarray::arr2;
 use ndarray_linalg::Eig;
-use num_complex::Complex64; // 固有値は一般に複素数になる
 
 fn main() {
     let a = arr2(&[[0.0, -1.0],
@@ -35,18 +34,18 @@ fn main() {
 
     println!("Eigenvalues: {}", evals);
     println!("Eigenvectors:\n{}", evecs);
-    
+
     // 回転行列 [[0, -1], [1, 0]] の固有値は +/- i
     // 出力は Complex64 型になります
 }
 ```
 
 > [!NOTE]
-> 実非対称行列の固有値は一般に複素数になるため、結果は `Complex64` 型の配列として返されることが多いです。`num-complex` クレートの依存関係を追加する必要があるかもしれません。
+> 実非対称行列の固有値は一般に複素数になるため、結果は `Complex64` 型の配列として返されることが多いです。複素数を直接操作する場合は`num-complex` クレートの依存関係を追加する必要があります。
 
 ### エルミート行列（実対称行列）
 
-物理学で現れる行列の多くは、エルミート行列（実数の場合は対称行列）です。エルミート行列の固有値は必ず実数になり、固有ベクトルは直交するという素晴らしい性質があります。
+物理学で現れる行列の多くは、エルミート行列（実数の場合は対称行列）です。エルミート行列の固有値は必ず実数になり、固有ベクトルは直交するという性質があります。
 この場合、`Eigh` トレイトを用いることで、計算を高速化し、結果を実数型 (`f64`) で得ることができます。
 
 ```rust,noplayground
@@ -87,7 +86,7 @@ $$
 ### Rustによる実装
 
 ```rust,noplayground
-use ndarray::{arr1, arr2, Array1, Array2};
+use ndarray::{arr2, Array1, Array2};
 use ndarray_linalg::Norm;
 
 fn power_iteration(a: &Array2<f64>, max_iter: usize, tol: f64) -> (f64, Array1<f64>) {
@@ -101,10 +100,10 @@ fn power_iteration(a: &Array2<f64>, max_iter: usize, tol: f64) -> (f64, Array1<f
     for _ in 0..max_iter {
         let x_next = a.dot(&x);
         let x_next_norm = x_next.norm_l2();
-        
+
         // レイリー商による固有値の推定: λ ≈ xᵀAx / xᵀx
         // ここでは単純にノルムの比に近いが、厳密には内積をとる方が精度が良い
-        let next_val = x.dot(&x_next); 
+        let next_val = x.dot(&x_next);
 
         // 収束判定
         if (next_val - eigenvalue).abs() < tol {
@@ -123,12 +122,12 @@ fn power_iteration(a: &Array2<f64>, max_iter: usize, tol: f64) -> (f64, Array1<f
 fn main() {
     let a = arr2(&[[2.0, 1.0],
                    [1.0, 3.0]]);
-    
+
     let (eval, evec) = power_iteration(&a, 1000, 1e-6);
-    
+
     println!("Dominant Eigenvalue: {:.5}", eval);
     println!("Eigenvector: {}", evec);
-    
+
     // 理論値:
     // trace=5, det=5 -> λ² - 5λ + 5 = 0
     // λ = (5 ± √(25 - 20))/2 = (5 ± 2.236)/2 = 3.618, 1.382

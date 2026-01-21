@@ -57,14 +57,20 @@ fn main() {
 
 ```rust,noplayground
 use ndarray::arr2;
-use ndarray_linalg::Norm;
+use ndarray_linalg::OperationNorm;
 
 fn main() {
     let a = arr2(&[[1.0, 2.0],
                    [3.0, 4.0]]);
 
-    // 行列のL2演算子ノルム（最大特異値）
-    println!("Operator L2 norm: {}", a.opnorm_one());
+    let norm_one = a.opnorm_one().unwrap();
+    let norm_inf = a.opnorm_inf().unwrap();
+    let norm_fro = a.opnorm_fro().unwrap();
+
+    // 行列のL2演算子ノルム
+    println!("Operator L2 1-norm: {}", norm_one);
+    println!("Operator L2 infinity norm: {}", norm_inf);
+    println!("Operator L2 Frobenius norm: {}", norm_fro);
 
     // Frobeniusノルム（全要素の二乗和の平方根）
     // ndarray-linalg では `norm` は L2ノルムを指すことが多いですが、
