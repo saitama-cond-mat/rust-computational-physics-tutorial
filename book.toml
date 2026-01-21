@@ -9,10 +9,13 @@ inline = false
 output-dir = "d2"
 
 [preprocessor.typst-math]
-fonts = ["Fira Math"]
+fonts = [
+    "./theme/typst-fonts",
+]
 preamble = """
 #set page(width: auto, height: auto, margin: 0.2em, fill: none)
-#set text(size: 15pt)
+#set text(font: ("Fira Math", "Harano Aji Gothic"), size: 15pt, lang: "ja")
+#show math.equation: set text(font: ("Fira Math", "Harano Aji Gothic"))
 #import "@preview/physica:0.9.8": *
 """
 
