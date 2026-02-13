@@ -26,6 +26,12 @@ jobs:
         with:
           fetch-depth: 0 # Required for mdbook-last-changed
 
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "mdbook-tools"
+          cache-on-failure: true
+
       - name: Install mise
         uses: jdx/mise-action@v2
         with:
@@ -33,7 +39,7 @@ jobs:
           cache: true
 
       - name: Build
-        run: mise run build
+        run: mise run build-core
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -41,7 +47,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: 'book'
+          path: "book"
 
       - name: Deploy to GitHub Pages
         id: deployment

@@ -1,0 +1,34 @@
+name: Check Links and Formatting
+
+on:
+  pull_request:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 0'  # 毎週日曜日に実行
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust cache
+        uses: Swatinem/rust-cache@v2
+        with:
+          shared-key: "mdbook-tools"
+          cache-on-failure: true
+
+      - name: Install mise
+        uses: jdx/mise-action@v2
+        with:
+          install: true
+          cache: true
+
+      - name: Build for checking
+        run: mise run build-core
+
+      - name: Check links and formatting
+        run: mise run check
