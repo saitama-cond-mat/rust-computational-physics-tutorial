@@ -22,3 +22,62 @@
 .typst-display > .typst-doc {
   overflow: visible;
 }
+
+/* スマホ向け：ブロック数式の横スクロール対応 */
+@media screen and (max-width: 768px) {
+  .typst-display {
+    /* 横スクロールを有効化 */
+    overflow-x: auto;
+    overflow-y: visible;
+    /* スクロールバーのスタイリング（Webkit系ブラウザ） */
+    -webkit-overflow-scrolling: touch;
+    /* 左寄せ（スクロール時に端まで見えるように） */
+    justify-content: flex-start;
+    /* 余白を調整 */
+    padding: 0.5em 0;
+  }
+
+  .typst-display > svg,
+  .typst-display > .typst-doc {
+    flex-shrink: 0;
+    min-width: min-content;
+  }
+
+  /* スクロールバーのカスタムスタイル（Webkit系） */
+  .typst-display::-webkit-scrollbar {
+    height: 6px;
+  }
+
+  .typst-display::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 3px;
+  }
+
+  .typst-display::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+  }
+
+  .typst-display::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+  }
+
+  /* ダークモード対応 */
+  .navy .typst-display::-webkit-scrollbar-track,
+  .coal .typst-display::-webkit-scrollbar-track,
+  .ayu .typst-display::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .navy .typst-display::-webkit-scrollbar-thumb,
+  .coal .typst-display::-webkit-scrollbar-thumb,
+  .ayu .typst-display::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  .navy .typst-display::-webkit-scrollbar-thumb:hover,
+  .coal .typst-display::-webkit-scrollbar-thumb:hover,
+  .ayu .typst-display::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+  }
+}
