@@ -101,7 +101,7 @@
 .pagefind-ui__search-clear {
     background: none !important;
     border: none !important;
-    color: var(--searchbar-fg) !important;
+    color: var(--fg) !important;
     cursor: pointer !important;
     padding: 0.5rem !important;
 }

@@ -109,9 +109,9 @@
     --table-header-bg: hsl(200, 7%, 28%);
     --table-alternate-bg: hsl(200, 7%, 11%);
 
-    --searchbar-border-color: #aaa;
-    --searchbar-bg: #b7b7b7;
-    --searchbar-fg: #000;
+    --searchbar-border-color: #43484d;
+    --searchbar-bg: #141617;
+    --searchbar-fg: #98a3ad;
     --searchbar-shadow-color: #aaa;
     --searchresults-header-fg: #666;
     --searchresults-border-color: #98a3ad;
@@ -231,9 +231,9 @@
     --table-header-bg: hsl(226, 23%, 31%);
     --table-alternate-bg: hsl(226, 23%, 14%);
 
-    --searchbar-border-color: #aaa;
-    --searchbar-bg: #aeaec6;
-    --searchbar-fg: #000;
+    --searchbar-border-color: #737480;
+    --searchbar-bg: #161923;
+    --searchbar-fg: #bcbdd0;
     --searchbar-shadow-color: #aaa;
     --searchresults-header-fg: #5f5f71;
     --searchresults-border-color: #5c5c68;
@@ -352,9 +352,9 @@
         --table-header-bg: hsl(200, 7%, 28%);
         --table-alternate-bg: hsl(200, 7%, 11%);
 
-        --searchbar-border-color: #aaa;
-        --searchbar-bg: #b7b7b7;
-        --searchbar-fg: #000;
+        --searchbar-border-color: #43484d;
+        --searchbar-bg: #141617;
+        --searchbar-fg: #98a3ad;
         --searchbar-shadow-color: #aaa;
         --searchresults-header-fg: #666;
         --searchresults-border-color: #98a3ad;
