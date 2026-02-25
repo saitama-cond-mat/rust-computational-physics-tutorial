@@ -1,30 +1,30 @@
 # ケプラー問題と軌道安定性
 
 シンプレクティック積分の恩恵を最も実感できる例の一つが、重力下での惑星の運動（ケプラー問題）です。
+本節では、太陽の周りを回る地球の軌道をシミュレーションし、物理量の保存（エネルギー・角運動量）を確認します。
 
 ## 運動方程式
 
-原点に質量 $M$ の恒星があり、位置 $vb(r)$ にある質量 $m$ の惑星が万有引力を受けて運動しているとします。
+原点に質量$M$の恒星があり、位置$vb(r)$にある質量$m$の惑星が万有引力を受けて運動しているとします。
 運動方程式は以下の通りです。
 
 $$ m dv(vb(v), t) = - (G M m) / abs(vb(r))^3 vb(r) $$
 
-ここで $G$ は万有引力定数です。
-この系は角運動量と全エネルギーが保存されるハミルトン系です。
+この系はハミルトン系であり、全エネルギー$E$、角運動量$vb(L)$、およびルンゲ＝レンツベクトルが保存されます。
 
-## ndarrayによる実装
+## ndarrayによる実装とエネルギー監視
 
-ここではベクトル計算を簡潔にするため、[第2章](../ch02-basics/ndarray.md)で導入した `ndarray` クレートを使用します。
-速度ベレ法を用いて、惑星の軌道を計算してみましょう。
+[第2章](../ch02-basics/ndarray.md)で導入した`ndarray`クレートを使用して、速度ベレ法を実装します。
 
-```rust
-use ndarray::{arr1, Array1};
+```rust,noplayground
+use ndarray::{Array1, arr1};
 
-const GM: f64 = 4.0 * std::f64::consts::PI * std::f64::consts::PI; // 年単位・天文単位系で考えると便利
+// 天文単位系 (AU, Year, Solar Mass) では G*M = 4 * pi^2
+const GM: f64 = 4.0 * std::f64::consts::PI * std::f64::consts::PI;
 
 struct Planet {
-    pos: Array1<f64>, // 位置 [x, y]
-    vel: Array1<f64>, // 速度 [vx, vy]
+    pos: Array1<f64>,
+    vel: Array1<f64>,
 }
 
 impl Planet {
@@ -34,51 +34,72 @@ impl Planet {
             vel: arr1(&[vx, vy]),
         }
     }
+
+    // 全エネルギー E = K + U
+    fn total_energy(&self) -> f64 {
+        let v_sq = self.vel.dot(&self.vel);
+        let r = self.pos.dot(&self.pos).sqrt();
+        0.5 * v_sq - GM / r
+    }
+
+    // 角運動量 L = r x v (2次元ではスカラー)
+    fn angular_momentum(&self) -> f64 {
+        self.pos[0] * self.vel[1] - self.pos[1] * self.vel[0]
+    }
 }
 
-// 加速度（重力場）の計算
 fn compute_acceleration(pos: &Array1<f64>) -> Array1<f64> {
     let r_sq = pos.dot(pos);
-    let r = r_sq.sqrt();
-    let r_cb = r_sq * r;
-    
-    // a = -GM/r^3 * r
-    -GM / r_cb * pos
+    let r_inv_cb = 1.0 / (r_sq * r_sq.sqrt());
+    -GM * r_inv_cb * pos
 }
 
 fn velocity_verlet_step(planet: &mut Planet, dt: f64) {
-    // 1. 位置の更新
     let a_curr = compute_acceleration(&planet.pos);
-    planet.pos = &planet.pos + &(&planet.vel * dt) + &(&a_curr * (0.5 * dt * dt));
-    
-    // 2. 新しい位置での加速度
+
+    // 1. 位置更新
+    planet.pos += &(&planet.vel * dt + 0.5 * &a_curr * dt * dt);
+
+    // 2. 新しい加速度
     let a_next = compute_acceleration(&planet.pos);
-    
-    // 3. 速度の更新
-    planet.vel = &planet.vel + &(&(&a_curr + &a_next) * (0.5 * dt));
+
+    // 3. 速度更新
+    planet.vel += &(0.5 * (&a_curr + &a_next) * dt);
 }
 
 fn main() {
-    // 地球のような軌道を想定 (r=1.0, v=2pi)
+    // 地球の初期条件 (r=1.0 AU, v=2*pi AU/yr)
     let mut earth = Planet::new(1.0, 0.0, 0.0, 2.0 * std::f64::consts::PI);
-    let dt = 0.01;
-    let steps = 1000;
+    let dt = 0.001; // 約8時間の刻み幅
 
-    for i in 0..steps {
+    println!("Time, X, Y, Energy, L");
+    for i in 0..2000 {
         if i % 10 == 0 {
-            println!("{},{},{}", i as f64 * dt, earth.pos[0], earth.pos[1]);
+            println!(
+                "{:.3}, {:.4}, {:.4}, {:.6}, {:.6}",
+                i as f64 * dt,
+                earth.pos[0],
+                earth.pos[1],
+                earth.total_energy(),
+                earth.angular_momentum()
+            );
         }
         velocity_verlet_step(&mut earth, dt);
     }
 }
 ```
 
-このコードで計算された `(x, y)` をプロットすると、始点に戻ってくる閉じた楕円（あるいは円）軌道が描かれます。
-もし同じ条件でオイラー法を使うと、惑星は外側へ螺旋を描いて飛び去ってしまいます。RK4でも長時間計算すると徐々にエネルギー誤差が蓄積しますが、速度ベレ法ならば非常に長時間にわたって安定した軌道を保ち続けることができます。
+## 軌道の安定性と誤差
 
-## まとめ
+このコードを実行すると、エネルギーや角運動量が時間とともにわずかに変動するものの、数千ステップ経過してもその平均値が一定に保たれることがわかります。
 
-- 重力多体問題のような保存系では、数値解法の選択が結果の定性的な振る舞い（軌道が閉じるか、発散するか）に直結します。
-- `ndarray` を使うことで、ベクトル方程式 $vb(a) prop vb(r)$ をそのまま数式に近い形でコードに落とし込むことができます。
+一方、[第7章](../ch07-ode/euler.md)で学んだオイラー法を用いた場合、エネルギーは指数関数的に増大し、惑星は螺旋を描いて太陽から遠ざかってしまいます。
+また、RK4（4次ルンゲ＝クッタ法）を用いれば短期的には非常に高精度ですが、シンプレクティックではないため、非常に長い時間のシミュレーション（数万年規模）では誤差が一方的に蓄積し、軌道が縮小したり拡大したりする「軌道ドリフト」が発生します。
 
-次節では、この手法を多数の粒子に拡張し、分子動力学シミュレーションを行います。
+## 保存量の物理的意味
+
+1. **エネルギー保存**: 軌道の大きさが保たれる。
+2. **角運動量保存**: ケプラーの第2法則（面積速度一定）に対応。
+3. **ルンゲ＝レンツベクトル保存**: 楕円軌道の向き（近日点の位置）が固定される。
+
+シンプレクティック積分は、これらの物理的性質を数値的に「壊さない」ように設計されているため、天体力学のような長期にわたる安定性が求められる系において、標準的な高精度解法よりも優れた結果をもたらします。
