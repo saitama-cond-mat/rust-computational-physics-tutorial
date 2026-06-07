@@ -208,6 +208,12 @@ Before `## 次のステップ`, add:
 
 AI coding agent を使う場合は、各ツールの最新の導入手順を公式情報で確認してください。ツールのインストール方法、料金体系、利用できるモデルは変わることがあるため、本書では詳細な手順や比較は扱いません。
 
+AIを使って学ぶ場合、本書では単発の質問に答える Chat 型よりも、
+リポジトリを読み、コードを編集し、テストを実行し、差分を説明できる
+エージェント型の利用を推奨します。Chat 型はRustの文法や数値計算法の
+概念を短く確認する用途には有用ですが、演習を進める標準的な補助としては
+エージェント型を想定します。
+
 agent を起動するときは、対象となるRustプロジェクトまたは本書のリポジトリのルートディレクトリで起動します。リポジトリに `AGENTS.md` のような共通指示ファイルがある場合は、その内容を読ませ、実装前に問題設定、入力、出力、境界条件、検証方法、テスト方針を確認させるとよいでしょう。
 ```
 
@@ -216,10 +222,10 @@ agent を起動するときは、対象となるRustプロジェクトまたは�
 Run:
 
 ```bash
-rg -n "AI coding agent|必須の開発環境ではありません|公式情報" src/ch01-introduction/setup.md
+rg -n "AI coding agent|必須の開発環境ではありません|公式情報|Chat 型|エージェント型" src/ch01-introduction/setup.md
 ```
 
-Expected: the subsection says agents are optional and avoids tool-specific setup commands.
+Expected: the subsection says agents are optional, recommends agent-style tools for exercises, positions chat-style use as concept checking, and avoids tool-specific setup commands.
 
 - [ ] **Step 3: Commit**
 
@@ -245,6 +251,11 @@ After the paragraph ending `本書の公式リポジトリをご参照くださ�
 ### AI agent と一緒に進める場合
 
 AI agent を使う場合でも、いきなり「実装して」と依頼するのではなく、計算物理の作業順序に沿って進めることが重要です。大きめの課題では、まず問題設定と検証方法を整理した note を作らせ、次に implementation plan を作らせてから実装に進むと、後から確認しやすくなります。
+
+本書の演習では、単発の質問に答える Chat 型ではなく、リポジトリの文脈、
+ファイル編集、テスト実行、diff review まで扱えるエージェント型を
+推奨します。Chat 型は概念確認には使えますが、実装、検証、差分確認を
+含む課題では、コードベース全体を扱えるエージェント型の方が適しています。
 
 基本的な流れは次の通りです。
 
@@ -287,10 +298,10 @@ Expected: command prints an even number and exits 0.
 Run:
 
 ```bash
-rg -n "implementation plan|cargo test|git status|git diff|metadata" src/ch01-introduction/how-to-use.md
+rg -n "implementation plan|cargo test|git status|git diff|metadata|Chat 型|エージェント型" src/ch01-introduction/how-to-use.md
 ```
 
-Expected: all terms appear in the new subsection.
+Expected: all terms appear in the new subsection, with agent-style use recommended for implementation, verification, and diff review.
 
 - [ ] **Step 4: Commit**
 
