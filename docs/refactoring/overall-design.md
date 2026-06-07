@@ -13,18 +13,55 @@ Rustで計算物理を学ぶ本として維持し、AI agent、Git、GitHub、�
   - 公開版: <https://shinaoka.github.io/agentic_scientific_coding/>
   - GitHub: <https://github.com/shinaoka/agentic_scientific_coding>
 
-## 図
+## 全体図
 
-![全体設計図](./overall-design.svg)
+```text
+rust-computational-physics-tutorial
+  Rustで計算物理を学ぶ主教材
 
-Typst source は [overall-design.typ](./overall-design.typ) に置く。
+agentic_scientific_coding
+  検証・再現性・AI agent 利用の観点
+
+        │
+        ▼
+
+薄い統合方針
+  Rust / 数値計算 / 物理を主軸にする
+  AI agent は計画、実装補助、検査の足場として扱う
+  AI tool manual にはしない
+
+        │
+        ▼
+
+統合後の章構成
+  第1部 基礎編
+    Rust, setup, plotting, how to use
+  第2部 数値計算手法
+    calculus, linear algebra, ODE/PDE, Monte Carlo
+  第3部 物理シミュレーション
+    mechanics, fluids, Ising model, quantum mechanics
+  第4部 高度なトピック
+    GitHub flow, profiling, SIMD, parallel computation
+  付録
+    references, crates, debugging, math background
+
+        │
+        ▼
+
+各章に横断的に足す観点
+  validation
+  unit test
+  metadata
+  compute / plot separation
+  diff review
+```
 
 ## 読み方
 
-図の左側は入力となる教材、中央は統合方針、右側は統合後の章構成を表す。
-下段の横断レイヤーは、各章に短く追加する共通観点である。特に
-validation、unit test、metadata、compute/plot separation、diff review は、
-章ごとの本文や演習に薄く繰り返し入れる。
+上の図は、入力となる2つの教材、統合方針、統合後の章構成、
+各章に横断的に足す観点を Markdown のまま読める形でまとめたものである。
+特に validation、unit test、metadata、compute / plot separation、
+diff review は、章ごとの本文や演習に薄く繰り返し入れる。
 
 Phase 1 は入口部分の最小統合に限る。第2章以降の memory layout、unit test、
 matrix multiplication、Ising model、SIMD、GitHub/PR は Phase 2 以降で
