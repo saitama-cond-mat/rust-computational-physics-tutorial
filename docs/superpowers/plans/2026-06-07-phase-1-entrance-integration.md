@@ -12,7 +12,7 @@
 
 ## File Structure
 
-- Modify `src/README.md`: broaden the reader profile and adjust the Rust Book guidance.
+- Modify `src/README.md`: broaden the reader profile for Rust beginners without presenting the book as a complete programming introduction, and adjust the Rust Book guidance.
 - Modify `src/ch01-introduction/why-rust.md`: add one subsection on why Rust remains useful in the AI agent era.
 - Modify `src/ch01-introduction/setup.md`: add an optional subsection introducing AI coding agents without tool-specific setup instructions.
 - Modify `src/ch01-introduction/how-to-use.md`: add a standard AI agent workflow for computational physics tasks.
@@ -93,12 +93,12 @@ This task is orientation only. Do not create a commit.
 **Files:**
 - Modify: `src/README.md`
 
-- [ ] **Step 1: Broaden the Rust prerequisite paragraph**
+- [ ] **Step 1: Soften the Rust prerequisite paragraph**
 
 In `## 想定読者`, replace the Rust bullet with this text:
 
 ```markdown
-- **Rustを学びながら計算物理を実装したい方**：Rustの基本文法をすでに学んでいる方はもちろん、簡単なプログラミング経験があり、必要に応じてRust Bookなどを参照しながら学習を進められる方も対象とします。変数、関数、構造体、所有権、借用といった概念は本書を読み進める上で重要ですが、最初からすべてを完全に理解している必要はありません。
+- **Rustの基本文法を学びながら計算物理を実装したい方**：Rustの基本文法を一通り学んだ方、または簡単なプログラミング経験があり、必要に応じてRust Bookなどを参照しながら学習を進められる方を対象とします。変数、関数、構造体、所有権、借用といった概念は本書を読み進める上で重要ですが、最初からすべてを完全に理解している必要はありません。
 ```
 
 - [ ] **Step 2: Add the primary reader profile**
@@ -139,7 +139,7 @@ Run:
 sed -n '1,90p' src/README.md
 ```
 
-Expected: AI agent appears once in the opening reader guidance and does not dominate the introduction.
+Expected: the reader guidance is broader than the original but does not imply the book is for complete programming beginners. AI agent appears once in the opening reader guidance and does not dominate the introduction.
 
 - [ ] **Step 6: Commit**
 
