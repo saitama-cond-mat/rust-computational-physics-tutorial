@@ -95,7 +95,27 @@ Phase 分けを読むための設計メモとして置く。
 - 既存の第2章を基本的に保存する。
 - 追加する重点は、計算機上で数値データがどう表現・配置されるか、
   そして関数化、モジュール化、ユニットテストである。
+- 第2章の冒頭に、計算物理の実装を読むための Rust 文法の最小導入を置く。
+  Rust Book を置き換えるのではなく、以降の数値計算コードで頻出する
+  文法と概念だけを、短い計算例に結びつけて整理する。
+- Rust 文法の最小導入で扱う範囲:
+  - Cargo project の構成、`cargo run`、`cargo test`
+  - `let`、`mut`、`f64`、`usize`、型推論
+  - 関数、戻り値、式としてのブロック
+  - `if`、`for`、range、簡単な反復処理
+  - `Vec<f64>`、slice、`&[f64]`、`&mut [f64]`
+  - 所有権と借用の最小限の説明、特に数値配列を関数に渡す場面
+  - `struct` による parameter や simulation state の表現
+  - `Option`、`Result`、`panic!` の使い分け
+  - module 分割、`src/lib.rs`、`src/main.rs`、`#[test]`
+  - `assert!` と浮動小数点の許容誤差を使った小さいテスト
+- Rust 文法の導入は、1節または数個の短い小節に留める。
+  目安は 30--45 分で読める分量とし、詳しい説明は Rust Book を
+  必要に応じて参照する形にする。
+- trait、generic、lifetime、macro、async、unsafe、concurrency は、
+  本文で必要になった箇所だけ扱い、Rust 文法導入では深追いしない。
 - 含める内容:
+  - Rust 最小セット: 計算コードを検証可能にするための文法 `[新規]`
   - 浮動小数点演算と誤差 `[既存/調整]`
   - 配列・スライス・ベクタの基礎 `[既存/調整]`
   - `Vec<f64>`, `&[f64]`, `&mut [f64]` の使い分け `[調整]`
@@ -516,6 +536,7 @@ Chat 型は、Rust の文法や数値計算法の概念を短く確認する補�
 ### Phase 1 の非目標
 
 - `src/SUMMARY.md` の章構成変更。
+- 第2章冒頭の Rust 文法最小導入。
 - 第2章以降の memory / cache / unit test 追加。
 - matrix multiplication 演習の実装。
 - Ising model project の実装。
@@ -525,6 +546,7 @@ Chat 型は、Rust の文法や数値計算法の概念を短く確認する補�
 
 ## Phase 2 以降の主な作業
 
+- 第2章の冒頭に、計算物理コードを読むための Rust 文法の最小導入を追加する。
 - 第2章に memory layout、関数化、モジュール化、unit test を追加する。
 - 第4章に matrix multiplication の検証・benchmark 演習を追加する。
 - 第12章の Ising model を project exercise として完結させる。
@@ -538,6 +560,8 @@ Chat 型は、Rust の文法や数値計算法の概念を短く確認する補�
 - 0章を作らず、第1章に統合する方針でよいか。
 - `why-rust.md` に「AI agent 時代になぜ Rust か」を入れるのは自然か。
 - Codex / OpenCodex / Claude Code などの導線を `setup.md` に軽く入れる方針でよいか。
+- Rust 文法の最小導入を第2章の冒頭に置き、詳しい説明は Rust Book 参照に
+  する方針でよいか。
 - 関数化・モジュール化・ユニットテストを第2章に置く方針でよいか。
 - GitHub / PR を第4部の最初に置く方針でよいか。
 - Ising model と SIMD を AI agent project 演習として完成させる方針でよいか。
@@ -545,6 +569,9 @@ Chat 型は、Rust の文法や数値計算法の概念を短く確認する補�
 ## 非目標
 
 - Rust Book を置き換える網羅的な Rust 文法書にはしない。
+- Rust 文法導入は、以降の数値計算コードを読むための最小限に絞る。
+  trait、generic、lifetime、macro、async、unsafe、concurrency の体系的な
+  解説は扱わない。
 - Git / GitHub の詳細な入門書にはしない。
 - AI agent の操作マニュアルにはしない。
 - 既存の学生チュートリアルを大きく作り直さない。
