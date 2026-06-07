@@ -90,120 +90,135 @@
 - compute と plot の分離、すなわち Rustで計算し、結果をファイルに保存し、
   plot は保存済みデータから作る方針を導入する。
 
-#### 第2章 Rust最小セットと検証可能なコード `[新規]`
+#### 第2章 Rustで数値計算を書く最小セット `[新規]`
 
 - 目的:
-  - Rust Book を置き換えるのではなく、以降の計算物理コードを読むための
-    Rust 文法の最小導入に絞る。
-  - 文法説明は抽象的な例ではなく、数値計算で使う短い関数、配列、
+  - Rust Book を置き換えるのではなく、以降の計算物理コードを書くための
+    Rust と数値データの最小導入に絞る。
+  - `f64`、浮動小数点の最小知識、`Vec<f64>`、slice、stack、heap、
+    所有権、借用を同じ章で扱い、1次元の数値計算関数を書いて
+    `cargo test` で確認できる状態を作る。
+  - 文法説明は抽象例ではなく、数値計算で使う短い関数、配列、
     テストに結びつける。
-  - `main` に全部書かず、関数境界、module 分割、`cargo test` へ進む足場にする。
 - 分量:
-  - 1章として独立させるが、読了目安は 30--45 分程度に留める。
+  - 1章として独立させるが、読了目安は 45--60 分程度に留める。
   - trait、generic、lifetime、macro、async、unsafe、concurrency は深追いしない。
-  - 詳しい説明は Rust Book を必要に応じて参照する。
+  - 詳しい Rust 文法は Rust Book を必要に応じて参照する。
 - 小節案:
-  - 2.1 Cargo project の構成
+  - 2.1 Cargo project と実行方法
     - `Cargo.toml`
     - `src/main.rs`
     - `src/lib.rs`
     - `cargo run`
     - `cargo test`
-  - 2.2 変数、数値型、型推論
-    - `let`
-    - `mut`
+  - 2.2 数値型と浮動小数点の最小知識
     - `f64`
     - `usize`
+    - 型推論
     - 整数と浮動小数点数の変換
-  - 2.3 関数と制御構造
+    - 丸め誤差
+    - `NaN` / `inf`
+    - 浮動小数点比較と許容誤差
+  - 2.3 変数、関数、制御構造
+    - `let`
+    - `mut`
     - `fn`
     - 戻り値
     - 式としてのブロック
     - `if`
     - `for`
     - range
-  - 2.4 `Vec<f64>` と slice
+  - 2.4 stack、heap、所有権、借用
+    - stack に置かれる値
+    - heap に置かれるデータ
+    - `Vec<f64>` が持つデータ
+    - 所有権
+    - 借用
+    - 可変借用
+  - 2.5 `Vec<f64>` と slice
     - 所有する1次元データとしての `Vec<f64>`
     - 関数境界としての `&[f64]`
     - 更新を伴う関数境界としての `&mut [f64]`
-  - 2.5 所有権、借用、可変参照の最小限
-    - 数値配列を関数に渡す場面に限定する。
-    - lifetime の一般論には入らない。
-  - 2.6 `struct` による parameter と simulation state
-    - 物理パラメータ
-    - 計算格子
+    - data ownership と function boundary
+  - 2.6 `struct` と `Result`
+    - parameter
     - simulation state
-  - 2.7 `Option`、`Result`、`panic!`
     - 入力不正
     - 収束失敗
     - 配列サイズ不一致
-    - 例外的に停止してよい場合
-  - 2.8 module 分割
-    - `src/lib.rs` に計算ロジックを置く。
-    - `src/main.rs` と `src/bin/*.rs` は実行用 entry point にする。
-    - model、algorithm、io、plot、benchmark を混ぜない。
-  - 2.9 小さい単体テスト
+    - `panic!` してよい場合
+  - 2.7 小さい単体テスト
     - `#[test]`
     - `assert!`
     - 浮動小数点の許容誤差
     - 小さい手計算可能な入力
-  - 2.10 AI agent に渡しやすい実装単位
-    - 問題設定
-    - 入力・出力
-    - 関数境界
+  - 2.8 module 分割と agent に渡しやすい単位
+    - `src/lib.rs`
+    - `src/main.rs`
+    - `src/bin/*.rs`
+    - function boundary
     - module plan
-    - 検証方法
+    - model、algorithm、io、plot、benchmark を混ぜない。
     - diff review
 
-#### 第3章 数値データの表現と計算機の基礎 `[既存/調整/移植]`
+#### 第3章 多次元データと tensor library `[既存/調整/移植]`
 
 - 目的:
-  - 現行の第2章から、数値計算そのものと計算機上のデータ表現を分離して扱う。
-  - Rust 文法ではなく、浮動小数点、配列、memory layout、cache、
-    `ndarray` を中心にする。
+  - 第2章では1次元データと関数境界までを扱い、第3章では多次元データ、
+    memory layout、外部 tensor/array library、結果保存へ進む。
+  - `ndarray` は本書の基本的な多次元配列 crate として扱う。
+  - `tenferro-rs` は `ndarray` の置き換えではなく、CPU/GPU backend、
+    einsum、FFT、AD、traced graph などへ進む発展的な tensor stack として
+    位置づける。
   - 高精度演算は入口には重いため、付録Eへ移動する。
 - 小節案:
-  - 3.1 浮動小数点演算と誤差 `[既存/調整]`
-    - 丸め誤差
-    - 桁落ち
-    - overflow / underflow
-    - 比較時の許容誤差
-  - 3.2 1次元数値データの表現 `[既存/調整]`
-    - 配列
-    - slice
-    - `Vec<f64>`
-    - data ownership と function boundary
-  - 3.3 memory、stack、heap、references `[移植]`
-    - Rust の文法説明ではなく、計算データがどこに置かれるかに絞る。
-  - 3.4 多次元配列と memory layout `[移植]`
+  - 3.1 多次元配列と flattening `[既存/調整/移植]`
+    - 2D field
+    - linear index
+    - shape
+    - indexing
+  - 3.2 memory layout `[移植]`
     - row-major
     - column-major
-    - indexing
     - stride
-    - flattening
-  - 3.5 view、copy、reshape、transpose `[移植]`
+    - contiguous access
+  - 3.3 view、copy、reshape、transpose `[移植]`
     - 参照だけの操作
     - 実データをコピーする操作
     - 意図しない allocation
-  - 3.6 cache、bandwidth、FLOPS の最小限の cost model `[移植]`
+  - 3.4 cache、bandwidth、FLOPS の最小限の cost model `[移植]`
     - loop order
-    - contiguous access
     - memory bandwidth bound
     - compute bound
-  - 3.7 外部クレートの活用、`ndarray` 入門 `[既存/調整]`
+  - 3.5 `ndarray` 入門 `[既存/調整]`
     - `Array1`
     - `Array2`
     - shape
     - axis
     - view
     - slicing
+  - 3.6 `tenferro-rs` の位置づけ `[新規]`
+    - tensor stack
+    - typed tensor と runtime dtype
+    - 明示的な CPU/GPU backend
+    - einsum / contraction
+    - FFT
+    - automatic differentiation
+    - pre-1.0 のため API 変更に注意する。
+  - 3.7 `ndarray` と `tenferro-rs` の使い分け `[新規]`
+    - 通常の2次元配列、基礎的な数値計算、既存例では `ndarray` を使う。
+    - tensor contraction、backend 制御、AD、GPU、traced graph が必要な
+      発展的演習では `tenferro-rs` を候補にする。
+    - 本書では `tenferro-rs` を必須依存にせず、発展的な導線として扱う。
   - 3.8 結果保存と metadata の入口 `[新規]`
     - parameter
     - input size
     - random seed
     - 実行条件
+    - crate version
+    - backend
     - compute と plot の分離
-- memory layout と cache の話は、第5章の matrix multiplication、
+- memory layout、`ndarray`、`tenferro-rs` の話は、第5章の matrix multiplication、
   第16章の profiling、SIMD、並列化へつなげる。
 
 ### 第2部: 数値計算手法
@@ -586,6 +601,8 @@
 #### 付録B 有用なクレート集 `[既存/調整]`
 
 - 既存内容を保存しつつ、用途別に整理する。
+- 多次元配列・tensor library として、`ndarray` と `tenferro-rs` の
+  位置づけを比較して載せる。
 
 #### 付録C デバッグとトラブルシューティング `[既存/調整]`
 
