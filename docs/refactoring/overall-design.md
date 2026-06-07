@@ -4,7 +4,7 @@
 [#1 教材統合案: 目次案と統合方針](https://github.com/saitama-cond-mat/rust-computational-physics-tutorial/issues/1)
 の内容を、今後のリファクタリングで参照しやすい形に整理したものである。
 疑似的な図ではなく、Markdown の見出しと箇条書きで章構成、横断方針、
-Phase 分けを読むための設計メモとして置く。
+各章に入れる観点を読むための設計メモとして置く。
 
 ## 目的
 
@@ -90,243 +90,492 @@ Phase 分けを読むための設計メモとして置く。
 - compute と plot の分離、すなわち Rustで計算し、結果をファイルに保存し、
   plot は保存済みデータから作る方針を導入する。
 
-#### 第2章 数値計算の基礎 `[既存/調整]`
+#### 第2章 Rust最小セットと検証可能なコード `[新規]`
 
-- 既存の第2章を基本的に保存する。
-- 追加する重点は、計算機上で数値データがどう表現・配置されるか、
-  そして関数化、モジュール化、ユニットテストである。
-- 第2章の冒頭に、計算物理の実装を読むための Rust 文法の最小導入を置く。
-  Rust Book を置き換えるのではなく、以降の数値計算コードで頻出する
-  文法と概念だけを、短い計算例に結びつけて整理する。
-- Rust 文法の最小導入で扱う範囲:
-  - Cargo project の構成、`cargo run`、`cargo test`
-  - `let`、`mut`、`f64`、`usize`、型推論
-  - 関数、戻り値、式としてのブロック
-  - `if`、`for`、range、簡単な反復処理
-  - `Vec<f64>`、slice、`&[f64]`、`&mut [f64]`
-  - 所有権と借用の最小限の説明、特に数値配列を関数に渡す場面
-  - `struct` による parameter や simulation state の表現
-  - `Option`、`Result`、`panic!` の使い分け
-  - module 分割、`src/lib.rs`、`src/main.rs`、`#[test]`
-  - `assert!` と浮動小数点の許容誤差を使った小さいテスト
-- Rust 文法の導入は、1節または数個の短い小節に留める。
-  目安は 30--45 分で読める分量とし、詳しい説明は Rust Book を
-  必要に応じて参照する形にする。
-- trait、generic、lifetime、macro、async、unsafe、concurrency は、
-  本文で必要になった箇所だけ扱い、Rust 文法導入では深追いしない。
-- 含める内容:
-  - Rust 最小セット: 計算コードを検証可能にするための文法 `[新規]`
-  - 浮動小数点演算と誤差 `[既存/調整]`
-  - 配列・スライス・ベクタの基礎 `[既存/調整]`
-  - `Vec<f64>`, `&[f64]`, `&mut [f64]` の使い分け `[調整]`
-  - memory, stack/heap, references の最小限の説明 `[移植]`
-  - 多次元配列と memory layout `[移植]`
-  - row-major / column-major, indexing, stride `[移植]`
-  - cache, bandwidth, FLOPS の最小限の cost model `[移植]`
-  - reshape / view / copy / transpose の違い `[移植]`
-  - 関数化・モジュール化・ユニットテスト `[新規]`
-  - Rust の error handling `[新規]`
-  - 結果保存と metadata の入口 `[新規]`
-  - 外部クレートの活用、`ndarray` 入門 `[既存/調整]`
-  - 高精度演算 `[既存]`
-- `main` に全部書かず、計算の部品を関数化し、`cargo test` で小さく確認する。
-- 大きい課題では `src/lib.rs` に計算ロジック、`src/main.rs` や
-  `src/bin/*.rs` に実行用 entry point を置く。
-- memory layout と cache の話は、第4章の matrix multiplication、
-  第15章の profiling、SIMD、並列化へつなげる。
+- 目的:
+  - Rust Book を置き換えるのではなく、以降の計算物理コードを読むための
+    Rust 文法の最小導入に絞る。
+  - 文法説明は抽象的な例ではなく、数値計算で使う短い関数、配列、
+    テストに結びつける。
+  - `main` に全部書かず、関数境界、module 分割、`cargo test` へ進む足場にする。
+- 分量:
+  - 1章として独立させるが、読了目安は 30--45 分程度に留める。
+  - trait、generic、lifetime、macro、async、unsafe、concurrency は深追いしない。
+  - 詳しい説明は Rust Book を必要に応じて参照する。
+- 小節案:
+  - 2.1 Cargo project の構成
+    - `Cargo.toml`
+    - `src/main.rs`
+    - `src/lib.rs`
+    - `cargo run`
+    - `cargo test`
+  - 2.2 変数、数値型、型推論
+    - `let`
+    - `mut`
+    - `f64`
+    - `usize`
+    - 整数と浮動小数点数の変換
+  - 2.3 関数と制御構造
+    - `fn`
+    - 戻り値
+    - 式としてのブロック
+    - `if`
+    - `for`
+    - range
+  - 2.4 `Vec<f64>` と slice
+    - 所有する1次元データとしての `Vec<f64>`
+    - 関数境界としての `&[f64]`
+    - 更新を伴う関数境界としての `&mut [f64]`
+  - 2.5 所有権、借用、可変参照の最小限
+    - 数値配列を関数に渡す場面に限定する。
+    - lifetime の一般論には入らない。
+  - 2.6 `struct` による parameter と simulation state
+    - 物理パラメータ
+    - 計算格子
+    - simulation state
+  - 2.7 `Option`、`Result`、`panic!`
+    - 入力不正
+    - 収束失敗
+    - 配列サイズ不一致
+    - 例外的に停止してよい場合
+  - 2.8 module 分割
+    - `src/lib.rs` に計算ロジックを置く。
+    - `src/main.rs` と `src/bin/*.rs` は実行用 entry point にする。
+    - model、algorithm、io、plot、benchmark を混ぜない。
+  - 2.9 小さい単体テスト
+    - `#[test]`
+    - `assert!`
+    - 浮動小数点の許容誤差
+    - 小さい手計算可能な入力
+  - 2.10 AI agent に渡しやすい実装単位
+    - 問題設定
+    - 入力・出力
+    - 関数境界
+    - module plan
+    - 検証方法
+    - diff review
+
+#### 第3章 数値データの表現と計算機の基礎 `[既存/調整/移植]`
+
+- 目的:
+  - 現行の第2章から、数値計算そのものと計算機上のデータ表現を分離して扱う。
+  - Rust 文法ではなく、浮動小数点、配列、memory layout、cache、
+    `ndarray` を中心にする。
+  - 高精度演算は入口には重いため、付録Eへ移動する。
+- 小節案:
+  - 3.1 浮動小数点演算と誤差 `[既存/調整]`
+    - 丸め誤差
+    - 桁落ち
+    - overflow / underflow
+    - 比較時の許容誤差
+  - 3.2 1次元数値データの表現 `[既存/調整]`
+    - 配列
+    - slice
+    - `Vec<f64>`
+    - data ownership と function boundary
+  - 3.3 memory、stack、heap、references `[移植]`
+    - Rust の文法説明ではなく、計算データがどこに置かれるかに絞る。
+  - 3.4 多次元配列と memory layout `[移植]`
+    - row-major
+    - column-major
+    - indexing
+    - stride
+    - flattening
+  - 3.5 view、copy、reshape、transpose `[移植]`
+    - 参照だけの操作
+    - 実データをコピーする操作
+    - 意図しない allocation
+  - 3.6 cache、bandwidth、FLOPS の最小限の cost model `[移植]`
+    - loop order
+    - contiguous access
+    - memory bandwidth bound
+    - compute bound
+  - 3.7 外部クレートの活用、`ndarray` 入門 `[既存/調整]`
+    - `Array1`
+    - `Array2`
+    - shape
+    - axis
+    - view
+    - slicing
+  - 3.8 結果保存と metadata の入口 `[新規]`
+    - parameter
+    - input size
+    - random seed
+    - 実行条件
+    - compute と plot の分離
+- memory layout と cache の話は、第5章の matrix multiplication、
+  第16章の profiling、SIMD、並列化へつなげる。
 
 ### 第2部: 数値計算手法
 
-- 既存の第3章から第9章を基本的に保存する。
+- 既存の第3章から第9章を基本的に保存し、章番号を1つ後ろにずらす。
 - 各章の末尾に、検証、テスト、AI agent 利用時の確認点を短く足す。
 
-#### 第3章 数値微分と数値積分 `[既存/調整]`
+#### 第4章 数値微分と数値積分 `[既存/調整]`
 
-- 解析解がある関数、刻み幅依存、収束次数、境界点の扱いを確認する。
-- 台形則や Simpson 則は、関数化して単体テストできる形にする。
-- failure mode:
-  - `n = 0`
-  - Simpson 則の偶数条件
-  - 区間の向き
-  - 非滑らかな関数
-- 関数例:
-  - `trapezoidal_rule(f, a, b, n)`
-  - `simpsons_rule(f, a, b, n)`
-  - `estimate_error(approx, exact)`
-  - `run_convergence_check(...)`
+- 小節案:
+  - 4.1 数値微分
+    - 前進差分
+    - 中心差分
+    - 刻み幅依存
+    - 丸め誤差との競合
+  - 4.2 数値積分
+    - 台形則
+    - Simpson 則
+    - `n = 0`
+    - Simpson 則の偶数条件
+  - 4.3 Gauss 求積法
+    - 重みと節点
+    - 多項式での確認
+  - 4.4 適応型積分
+    - 誤差推定
+    - 再帰の停止条件
+    - 非滑らかな関数
+  - 4.5 検証と関数化
+    - `trapezoidal_rule(f, a, b, n)`
+    - `simpsons_rule(f, a, b, n)`
+    - `estimate_error(approx, exact)`
+    - `run_convergence_check(...)`
 
-#### 第4章 線形代数 `[既存/調整]`
+#### 第5章 線形代数 `[既存/調整]`
 
-- 行列演算、連立一次方程式、固有値問題、スパース行列を扱う。
-- 残差、条件数、既知解、データ表現を検証観点として足す。
-- matrix multiplication 演習を入れる。
-  - 素朴な三重ループ
-  - 関数化
-  - 行列サイズの境界条件
-  - 単体テスト
-  - row-major memory layout と loop order
-  - 簡単な benchmark
-- この演習を後半の cache、SIMD、並列化の導入にも使う。
-- failure mode:
-  - サイズ不一致
-  - singular matrix
-  - ill-conditioned matrix
+- 小節案:
+  - 5.1 行列演算の基礎
+    - vector
+    - matrix
+    - shape
+    - indexing
+  - 5.2 matrix multiplication 演習 `[新規]`
+    - 素朴な三重ループ
+    - 関数化
+    - 行列サイズの境界条件
+    - 単体テスト
+    - row-major memory layout と loop order
+    - 簡単な benchmark
+  - 5.3 連立一次方程式
+    - Gauss 消去法
+    - LU 分解
+    - residual
+    - singular matrix
+  - 5.4 固有値問題
+    - 既知行列での確認
+    - normalization
+    - residual
+  - 5.5 スパース行列
+    - 表現形式
+    - memory cost
+    - dense との比較
+  - 5.6 検証と failure mode
+    - サイズ不一致
+    - ill-conditioned matrix
+    - 条件数
+    - 既知解
 
-#### 第5章 非線形方程式と最適化 `[既存/調整]`
+#### 第6章 非線形方程式と最適化 `[既存/調整]`
 
-- 二分法、Newton 法、多変数 Newton 法、最急降下法、共役勾配法を扱う。
-- 初期値依存、停止条件、収束しない例を検証観点として足す。
-- 収束しない場合に `Result` で返す設計を扱う。
+- 小節案:
+  - 6.1 二分法
+    - bracket
+    - 停止条件
+    - 符号変化がない場合
+  - 6.2 Newton 法
+    - 導関数
+    - 初期値依存
+    - 発散する例
+  - 6.3 多変数 Newton 法
+    - Jacobian
+    - linear solve
+    - residual
+  - 6.4 最適化
+    - 最急降下法
+    - 共役勾配法
+    - step size
+  - 6.5 収束失敗と `Result`
+    - iteration limit
+    - tolerance
+    - error message
 
-#### 第6章 フーリエ解析 `[既存/調整]`
+#### 第7章 フーリエ解析 `[既存/調整]`
 
-- DFT、FFT、スペクトル解析を扱う。
-- normalization、周波数軸、aliasing、既知信号での確認を足す。
-- sampling interval、sample数、window、normalization を metadata として保存する。
+- 小節案:
+  - 7.1 離散 Fourier 変換
+    - DFT
+    - normalization
+    - 周波数軸
+  - 7.2 高速 Fourier 変換
+    - FFT
+    - 入力サイズ
+    - crate 利用
+  - 7.3 スペクトル解析
+    - sampling interval
+    - aliasing
+    - window
+  - 7.4 既知信号での検証
+    - sine wave
+    - peak frequency
+    - inverse transform
+  - 7.5 metadata
+    - sample 数
+    - sampling interval
+    - normalization
+    - window
 
-#### 第7章 常微分方程式 `[既存/調整]`
+#### 第8章 常微分方程式 `[既存/調整]`
 
-- Euler 法、Runge-Kutta 法、適応刻み幅、境界値問題を扱う。
-- 既知解、保存量、刻み幅依存、安定性を検証する。
-- step size、stiff な問題、adaptive step の許容誤差、境界値問題の初期推定依存を扱う。
-- 単位と無次元化を明示する。
+- 小節案:
+  - 8.1 Euler 法
+    - local error
+    - global error
+    - stability
+  - 8.2 Runge-Kutta 法
+    - RK4
+    - 刻み幅依存
+    - 既知解との比較
+  - 8.3 適応刻み幅
+    - tolerance
+    - step rejection
+    - stiff な問題
+  - 8.4 境界値問題
+    - shooting method
+    - 初期推定依存
+  - 8.5 保存量と単位
+    - energy
+    - norm
+    - 無次元化
 
-#### 第8章 偏微分方程式 `[既存/調整]`
+#### 第9章 偏微分方程式 `[既存/調整]`
 
-- 差分法、拡散方程式、波動方程式、Laplace/Poisson 方程式を扱う。
-- 境界条件、格子幅、CFL 条件、残差を検証観点として足す。
-- 2D field の flattening、indexing、stride を明示する。
-- off-by-one、row/column の取り違えを failure mode として扱う。
+- 小節案:
+  - 9.1 差分法の基礎
+    - grid
+    - boundary
+    - stencil
+  - 9.2 拡散方程式
+    - explicit scheme
+    - stability
+    - CFL 条件
+  - 9.3 波動方程式
+    - time stepping
+    - boundary reflection
+    - energy
+  - 9.4 Laplace / Poisson 方程式
+    - residual
+    - convergence
+    - boundary condition
+  - 9.5 2D field のデータ表現
+    - flattening
+    - indexing
+    - stride
+    - off-by-one
 
-#### 第9章 モンテカルロ法 `[既存/調整]`
+#### 第10章 モンテカルロ法 `[既存/調整]`
 
-- 乱数生成、Monte Carlo 積分、重点サンプリング、MCMC を扱う。
-- seed、誤差推定、独立試行、結果 metadata の保存を強調する。
-- 既知の期待値、複数 seed、誤差が sample 数に対してどう減るかを確認する。
-- sampling 不足、相関の強い sample、burn-in / thermalization 不足を扱う。
+- 小節案:
+  - 10.1 乱数生成
+    - random seed
+    - reproducibility
+    - distribution
+  - 10.2 Monte Carlo 積分
+    - sample 数
+    - 誤差推定
+    - 既知期待値
+  - 10.3 重点サンプリング
+    - proposal
+    - weight
+    - variance reduction
+  - 10.4 MCMC
+    - Markov chain
+    - burn-in
+    - autocorrelation
+  - 10.5 結果 metadata
+    - seed
+    - sample 数
+    - 独立試行
+    - 誤差棒
 
 ### 第3部: 物理シミュレーション
 
-- 既存の第10章から第13章を基本的に保存する。
+- 既存の第10章から第13章を基本的に保存し、章番号を1つ後ろにずらす。
 - 単なるコード例ではなく、小さい研究 project として、モデル、数値計算法、
   検証、結果保存を意識させる。
 
-#### 第10章 古典力学シミュレーション `[既存/調整]`
+#### 第11章 古典力学シミュレーション `[既存/調整]`
 
-- 質点系、シンプレクティック積分、Kepler 問題、分子動力学を扱う。
-- エネルギー、角運動量、長時間安定性、積分法比較を検証観点にする。
-- step size、単位系の混在、長時間 drift を failure mode として扱う。
-- `GM = 4π²` のような単位系の選び方を明示する。
+- 小節案:
+  - 11.1 質点系の運動
+    - force
+    - state
+    - time step
+  - 11.2 シンプレクティック積分法
+    - Euler 法との比較
+    - energy drift
+    - long-time stability
+  - 11.3 Kepler 問題
+    - `GM = 4π²`
+    - energy
+    - angular momentum
+  - 11.4 分子動力学入門
+    - pair potential
+    - boundary
+    - neighbor
+  - 11.5 検証と結果保存
+    - 保存量
+    - 単位系
+    - metadata
 
-#### 第11章 流体力学 `[既存/調整]`
+#### 第12章 流体力学 `[既存/調整]`
 
-- Navier-Stokes 方程式、差分法による流体シミュレーション、
-  格子 Boltzmann 法を扱う。
-- 境界条件、安定性、保存量、可視化データ保存を確認する。
-- benchmark problem、grid refinement、CFL 条件違反、境界条件の不整合を扱う。
-- field data と metadata を保存し、plot は保存データから作る。
+- 小節案:
+  - 12.1 Navier-Stokes 方程式の基礎
+    - conservation law
+    - viscosity
+    - pressure
+  - 12.2 差分法による流体シミュレーション
+    - grid
+    - boundary condition
+    - CFL 条件
+  - 12.3 benchmark problem
+    - cavity flow
+    - Poiseuille flow
+    - grid refinement
+  - 12.4 格子 Boltzmann 法
+    - lattice
+    - distribution function
+    - boundary
+  - 12.5 field data と可視化
+    - field output
+    - metadata
+    - plot from saved data
 
-#### 第12章 統計力学シミュレーション `[既存/調整/AI演習]`
+#### 第13章 統計力学シミュレーション `[既存/調整/AI演習]`
 
-- Ising model、Metropolis 法、相転移と臨界現象を扱う。
-- 既存本文が尻切れトンボにならないよう、2D Ising model を
-  AI agent と一緒に完成させる project 演習を置く。
-- 既存の `src/ch12-statistical-mechanics/ising-basics.md` は、
-  モデル定義と Boltzmann 分布、MCMC への導入までは自然だが、
-  そこで止まって見えやすい。
-- 統合版では次の方針を明示する。
-  - 入門節として割り切る場合:
-    - Ising model の定義と「なぜ MCMC が必要か」までに限定する。
-    - 続きは Metropolis 節へ明示的につなぐ。
-  - project にする場合:
-    - 2D Ising の Metropolis 実装
+- 小節案:
+  - 13.1 Ising model の基礎
+    - spin
+    - Hamiltonian
+    - Boltzmann 分布
+    - なぜ MCMC が必要か
+  - 13.2 Metropolis 法
+    - proposal
+    - acceptance probability
+    - detailed balance
+    - `ΔE`
+  - 13.3 2D Ising project `[AI演習]`
     - 周期境界条件
-    - エネルギー差 `ΔE`
-    - 磁化
-    - thermalization
+    - energy
+    - magnetization
+    - `delta_energy_flip`
+    - module 分割
+  - 13.4 thermalization と measurement
+    - burn-in
     - sampling interval
-    - 乱数 seed
-    - 誤差棒
-    - finite size effect
-- AI演習の流れ:
-  - agent にモデル定義と計算法の note を作らせる。
-  - Hamiltonian、周期境界条件、Metropolis 条件、`ΔE`、観測量を確認する。
-  - agent に実装 plan を作らせる。
-  - `lattice`, `model`, `metropolis`, `io` などにモジュール化する。
-  - `delta_energy_flip`, energy, magnetization を単体テストする。
-  - 温度スキャンを行い、susceptibility や specific heat の peak から
-    相転移温度を推定する。
-  - 余裕があれば Binder cumulant を使う。
-  - 厳密値 `T_c = 2J / ln(1 + sqrt(2)) ≈ 2.269` と比較し、
-    finite size effect、thermalization、sampling error を考察する。
-- project の検証観点:
-  - 小さい格子で全エネルギーと磁化を手計算と比較する。
-  - spin flip の `ΔE` を局所計算と全エネルギー再計算で比較する。
-  - `T` が低いと磁化が揃いやすく、高いと乱れやすいことを確認する。
-  - seed、格子サイズ、温度、thermalization steps、measurement steps を
-    result metadata に保存する。
-  - plot は保存済みデータから作る。
+    - autocorrelation
+    - random seed
+  - 13.5 相転移と finite size effect
+    - susceptibility
+    - specific heat
+    - Binder cumulant
+    - `T_c = 2J / ln(1 + sqrt(2)) ≈ 2.269`
+  - 13.6 結果保存と検証
+    - 小さい格子での手計算
+    - 局所 `ΔE` と全エネルギー再計算の比較
+    - temperature scan
+    - metadata
 
-#### 第13章 量子力学 `[既存/調整]`
+#### 第14章 量子力学 `[既存/調整]`
 
-- Schrodinger 方程式、1次元束縛状態、時間発展、散乱問題を扱う。
-- 規格化、境界条件、固有値、時間発展での保存量を検証する。
-- grid spacing 不足、boundary artifact、potential の単位や符号の間違いを扱う。
-- grid、potential、initial condition、time step を保存する。
+- 小節案:
+  - 14.1 Schrodinger 方程式の数値解法
+    - discretization
+    - Hamiltonian
+    - boundary
+  - 14.2 1次元束縛状態
+    - harmonic oscillator
+    - well potential
+    - eigenvalue
+  - 14.3 時間発展
+    - split operator
+    - norm conservation
+    - time step
+  - 14.4 散乱問題
+    - wave packet
+    - potential barrier
+    - boundary artifact
+  - 14.5 検証と保存データ
+    - normalization
+    - grid spacing
+    - potential
+    - initial condition
 
 ### 第4部: 高度なトピック
 
-#### 第14章 共同開発フロー `[新規]`
+#### 第15章 共同開発フロー `[新規]`
 
-- ここで初めて GitHub を扱う。
-- local Git から GitHub へ進み、fork、branch、push、pull request を最小限学ぶ。
-- 教材またはサンプル repository に小さい改善提案を出す演習を置く。
-- PR 本文には、何を変えたか、なぜ変えたか、どう確認したかを書く。
-- merge conflict や rebase の詳細には深入りしない。
+- 小節案:
+  - 15.1 local Git の復習
+    - `git status`
+    - `git diff`
+    - `git add`
+    - `git commit`
+  - 15.2 GitHub の最小導入
+    - repository
+    - fork
+    - branch
+    - push
+  - 15.3 pull request
+    - PR 本文
+    - 何を変えたか
+    - なぜ変えたか
+    - どう確認したか
+  - 15.4 review と修正
+    - review comment
+    - additional commit
+    - checks
+  - 15.5 共同開発で扱わないこと
+    - rebase の詳細
+    - 複雑な merge conflict
+    - release management
 
-#### 第15章 並列計算と性能測定 `[既存/調整/AI演習]`
+#### 第16章 並列計算と性能測定 `[既存/調整/AI演習]`
 
-- 既存の第14章を移動・調整する。
-- Rayon、profiling、SIMD、GPU 計算への展望を扱う。
-- SIMD は本文だけで無理に完結させず、performance project として扱う。
+- 既存の第14章を第16章へ移動・調整する。
 - 現状の `src/ch14-parallel/simd.md` は、SIMD の概念、
   auto-vectorization、SoA/AoS の話としては有用だが、実践章としては
   まだ完結していない。
 - SoA のサンプルでは `ParticlesSoA` に `vx` が定義されていないのに
   `update_positions` で `p.vx` を使っているため、コード例として修正が必要。
-- 統合版では次の方針を明示する。
-  - 展望節として割り切る場合:
-    - SIMD の概念
-    - memory layout
-    - auto-vectorization の条件
-    - profiling の必要性
-  - performance project にする場合:
+- 小節案:
+  - 16.1 Rayon によるデータ並列化
+    - iterator
+    - parallel iterator
+    - correctness first
+  - 16.2 performance measurement
+    - `--release`
+    - 入力サイズ
+    - 実行環境
+    - 複数回測定
+  - 16.3 profiling
+    - bottleneck
+    - memory bandwidth
+    - compute bound
+  - 16.4 SIMD と memory layout
+    - auto-vectorization
+    - SoA
+    - AoS
+    - contiguous access
+  - 16.5 performance project `[AI演習]`
     - scalar baseline
     - SoA への変更
     - `cargo test` による結果一致
     - benchmark
-    - 環境情報
-    - 入力サイズ
-    - 速度比較
-- AI演習の流れ:
-  - agent に最適化対象の kernel と benchmark 方針の note を作らせる。
-  - scalar baseline を作る。
-  - AoS と SoA の違いを確認する。
-  - SoA や auto-vectorization が効きやすい loop に変更する。
-  - 最適化前後で結果が一致することを `cargo test` で確認する。
-  - CPU、Rust version、compile option、入力サイズ、実行時間を記録する。
-  - 速度改善と正しさの両方を報告する。
-- benchmark の作法:
-  - correctness first
-  - `--release`
-  - 入力サイズ
-  - 実行環境
-  - 複数回測定
-  - 結果一致の確認
-- 並列化後の注意:
-  - 結果の非決定性
-  - 浮動小数点和の順序依存
-  - random seed と thread 数
+    - CPU、Rust version、compile option
+  - 16.6 並列化後の注意
+    - 結果の非決定性
+    - 浮動小数点和の順序依存
+    - random seed
+    - thread 数
+  - 16.7 GPU 計算への展望
+    - 本文では概念紹介に留める。
 
 ### 付録
 
@@ -345,6 +594,24 @@ Phase 分けを読むための設計メモとして置く。
 #### 付録D 数学的背景 `[既存]`
 
 - 既存内容を基本保存する。
+
+#### 付録E 高精度演算 `[既存/移動]`
+
+- 現行第2章の「高精度演算（double-double型とxprec-rs）」を移動する。
+- 小節案:
+  - E.1 高精度演算が必要になる場面
+    - 桁落ち
+    - ill-conditioned problem
+    - 長時間積分
+  - E.2 double-double 型の考え方
+    - 2つの `f64` による表現
+    - error-free transformation の直感
+  - E.3 `xprec-rs` の利用
+    - crate の位置づけ
+    - 基本的な使い方
+  - E.4 検証と性能
+    - 通常の `f64` との比較
+    - 精度と実行時間の trade-off
 
 ## 各章に共通して入れる観点
 
@@ -402,169 +669,6 @@ Chat 型は、Rust の文法や数値計算法の概念を短く確認する補�
 9. agent に diff と結果をレビューさせる。
 10. 学生が最終的に、何を信頼できて何がまだ近似・有限サイズ効果に
     依存するかを書く。
-
-## Phase 1: 入口部分の最小統合
-
-詳細な実装計画は
-[Phase 1 Entrance Integration Implementation Plan](../superpowers/plans/2026-06-07-phase-1-entrance-integration.md)
-に置く。
-
-### Phase 1 の目的
-
-- 既存の日本語資料の文体を忠実に優先しながら、入口部分にだけ
-  `agentic_scientific_coding` 由来の考え方を薄く統合する。
-- 章構成を大きく変えない。
-- `src/SUMMARY.md` は原則変更しない。
-- 本文の主軸は **Rustで計算物理を学ぶ本** のままにする。
-
-### Phase 1 の対象ファイル
-
-- `src/README.md`
-- `src/ch01-introduction/why-rust.md`
-- `src/ch01-introduction/setup.md`
-- `src/ch01-introduction/how-to-use.md`
-- `AGENTS.md` 新規追加
-- `CLAUDE.md` 新規追加
-
-### Phase 1 の文体方針
-
-- 既存本文の丁寧で説明的な日本語を優先する。
-- 断定的すぎる agentic coding 用語を避ける。
-- 「AI agent がコードを正しくしてくれる」ではなく、
-  「Rustや計算物理の基礎を持つ人間が agent の出力を検査する」と書く。
-- 詳細なインストール手順、料金、ツール比較は本文に入れない。
-- 図やコマンド、crate 名、file path、関数名は英語表記のままにする。
-
-### Phase 1 tasks
-
-#### Task 1: `src/README.md` の導入調整
-
-- 想定読者と本書の目的を、Rust初学者にも開く。ただし、完全な
-  プログラミング未経験者向けにはしない。
-- 「Rustの基本文法を習得されている方」という前提を少し緩めるが、
-  Rust Book などを参照しながら進める姿勢は前提にする。
-- B4/M1程度の理工系学生を主読者として明記する。
-- AI agent 時代でも、Rust、数値計算、物理の基本概念が必要であることを短く追加する。
-- Rust Book への導線は残すが、「事前に全部読む」ではなく
-  「必要に応じて参照する補助教材」として書き換える。
-
-#### Task 2: `why-rust.md` に AI agent 時代の Rust の意義を追加
-
-- 「AI agent 時代になぜ Rust か」を既存の「なぜRustを用いるのか」の流れに沿って追加する。
-- 主張:
-  - AI agent はコード生成を速くする。
-  - 生成コードの物理的・数値的な正しさは保証しない。
-  - Rust の型、所有権、借用、明示的な可変性、Cargo、`cargo test` は、
-    生成コードを検査する足場になる。
-  - コンパイルが通っても、数式、単位、境界条件、刻み幅、乱数、
-    保存量が正しいとは限らない。
-  - したがって、Rustと計算物理の基礎を学ぶ必要がある。
-- 置き場所候補:
-  - 「モダンな開発環境」の後
-  - または「Rustの主な利点」の最後
-
-#### Task 3: `setup.md` に AI coding agent の軽い導線を追加
-
-- Rust, Cargo, rust-analyzer の説明は既存のまま維持する。
-- optional な小節として AI coding agent を紹介する。
-- Codex / OpenCodex / Claude Code などを例示してよい。
-- 詳細なインストール手順や価格比較はしない。
-- 最新の手順は公式情報を確認すると書く。
-- Chat 型の AI は概念確認の補助、エージェント型の AI は本書の演習を進める
-  標準的な補助として位置づける。
-- agent はリポジトリのルートで起動し、共通指示ファイルを読ませると説明する。
-
-#### Task 4: `how-to-use.md` に agent 利用時の標準ワークフローを追加
-
-- ツール操作ではなく、Rust計算物理の作業順序として説明する。
-- 本書の演習では、単発の Chat 型よりも、リポジトリの文脈、ファイル編集、
-  テスト実行、diff review まで扱えるエージェント型を推奨する。
-- 「いきなり実装して」と頼まないことを明記する。
-- 大きめの課題では、まず note を作らせ、次に implementation plan を作らせる。
-- agent に関数境界と module plan を出させることを推奨する。
-- 実装後は `cargo test`, `git status`, `git diff` を確認する。
-- 「正しいですか」ではなく、解析解、保存量、収束性、境界条件、
-  metadata など具体的に確認させる。
-- 追加する流れ:
-  1. 問題設定
-  2. 入力・出力
-  3. 仮定・境界条件
-  4. 数値計算法
-  5. データ構造
-  6. 関数・モジュール設計
-  7. テスト・検証方針
-  8. 実装
-  9. `cargo test`
-  10. 結果保存
-  11. diff review
-  12. 修正
-
-#### Task 5: `AGENTS.md` と `CLAUDE.md` を追加
-
-- agent に渡す共通指示を一箇所に置く。
-- ツール固有ファイルで本文を重複させない。
-- `AGENTS.md` に含める方針:
-  - このリポジトリは Rustで計算物理を学ぶ教材である。
-  - agent は、実装前に問題設定、入力、出力、境界条件、検証方法、
-    テスト方針を確認する。
-  - 大きいコードを一度に生成せず、関数化・モジュール化して進める。
-  - 1次元数値データでは、所有データに `Vec<f64>`、関数境界に
-    `&[f64]` / `&mut [f64]` を使うことを基本とする。
-  - コード変更後は `cargo test` を実行し、必要なら解析解、保存量、
-    収束性、極限ケースで検証する。
-  - 結果とパラメータを保存し、描画は保存済みデータから行う。
-  - 変更後は diff を確認する。
-- `CLAUDE.md` は次だけにする。
-
-```markdown
-@AGENTS.md
-```
-
-#### Task 6: 検証
-
-- コマンド:
-  - `mdbook build`
-  - `dprint check` が利用可能であれば実行する。
-- 手動確認:
-  - `src/README.md` から第1章への流れが自然か。
-  - `why-rust.md` の追加小節が既存の文体と合っているか。
-  - `setup.md` が agent ツールの詳細説明になっていないか。
-  - `how-to-use.md` が長すぎないか。
-  - `AGENTS.md` が実装を丸投げしない指示になっているか。
-  - `git diff` を読み、既存資料の文体を壊していないか確認する。
-
-### Phase 1 の非目標
-
-- `src/SUMMARY.md` の章構成変更。
-- 第2章冒頭の Rust 文法最小導入。
-- 第2章以降の memory / cache / unit test 追加。
-- matrix multiplication 演習の実装。
-- Ising model project の実装。
-- SIMD / performance project の実装。
-- GitHub / PR / 共同開発フローの本文追加。
-- 英語版・中国語版の作成。
-
-## Phase 2 以降の主な作業
-
-- 第2章の冒頭に、計算物理コードを読むための Rust 文法の最小導入を追加する。
-- 第2章に memory layout、関数化、モジュール化、unit test を追加する。
-- 第4章に matrix multiplication の検証・benchmark 演習を追加する。
-- 第12章の Ising model を project exercise として完結させる。
-- 第14章に共同開発フローを新規追加する。
-- 既存の第14章並列計算を第15章へ移動・調整する。
-- 第15章で SIMD/performance project を扱う。
-- GitHub/PR は後半の共同開発フローとして扱う。
-
-## レビューしたい点
-
-- 0章を作らず、第1章に統合する方針でよいか。
-- `why-rust.md` に「AI agent 時代になぜ Rust か」を入れるのは自然か。
-- Codex / OpenCodex / Claude Code などの導線を `setup.md` に軽く入れる方針でよいか。
-- Rust 文法の最小導入を第2章の冒頭に置き、詳しい説明は Rust Book 参照に
-  する方針でよいか。
-- 関数化・モジュール化・ユニットテストを第2章に置く方針でよいか。
-- GitHub / PR を第4部の最初に置く方針でよいか。
-- Ising model と SIMD を AI agent project 演習として完成させる方針でよいか。
 
 ## 非目標
 
