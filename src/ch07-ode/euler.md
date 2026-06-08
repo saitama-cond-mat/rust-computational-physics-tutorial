@@ -55,6 +55,22 @@ where
     x + h * f(t, x)
 }
 
+fn euler_integrate<F>(x0: f64, t0: f64, t_max: f64, h: f64, f: F) -> f64
+where
+    F: Fn(f64, f64) -> f64 + Copy,
+{
+    let mut t = t0;
+    let mut x = x0;
+
+    while t < t_max {
+        let step_h = if t + h > t_max { t_max - t } else { h };
+        x = euler_step(x, t, step_h, f);
+        t += step_h;
+    }
+
+    x
+}
+
 fn main() {
     let f = |_t: f64, x: f64| -x;
     let x0 = 1.0;
@@ -67,14 +83,7 @@ fn main() {
     println!("{}", "-".repeat(55));
 
     for &h in &[0.4, 0.2, 0.1, 0.05] {
-        let mut t = 0.0;
-        let mut x = x0;
-
-        while t < t_max {
-            x = euler_step(x, t, h, f);
-            t += h;
-        }
-
+        let x = euler_integrate(x0, 0.0, t_max, h, f);
         let exact = (-t_max).exp();
         println!(
             "{:<5.2} {:<15.8} {:<15.8} {:<15.2e}",

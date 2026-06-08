@@ -30,6 +30,11 @@ J = display(mat(
 ))
 $$
 
+実用上は、このヤコビ行列の扱いが大きな問題になります。未知数が $N$ 個なら
+$J$ は $N times N$ 行列なので、要素数は $N^2$ 個あります。各要素は偏微分
+$pdv(f_i, x_j)$ であり、解析的に導出する場合も、差分で近似する場合も、自動微分を
+使う場合も、「残差ベクトルを評価する」だけの場合より設計が難しくなります。
+
 したがって、修正量 $Delta vb(x)$ は以下の連立一次方程式を解くことで求められます。
 
 $$ J(vb(x)) Delta vb(x) = -vb(F)(vb(x)) $$
@@ -95,38 +100,45 @@ $$
 > 実行には `Cargo.toml` に `ndarray` と `ndarray-linalg`、およびバックエンド（例: `openblas-src`）の依存関係が必要です。
 
 ```rust,noplayground
-use ndarray::{arr1, arr2};
+use ndarray::{arr1, arr2, Array1, Array2};
 use ndarray_linalg::Solve;
 
-fn main() {
-    // 初期値 (x, y) = (1.0, 2.0)
-    // 解に近い適切な初期値を選ぶ必要があります
-    let mut x = arr1(&[1.0, 2.0]);
+fn residual(x: &Array1<f64>) -> Array1<f64> {
+    let curr_x: f64 = x[0];
+    let curr_y: f64 = x[1];
 
-    let tolerance = 1e-8;
-    let max_iter = 100;
+    arr1(&[
+        curr_x.powi(2) + curr_y.powi(2) - 1.0,
+        curr_y - curr_x.powi(2),
+    ])
+}
 
+fn jacobian(x: &Array1<f64>) -> Array2<f64> {
+    let curr_x: f64 = x[0];
+    let curr_y: f64 = x[1];
+
+    arr2(&[
+        [2.0 * curr_x, 2.0 * curr_y],
+        [-2.0 * curr_x, 1.0       ]
+    ])
+}
+
+fn residual_norm(f_vec: &Array1<f64>) -> f64 {
+    f_vec.iter().map(|v| v.powi(2)).sum::<f64>().sqrt()
+}
+
+fn newton_solve(mut x: Array1<f64>, tolerance: f64, max_iter: usize) -> Option<(Array1<f64>, usize)> {
     for i in 0..max_iter {
-        // 現在の x, y
-        let curr_x: f64 = x[0];
-        let curr_y: f64 = x[1];
-
         // 残差ベクトル F(x)
-        let f1 = curr_x.powi(2) + curr_y.powi(2) - 1.0;
-        let f2 = curr_y - curr_x.powi(2);
-        let f_vec = arr1(&[f1, f2]);
+        let f_vec = residual(&x);
 
         // 収束判定 (ノルムが十分小さいか)
-        if f_vec.iter().map(|v| v.powi(2)).sum::<f64>().sqrt() < tolerance {
-            println!("解が見つかりました: x={:.6}, y={:.6} (反復: {})", curr_x, curr_y, i);
-            return;
+        if residual_norm(&f_vec) < tolerance {
+            return Some((x, i));
         }
 
         // ヤコビ行列 J(x)
-        let j = arr2(&[
-            [2.0 * curr_x, 2.0 * curr_y],
-            [-2.0 * curr_x, 1.0       ]
-        ]);
+        let j = jacobian(&x);
 
         // 連立一次方程式 J * delta_x = -F を解く
         // solve() は ndarray-linalg の機能
@@ -136,15 +148,30 @@ fn main() {
         x = x + delta;
     }
 
-    println!("収束しませんでした");
+    None
+}
+
+fn main() {
+    // 初期値 (x, y) = (1.0, 2.0)
+    // 解に近い適切な初期値を選ぶ必要があります
+    let x0 = arr1(&[1.0, 2.0]);
+
+    let tolerance = 1e-8;
+    let max_iter = 100;
+
+    match newton_solve(x0, tolerance, max_iter) {
+        Some((x, iter)) => println!("解が見つかりました: x={:.6}, y={:.6} (反復: {})", x[0], x[1], iter),
+        None => println!("収束しませんでした"),
+    }
 }
 ```
 
 ### 解説
 
 1. **ループ**: 1変数のときと同様に、収束するまでループします。
-2. **連立一次方程式**: `j.solve(&(-f_vec))` の部分で、線形代数のソルバーが活躍します。ここでは $2 times 2$ の小さな行列ですが、大規模な物理シミュレーションではここの計算コストが支配的になります。
-3. **逆行列**: 数式上は $Delta vb(x) = -J^(-1) vb(F)$ と書けますが、**数値計算では逆行列 $J^(-1)$ を明示的に求めてはいけません**。連立方程式 $J Delta vb(x) = -vb(F)$ を解く方が、計算量的にも精度的にも有利だからです。
+2. **ヤコビ行列の評価**: `jacobian(&x)` は今回のような $2 times 2$ の問題では簡単ですが、未知数が多い問題では $N^2$ 個の偏微分を評価・保存する必要があります。PDEを離散化して得られる問題ではヤコビ行列が疎になることが多く、その構造を使わずに密行列として扱うとすぐに破綻します。
+3. **連立一次方程式**: `j.solve(&(-f_vec))` の部分で、線形代数のソルバーが活躍します。密行列として解くと一般に $O(N^3)$ の計算量が必要です。大規模な物理シミュレーションでは、ヤコビ行列の疎性を使うソルバーや、ヤコビ行列を明示的に作らない Newton-Krylov 法などを検討します。
+4. **逆行列**: 数式上は $Delta vb(x) = -J^(-1) vb(F)$ と書けますが、**数値計算では逆行列 $J^(-1)$ を明示的に求めてはいけません**。連立方程式 $J Delta vb(x) = -vb(F)$ を解く方が、計算量的にも精度的にも有利だからです。
 
 ## 応用例
 
@@ -157,6 +184,7 @@ fn main() {
 
 - **多変数ニュートン法**は、1変数のニュートン法をベクトルと行列に一般化した手法である。
 - 各ステップで**ヤコビ行列** $J$ を計算し、連立一次方程式 $J Delta vb(x) = -vb(F)$ を解くことで修正量を求める。
+- 未知数が $N$ 個ならヤコビ行列は $N^2$ 個の要素を持つため、大規模問題では評価方法、疎性、保存形式を含めて設計する必要がある。
 - 逆行列 $J^(-1)$ を計算するのではなく、**LU分解などの線形ソルバー**を用いるのが数値計算の鉄則である。
 - この手法は、非線形微分方程式の陰的解法など、物理シミュレーションの多くの場面で利用される。
 

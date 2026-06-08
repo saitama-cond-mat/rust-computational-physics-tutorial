@@ -5,8 +5,8 @@
 >
 > この章を読むには、以下の章を先に読んでおく必要があります。
 >
-> - **必須**：[第4章: 多次元データと配列](../ch04-multidimensional-data/)
-> - **必須**：[第6章: 線形代数](../ch04-linear-algebra/)（複素ベクトルと行列の概念で使用）
+> - **必須**：[多次元データと配列](../ch04-multidimensional-data/)
+> - **必須**：[線形代数](../ch04-linear-algebra/)（複素ベクトルと行列の概念で使用）
 
 物理学や工学において、信号を周波数成分に分解する**フーリエ解析 (Fourier Analysis)** は欠かせないツールです。
 
@@ -31,3 +31,24 @@
 
 3. **[スペクトル解析](./spectral-analysis.md)**
    実際の信号データに対してFFTを適用し、パワースペクトルの計算や窓関数の重要性について実践的に学びます。
+
+## 作業テーマ
+
+作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
+ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
+
+| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
+|---|---|---|---|---|
+| DFTの基礎 | `fourier/dft-basics` | `dft`, `idft`, `complex_exp` | impulseや定数列のDFTを確認する | DFTとIDFTの往復誤差を出力する |
+| FFT | `fourier/fft` | `run_fft`, `check_power_of_two`, `normalize` | 小さい入力でDFTとFFTを比較する | 入力サイズごとの実行時間をCSVに出力する |
+| スペクトル解析 | `fourier/spectral-analysis` | `frequency_axis`, `power_spectrum`, `window` | 既知周波数の正弦波でピーク位置を確認する | 窓関数の有無を比較する |
+
+## 検証と実装の観点
+
+フーリエ解析では、配列の長さ、正規化、周波数軸の定義が少しずれるだけで、
+見た目は似ていても意味の異なる結果になります。
+
+- 周波数が既知の正弦波を入力し、ピーク位置と振幅の正規化を確認する。
+- DFTとFFTの結果を、小さい入力で比較する。
+- 逆変換を使う場合は、元の信号に戻るかを許容誤差つきで確認する。
+- sample数、sampling interval、window、正規化規約をmetadataとして残す。

@@ -57,7 +57,7 @@ ndarray = "0.17"
 use sprs::TriMat;
 use ndarray::arr1;
 
-fn main() {
+fn sample_sparse_matrix() -> sprs::CsMat<f64> {
     let rows = 4;
     let cols = 4;
     // トリプレット形式 (Triplet Format) で初期化
@@ -72,7 +72,11 @@ fn main() {
     triplet.add_triplet(3, 3, 6.0);
 
     // CSR形式に変換
-    let a_csr = triplet.to_csr::<usize>();
+    triplet.to_csr::<usize>()
+}
+
+fn main() {
+    let a_csr = sample_sparse_matrix();
 
     println!("CSR Matrix:\n{:?}", a_csr);
 
@@ -106,8 +110,7 @@ $$
 ```rust,noplayground
 use sprs::TriMat;
 
-fn main() {
-    let n = 10; // グリッド点数
+fn laplacian_1d(n: usize) -> sprs::CsMat<f64> {
     let mut triplet = TriMat::new((n, n));
 
     for i in 0..n {
@@ -123,7 +126,12 @@ fn main() {
         }
     }
 
-    let laplacian = triplet.to_csr::<usize>();
+    triplet.to_csr::<usize>()
+}
+
+fn main() {
+    let n = 10; // グリッド点数
+    let laplacian = laplacian_1d(n);
     // これでサイズが大きくてもメモリ効率よく保持できる
 }
 ```
@@ -137,7 +145,7 @@ fn main() {
 1. **反復法 (Iterative Methods)**: 共役勾配法 (Conjugate Gradient Method) など。行列を直接変形せず、行列ベクトル積だけを使って解を徐々に改善していく方法。メモリ効率が非常に良い。
 2. **スパース直接法**: フィルインを最小限に抑えるように行や列を並べ替えてから分解を行う高度な手法。
 
-本書の[第7章](../ch05-nonlinear/)では、共役勾配法のアルゴリズムについても触れる予定です。
+本書の[非線形方程式と最適化](../ch05-nonlinear/)では、共役勾配法のアルゴリズムについても触れる予定です。
 
 ## まとめ
 

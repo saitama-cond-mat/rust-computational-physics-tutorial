@@ -74,51 +74,85 @@ $$ phi_(i,j)^(k+1) = (1 - omega) phi_(i,j)^k + omega phi_("GS") $$
 ```rust,noplayground
 use ndarray::Array2;
 
+fn initialize_plate(n: usize, top_boundary: f64) -> Array2<f64> {
+    // 2次元グリッドの初期化 (0.0)
+    let mut phi = Array2::<f64>::zeros((n, n));
+
+    // 境界条件の設定
+    // 上辺 (y=0) を top_boundary に固定
+    for x in 0..n {
+        phi[[0, x]] = top_boundary;
+    }
+    // 左辺、右辺、下辺は 0.0 のまま
+
+    phi
+}
+
+fn gauss_seidel_step(phi: &mut Array2<f64>) -> f64 {
+    let n = phi.nrows();
+    let mut max_diff = 0.0;
+
+    // グリッド内部の更新 (y, x)
+    for y in 1..n - 1 {
+        for x in 1..n - 1 {
+            let old_val = phi[[y, x]];
+
+            // ガウス＝ザイデル法: 最新の値をそのまま使って更新
+            let new_val =
+                0.25 * (phi[[y, x + 1]] + phi[[y, x - 1]] + phi[[y + 1, x]] + phi[[y - 1, x]]);
+
+            phi[[y, x]] = new_val;
+
+            let diff = (new_val - old_val).abs();
+            if diff > max_diff {
+                max_diff = diff;
+            }
+        }
+    }
+
+    max_diff
+}
+
+fn solve_laplace_gauss_seidel(
+    mut phi: Array2<f64>,
+    max_iter: usize,
+    tolerance: f64,
+    sample_interval: usize,
+) -> (Array2<f64>, usize, bool, Vec<(usize, f64)>) {
+    let mut samples = Vec::new();
+
+    for iter in 0..max_iter {
+        let max_diff = gauss_seidel_step(&mut phi);
+
+        // 収束判定
+        if max_diff < tolerance {
+            return (phi, iter + 1, true, samples);
+        }
+
+        if iter % sample_interval == 0 {
+            samples.push((iter, max_diff));
+        }
+    }
+
+    (phi, max_iter, false, samples)
+}
+
 fn main() {
     let n = 50; // グリッドサイズ 50x50
     let max_iter = 10000;
     let tolerance = 1e-4; // 収束判定の閾値
 
-    // 2次元グリッドの初期化 (0.0)
-    let mut phi = Array2::<f64>::zeros((n, n));
+    let phi0 = initialize_plate(n, 100.0);
+    let (phi, iterations, converged, samples) =
+        solve_laplace_gauss_seidel(phi0, max_iter, tolerance, 500);
 
-    // 境界条件の設定
-    // 上辺 (y=0) を 100.0 に固定
-    for x in 0..n {
-        phi[[0, x]] = 100.0;
+    for (iter, max_diff) in samples {
+        println!("Iter {}: max_diff = {:.6}", iter, max_diff);
     }
-    // 左辺、右辺、下辺は 0.0 のまま
-
-    for iter in 0..max_iter {
-        let mut max_diff = 0.0;
-
-        // グリッド内部の更新 (y, x)
-        for y in 1..n - 1 {
-            for x in 1..n - 1 {
-                let old_val = phi[[y, x]];
-
-                // ガウス＝ザイデル法: 最新の値をそのまま使って更新
-                let new_val =
-                    0.25 * (phi[[y, x + 1]] + phi[[y, x - 1]] + phi[[y + 1, x]] + phi[[y - 1, x]]);
-
-                phi[[y, x]] = new_val;
-
-                let diff = (new_val - old_val).abs();
-                if diff > max_diff {
-                    max_diff = diff;
-                }
-            }
-        }
-
-        // 収束判定
-        if max_diff < tolerance {
-            println!("収束しました: 反復回数 {}", iter + 1);
-            break;
-        }
-
-        if iter % 500 == 0 {
-            println!("Iter {}: max_diff = {:.6}", iter, max_diff);
-        }
+    if converged {
+        println!("収束しました: 反復回数 {}", iterations);
+    } else {
+        println!("最大反復回数に達しました: 反復回数 {}", iterations);
     }
 
     // 結果の確認（中心付近の値）
@@ -148,4 +182,4 @@ phi[25, 25] = 24.12
 
 ---
 
-第10章はこれで終わりです。次は[第11章: モンテカルロ法](../ch09-monte-carlo/)に進みましょう。
+本章はこれで終わりです。次は[モンテカルロ法](../ch09-monte-carlo/)に進みましょう。

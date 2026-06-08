@@ -31,6 +31,8 @@
 
 # 第2部: 数値計算手法
 
+- [作業用ディレクトリのセットアップ](./ch05-workspace-setup/README.md)
+
 - [数値微分と数値積分](./ch03-calculus/README.md)
   - [数値微分](./ch03-calculus/differentiation.md)
   - [数値積分（台形則・シンプソン則）](./ch03-calculus/integration.md)

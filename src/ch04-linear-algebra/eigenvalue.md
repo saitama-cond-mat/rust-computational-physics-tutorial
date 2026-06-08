@@ -22,15 +22,20 @@ $$
 正方行列の固有値・固有ベクトルを求めるには、`Eig` トレイトを使用します。
 
 ```rust,noplayground
-use ndarray::arr2;
+use ndarray::{arr2, Array1, Array2};
+use num_complex::Complex64;
 use ndarray_linalg::Eig;
+
+fn eig_decomposition(a: &Array2<f64>) -> (Array1<Complex64>, Array2<Complex64>) {
+    a.eig().expect("Eig decomposition failed")
+}
 
 fn main() {
     let a = arr2(&[[0.0, -1.0],
                    [1.0,  0.0]]);
 
     // 固有値と固有ベクトルを計算
-    let (evals, evecs) = a.eig().expect("Eig decomposition failed");
+    let (evals, evecs) = eig_decomposition(&a);
 
     println!("Eigenvalues: {}", evals);
     println!("Eigenvectors:\n{}", evecs);
@@ -49,9 +54,13 @@ fn main() {
 この場合、`Eigh` トレイトを用いることで、計算を高速化し、結果を実数型 (`f64`) で得ることができます。
 
 ```rust,noplayground
-use ndarray::arr2;
+use ndarray::{arr2, Array1, Array2};
 use ndarray_linalg::Eigh;
 use ndarray_linalg::UPLO;
+
+fn symmetric_eigenvalues(a: &Array2<f64>) -> (Array1<f64>, Array2<f64>) {
+    a.eigh(UPLO::Lower).expect("Eigh failed")
+}
 
 fn main() {
     // 対称行列（パウリ行列 sigma_x など）
@@ -60,7 +69,7 @@ fn main() {
 
     // 固有値と固有ベクトルを計算
     // UPLO::Lower は下三角部分のみを参照することを意味します（対称なので）
-    let (evals, evecs) = a.eigh(UPLO::Lower).expect("Eigh failed");
+    let (evals, evecs) = symmetric_eigenvalues(&a);
 
     println!("Eigenvalues: {}", evals); // [-1, 1]
     println!("Eigenvectors:\n{}", evecs);

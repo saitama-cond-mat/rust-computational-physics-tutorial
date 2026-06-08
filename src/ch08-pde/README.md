@@ -5,10 +5,10 @@
 >
 > この章を読むには、以下の章を先に読んでおく必要があります。
 >
-> - **必須**：[第4章: 多次元データと配列](../ch04-multidimensional-data/)
-> - **必須**：[第5章: 数値微分と数値積分](../ch03-calculus/)
-> - **必須**：[第6章: 線形代数](../ch04-linear-algebra/)
-> - **必須**：[第9章: 常微分方程式](../ch07-ode/)
+> - **必須**：[多次元データと配列](../ch04-multidimensional-data/)
+> - **必須**：[数値微分と数値積分](../ch03-calculus/)
+> - **必須**：[線形代数](../ch04-linear-algebra/)
+> - **必須**：[常微分方程式](../ch07-ode/)
 
 現実の物理現象の多くは、時間だけでなく空間（$x, y, z$）にも依存する**偏微分方程式 (Partial Differential Equation, PDE)** として記述されます。
 
@@ -41,3 +41,25 @@
 
 4. **[楕円型方程式](./elliptic.md)**
    静的なポテンシャル分布を求める手法（反復法など）を学びます。
+
+## 作業テーマ
+
+作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
+ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
+
+| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
+|---|---|---|---|---|
+| 差分法の基礎 | `pde/finite-difference` | `idx`, `central_diff`, `laplacian_1d` | 小さい格子でstencilを手計算と比較する | 境界条件を切り替えられる形にする |
+| 拡散方程式 | `pde/diffusion` | `step_ftcs`, `check_cfl`, `mass` | 安定条件と質量保存の目安を確認する | 時間発展をCSVに出力する |
+| 波動方程式 | `pde/wave` | `step_wave`, `energy`, `apply_boundary` | 小さい格子で初期ステップを確認する | 反射境界と固定境界を比較する |
+| 楕円型方程式 | `pde/elliptic` | `jacobi_step`, `residual`, `apply_boundary` | 既知境界の小さい問題で残差を確認する | residual履歴をCSVに出力する |
+
+## 検証と実装の観点
+
+偏微分方程式では、数値スキームだけでなく、格子、境界条件、添字の対応が
+正しいかを確認します。境界の1点のずれが、安定性や保存量に大きく影響します。
+
+- 小さい格子で、stencil、boundary、linear indexを手計算と比較する。
+- 拡散方程式や波動方程式では、CFL条件と刻み幅依存性を確認する。
+- 楕円型方程式では、反復回数だけでなくresidualと境界条件を確認する。
+- grid shape、spacing、time step、boundary conditionをmetadataとして保存する。

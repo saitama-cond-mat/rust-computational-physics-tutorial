@@ -113,39 +113,55 @@ where
     adaptive_simpson_recursive(&f, a, b, tol, s, fa, fb, fm, max_depth)
 }
 
-fn main() {
+/// 固定刻みの複合シンプソン則
+fn composite_simpson<F>(f: F, a: f64, b: f64, n: usize) -> f64
+where
+    F: Fn(f64) -> f64,
+{
+    assert!(n % 2 == 0, "Simpson's rule requires an even number of intervals.");
+
+    let h = (b - a) / n as f64;
+    let mut sum = f(a) + f(b);
+
+    for i in 1..n {
+        let x = a + i as f64 * h;
+        sum += if i % 2 == 0 { 2.0 } else { 4.0 } * f(x);
+    }
+
+    sum * h / 3.0
+}
+
+fn gaussian_peak(x: f64) -> f64 {
+    (-100.0 * (x - 0.5).powi(2)).exp()
+}
+
+fn gaussian_peak_exact() -> f64 {
     use std::f64::consts::PI;
 
+    // int_0^1 exp(-100(x-0.5)^2) dx = sqrt(pi)/10 * erf(5)
+    (PI / 100.0).sqrt() * libm::erf(5.0)
+}
+
+fn main() {
     // 積分対象: 鋭いガウスピークを持つ関数
     // x = 0.5 にピーク、幅が狭い
-    let f = |x: f64| (-100.0 * (x - 0.5).powi(2)).exp();
-
     let a = 0.0;
     let b = 1.0;
     let tolerance = 1e-8;
 
     // 適応型積分
-    let result = adaptive_simpson(f, a, b, tolerance);
+    let result = adaptive_simpson(gaussian_peak, a, b, tolerance);
 
     // 比較用：固定刻みシンプソン則 (N=100)
-    let n_fixed = 100;
-    let h_fixed = (b - a) / n_fixed as f64;
-    let mut s_fixed = f(a) + f(b);
-    for i in 1..n_fixed {
-        let x = a + i as f64 * h_fixed;
-        s_fixed += if i % 2 == 0 { 2.0 } else { 4.0 } * f(x);
-    }
-    s_fixed *= h_fixed / 3.0;
+    let fixed_result = composite_simpson(gaussian_peak, a, b, 100);
 
     // 解析解に近い値（高精度計算の結果）
-    // int_0^1 exp(-100(x-0.5)^2) dx approx sqrt(pi)/10 * erf(5)
-    // erf(5) approx 0.999999999998... approx 1.0
-    let exact = (PI / 100.0).sqrt() * libm::erf(5.0);
+    let exact = gaussian_peak_exact();
 
     println!("Target: Gaussian peak at x=0.5");
     println!("Exact:            {:.12}", exact);
     println!("Adaptive Simpson: {:.12} (Error: {:.2e})", result, (result - exact).abs());
-    println!("Fixed Simpson:    {:.12} (Error: {:.2e})", s_fixed, (s_fixed - exact).abs());
+    println!("Fixed Simpson:    {:.12} (Error: {:.2e})", fixed_result, (fixed_result - exact).abs());
 }
 ```
 

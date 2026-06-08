@@ -5,8 +5,8 @@
 >
 > この章を読むには、以下の章を先に読んでおく必要があります。
 >
-> - **必須**：[第4章: 多次元データと配列](../ch04-multidimensional-data/)
-> - **必須**：[第5章: 数値微分と数値積分](../ch03-calculus/)
+> - **必須**：[多次元データと配列](../ch04-multidimensional-data/)
+> - **必須**：[数値微分と数値積分](../ch03-calculus/)
 
 物理法則の多くは、時間や空間に対する変化率（微分）を含む**微分方程式 (Differential Equations)** として記述されます。
 
@@ -29,3 +29,25 @@ $$ L dv(I, t) + R I = V(t) quad ("回路方程式") $$
 
 4. **[境界値問題](./boundary-value.md)**
    初期値問題とは異なり、区間の両端で条件が与えられる問題（例：両端が固定された弦の振動など）を解く「シューティング法」について触れます。
+
+## 作業テーマ
+
+作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
+ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
+
+| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
+|---|---|---|---|---|
+| オイラー法 | `ode/euler` | `euler_step`, `integrate`, `max_error` | 指数関数の解析解と比較する | 刻み幅ごとの誤差をCSVに出力する |
+| ルンゲ＝クッタ法 | `ode/rk4` | `rk4_step`, `integrate`, `state_norm` | RK4の刻み幅依存を確認する | Euler法との誤差比較を追加する |
+| 適応型刻み幅 | `ode/adaptive-step` | `rk_embedded_step`, `accept_step`, `next_dt` | 許容誤差を変えたときの結果を確認する | rejected step数をmetadataに保存する |
+| 境界値問題 | `ode/boundary-value` | `shoot`, `boundary_residual`, `bisect_slope` | 線形な境界値問題で既知解と比較する | 初期推定を変えた収束比較を追加する |
+
+## 検証と実装の観点
+
+常微分方程式の計算では、時間刻みを変えたときの収束性と、物理量の保存性を
+分けて確認します。短時間で精度が高くても、長時間で保存量が大きく漂う場合があります。
+
+- 解析解が分かる指数関数や調和振動子で、刻み幅依存の誤差を確認する。
+- state、微分方程式、1 step更新、出力処理を関数やmoduleで分ける。
+- energy、norm、massなど、問題に応じた保存量や単位を確認する。
+- initial condition、time span、step size、toleranceを結果と一緒に保存する。

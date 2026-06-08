@@ -5,9 +5,9 @@
 >
 > この章を読むには、以下の章を先に読んでおく必要があります。
 >
-> - **必須**：[第6章: 線形代数](../ch04-linear-algebra/)（固有値問題）
-> - **必須**：[第9章: 常微分方程式](../ch07-ode/)（時間発展）
-> - **推奨**：[第8章: フーリエ解析](../ch06-fourier/)（スプリット演算子法で使用）
+> - **必須**：[線形代数](../ch04-linear-algebra/)（固有値問題）
+> - **必須**：[常微分方程式](../ch07-ode/)（時間発展）
+> - **推奨**：[フーリエ解析](../ch06-fourier/)（スプリット演算子法で使用）
 
 量子力学は、原子や分子、半導体デバイスなど、微細なスケールの世界を支配する物理法則です。
 その中心となる**シュレーディンガー方程式**は、解析的に解ける場合が非常に限られているため、数値シミュレーションが不可欠な分野です。
@@ -27,3 +27,25 @@
 
 4. **[散乱問題とトンネル効果](./scattering.md)**
    ポテンシャル障壁に対する波束の衝突をシミュレーションし、量子力学特有の現象であるトンネル効果を観測します。
+
+## 作業テーマ
+
+作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
+ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
+
+| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
+|---|---|---|---|---|
+| Schrodinger方程式 | `quantum-mechanics/schrodinger` | `build_grid`, `potential`, `hamiltonian` | 小さい格子でHamiltonianの対称性を確認する | grid spacingと境界条件をmetadataに保存する |
+| 1次元束縛状態 | `quantum-mechanics/bound-states` | `solve_eigenstates`, `normalize`, `expectation_energy` | 井戸型ポテンシャルの低い準位を確認する | 固有状態とエネルギーをCSVに出力する |
+| 時間発展 | `quantum-mechanics/time-evolution` | `step_crank_nicolson`, `step_split_operator`, `norm` | norm保存を許容誤差つきで確認する | time stepを変えたnorm driftを比較する |
+| 散乱問題 | `quantum-mechanics/scattering` | `wave_packet`, `barrier`, `transmission_probability` | 初期波束の規格化を確認する | 透過率の障壁幅依存をCSVに出力する |
+
+## 検証と実装の観点
+
+量子力学の数値計算では、複素数、境界条件、規格化、単位系を明示します。
+固有値や時間発展の結果は、見た目だけでなく、norm、energy、residualで確認します。
+
+- grid、potential、Hamiltonian、solver、出力処理を分けて実装する。
+- 固有値問題では residual、時間発展では norm保存を確認する。
+- grid spacing、time step、境界条件、初期波束、potential parameterをmetadataとして残す。
+- agentに実装を任せた場合も、複素共役、正規化、境界条件の扱いをdiffで確認する。

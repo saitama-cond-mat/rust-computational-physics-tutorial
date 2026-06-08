@@ -36,7 +36,7 @@ $$ vb(x)_(n+1) = vb(x)_n + h/6 (k_1 + 2k_2 + 2k_3 + k_4) $$
 
 ## Rustによる実装（ndarrayの活用）
 
-連立微分方程式（多変数）を扱う場合、[第4章](../ch04-multidimensional-data/ndarray.md)で学んだ`ndarray`を使うと、数学的なベクトル演算をそのままコードに落とし込めるため、非常に見通しが良くなります。
+連立微分方程式（多変数）を扱う場合、[ndarray入門](../ch04-multidimensional-data/ndarray.md)で学んだ`ndarray`を使うと、数学的なベクトル演算をそのままコードに落とし込めるため、非常に見通しが良くなります。
 例として、単振動（調和振動子）の方程式を解いてみましょう。
 $$ dv(x, t, 2) = -x $$
 
@@ -47,7 +47,7 @@ $$ dv(vb(x), t) = [v, -x]^T $$
 use ndarray::{Array1, arr1};
 
 /// 4次のルンゲ＝クッタ法による1ステップの更新
-fn rk4_step<F>(state: &Array1<f64>, t: f64, h: f64, f: F) -> Array1<f64>
+fn rk4_step<F>(state: &Array1<f64>, t: f64, h: f64, f: &F) -> Array1<f64>
 where
     F: Fn(f64, &Array1<f64>) -> Array1<f64>,
 {
@@ -59,14 +59,36 @@ where
     state + (&k1 + &k2 * 2.0 + &k3 * 2.0 + &k4) * (h / 6.0)
 }
 
-fn main() {
-    // dx/dt = v, dv/dt = -x
-    let system = |_t: f64, state: &Array1<f64>| -> Array1<f64> {
-        let x = state[0];
-        let v = state[1];
-        arr1(&[v, -x])
-    };
+fn integrate_rk4<F>(
+    state0: &Array1<f64>,
+    t0: f64,
+    t_max: f64,
+    h: f64,
+    f: &F,
+) -> Array1<f64>
+where
+    F: Fn(f64, &Array1<f64>) -> Array1<f64>,
+{
+    let mut t = t0;
+    let mut state = state0.clone();
 
+    while t < t_max {
+        // ステップ幅が余る場合の調整
+        let step_h = if t + h > t_max { t_max - t } else { h };
+        state = rk4_step(&state, t, step_h, f);
+        t += step_h;
+    }
+
+    state
+}
+
+fn harmonic_oscillator(_t: f64, state: &Array1<f64>) -> Array1<f64> {
+    let x = state[0];
+    let v = state[1];
+    arr1(&[v, -x])
+}
+
+fn main() {
     let x0 = arr1(&[1.0, 0.0]); // 初期条件: x=1, v=0
     let t_max = 2.0 * std::f64::consts::PI; // 1周期
 
@@ -74,16 +96,7 @@ fn main() {
     println!("{}", "-".repeat(40));
 
     for &h in &[0.5, 0.25, 0.125, 0.0625] {
-        let mut t = 0.0;
-        let mut state = x0.clone();
-
-        while t < t_max {
-            // ステップ幅が余る場合の調整
-            let step_h = if t + h > t_max { t_max - t } else { h };
-            state = rk4_step(&state, t, step_h, system);
-            t += step_h;
-        }
-
+        let state = integrate_rk4(&x0, 0.0, t_max, h, &harmonic_oscillator);
         let exact = 1.0; // cos(2pi) = 1
         println!(
             "{:<5.3} {:<15.10} {:<15.2e}",
@@ -120,7 +133,7 @@ RK4は非常に優秀ですが、**万能ではありません**。
 <details>
 <summary>コラム: エネルギー保存とシンプレクティック積分</summary>
 
-天体力学や分子動力学など、長時間の安定性が求められるシミュレーションでは、精度の高いRK4よりも、エネルギー（ハミルトニアン）を一定の範囲に保つ性質を持つ **シンプレクティック積分法 (Symplectic Integrator)** が好まれることが多いです。これについては[第12章](../ch10-classical-mechanics/symplectic.md)で詳しく扱います。
+天体力学や分子動力学など、長時間の安定性が求められるシミュレーションでは、精度の高いRK4よりも、エネルギー（ハミルトニアン）を一定の範囲に保つ性質を持つ **シンプレクティック積分法 (Symplectic Integrator)** が好まれることが多いです。これについては[シンプレクティック積分法](../ch10-classical-mechanics/symplectic.md)で詳しく扱います。
 
 </details>
 

@@ -512,8 +512,8 @@
     - magnetization
     - `delta_energy_flip`
     - module 分割
-  - 13.4 thermalization と measurement
-    - burn-in
+  - 13.4 thermalization（熱化）と measurement
+    - 統計物理の文脈では、MCMC一般の burn-in よりも thermalization（熱化）という語を使う。
     - sampling interval
     - autocorrelation
     - random seed

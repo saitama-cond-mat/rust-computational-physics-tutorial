@@ -5,7 +5,7 @@
 >
 > この章を読むには、以下の章を先に読んでおく必要があります。
 >
-> - [第11章: モンテカルロ法](../ch09-monte-carlo/)
+> - [モンテカルロ法](../ch09-monte-carlo/)
 
 統計力学は、原子や分子といったミクロな構成要素の振る舞いから、温度や圧力、磁化といったマクロな性質を導き出す学問です。
 しかし、現実的な複雑さを持つ系において、理論的に厳密解が得られるケースは極めて稀です。
@@ -28,3 +28,27 @@
 
 4. **[その他の格子模型](./other-models.md)**
    イジング模型を拡張したポッツ模型やXY模型など、より多様な物理現象を記述するモデルについて概観します。
+
+## 作業テーマ
+
+作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
+ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
+
+| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
+|---|---|---|---|---|
+| イジング模型の基礎 | `statistical-mechanics/ising-basics` | `idx`, `neighbor`, `energy`, `magnetization` | 小さい格子でエネルギーと磁化を手計算と比較する | 周期境界条件を切り替えられる形にする |
+| メトロポリス法 | `statistical-mechanics/metropolis` | `delta_energy_flip`, `accept`, `sweep`, `measure` | 局所エネルギー差と全エネルギー再計算を比較する | 熱化と測定間隔をmetadataに保存する |
+| 相転移 | `statistical-mechanics/phase-transition` | `temperature_scan`, `susceptibility`, `specific_heat` | 固定seedで測定量の再現性を確認する | 温度走査結果をCSVに出力する |
+| その他の格子模型 | `statistical-mechanics/other-models` | `potts_energy`, `xy_energy`, `local_update` | 小さい格子で相互作用エネルギーを確認する | model enumで複数模型を切り替える |
+
+## 検証と実装の観点
+
+統計力学シミュレーションでは、乱数、熱化、測定間隔、有限サイズ効果を明示します。
+MCMC一般では burn-in という語も使われますが、統計物理の文脈では
+thermalization（熱化）と呼ぶのが一般的です。
+1回のrunだけで結論を出さず、seed、格子サイズ、温度、測定回数を結果と一緒に保存します。
+
+- 格子、model、更新アルゴリズム、測定、入出力をmoduleで分ける。
+- 小さい格子で局所更新量と全エネルギー再計算を比較する。
+- 熱化、sampling interval、autocorrelation、誤差棒を確認する。
+- agentに実装を任せた場合も、周期境界条件と`delta_energy_flip`の符号を重点的に確認する。

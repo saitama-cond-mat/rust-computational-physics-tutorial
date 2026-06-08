@@ -41,6 +41,27 @@ $$ dv(f, x) approx (f(x + h) - f(x - h)) / (2h) $$
 これらの差分法をRustで実装してみましょう。ここでは、関数 $f(x) = sin(x)$ を例にとり、$x = 1.0$ における微分係数を計算します。解析解は $f'(x) = cos(x)$ なので、これと比較して精度を確認します。
 
 ```rust
+fn forward_difference<F>(f: F, x: f64, h: f64) -> f64
+where
+    F: Fn(f64) -> f64,
+{
+    (f(x + h) - f(x)) / h
+}
+
+fn backward_difference<F>(f: F, x: f64, h: f64) -> f64
+where
+    F: Fn(f64) -> f64,
+{
+    (f(x) - f(x - h)) / h
+}
+
+fn central_difference<F>(f: F, x: f64, h: f64) -> f64
+where
+    F: Fn(f64) -> f64,
+{
+    (f(x + h) - f(x - h)) / (2.0 * h)
+}
+
 fn main() {
     // 微分対象の関数 f(x) = sin(x)
     let f = |x: f64| x.sin();
@@ -55,13 +76,13 @@ fn main() {
     let exact = x.cos();
 
     // 1. 前進差分
-    let diff_forward = (f(x + h) - f(x)) / h;
+    let diff_forward = forward_difference(f, x, h);
 
     // 2. 後退差分
-    let diff_backward = (f(x) - f(x - h)) / h;
+    let diff_backward = backward_difference(f, x, h);
 
     // 3. 中心差分
-    let diff_central = (f(x + h) - f(x - h)) / (2.0 * h);
+    let diff_central = central_difference(f, x, h);
 
     println!("解析解:    {:.10}", exact);
     println!("前進差分:  {:.10} (誤差: {:.2e})", diff_forward, (diff_forward - exact).abs());
@@ -127,18 +148,32 @@ $h$ を極端に小さくすると、分子の $f(x+h) - f(x)$ において、�
 以下のコードで、$h$ を $10^(-1)$ から $10^(-16)$ まで変化させたときの誤差を確認してみましょう。
 
 ```rust
+fn central_difference<F>(f: F, x: f64, h: f64) -> f64
+where
+    F: Fn(f64) -> f64,
+{
+    (f(x + h) - f(x - h)) / (2.0 * h)
+}
+
+fn central_difference_error<F, G>(f: F, df_exact: G, x: f64, h: f64) -> f64
+where
+    F: Fn(f64) -> f64,
+    G: Fn(f64) -> f64,
+{
+    (central_difference(f, x, h) - df_exact(x)).abs()
+}
+
 fn main() {
     let f = |x: f64| x.sin();
+    let df_exact = |x: f64| x.cos();
     let x: f64 = 1.0;
-    let exact = x.cos();
 
     println!("h,      Error (Central)");
 
     let mut h = 1.0;
     for _ in 0..16 {
         h /= 10.0;
-        let approx = (f(x + h) - f(x - h)) / (2.0 * h);
-        let error = (approx - exact).abs();
+        let error = central_difference_error(f, df_exact, x, h);
         println!("{:.1e}, {:.2e}", h, error);
     }
 }
@@ -216,6 +251,6 @@ where
 
 Rustコミュニティでは、コンパイラレベルで自動微分をサポートする取り組み（[`std::autodiff`](https://doc.rust-lang.org/std/autodiff/index.html)の提案や Enzyme プロジェクトとの統合など）が進められています。これが実現すれば、物理シミュレーションのコードを書くだけで、そのパラメータに対する感度解析や最適化が簡単に分かるようになるかも知れません。
 
-本書では、物理シミュレーションの基礎原理（運動方程式をどう離散化するか）を理解するために「差分法」を中心に扱いますが、最適化問題を扱う第5章などでは、ADの考え方が重要になります。
+本書では、物理シミュレーションの基礎原理（運動方程式をどう離散化するか）を理解するために「差分法」を中心に扱いますが、[非線形方程式と最適化](../ch05-nonlinear/)などでは、ADの考え方が重要になります。
 
 </details>

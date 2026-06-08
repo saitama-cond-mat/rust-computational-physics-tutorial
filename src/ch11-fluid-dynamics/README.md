@@ -5,8 +5,8 @@
 >
 > この章を読むには、以下の章を先に読んでおく必要があります。
 >
-> - **必須**：[第10章: 偏微分方程式](../ch08-pde/)
-> - **推奨**：[第16章: 並列計算](../ch14-parallel/)（LBMの高速化に関連）
+> - **必須**：[偏微分方程式](../ch08-pde/)
+> - **推奨**：[並列計算](../ch14-parallel/)（LBMの高速化に関連）
 
 私たちの身の回りにある空気や水の流れ、さらには天気予報や航空機の設計に至るまで、流体の動きを理解し予測することは工学的・科学的に極めて重要です。
 **数値流体力学 (Computational Fluid Dynamics, CFD)** は、コンピュータを用いて流体現象をシミュレーションする分野であり、現代の設計開発には欠かせないツールとなっています。
@@ -23,3 +23,24 @@
 
 3. **[格子ボルツマン法 (LBM)](./lattice-boltzmann.md)**
    流体を仮想粒子の集団として捉える、比較的新しいシミュレーション手法です。アルゴリズムが単純で並列化に適しているため、GPUコンピューティングなどで威力を発揮します。
+
+## 作業テーマ
+
+作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
+ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
+
+| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
+|---|---|---|---|---|
+| Navier-Stokes方程式 | `fluid-dynamics/navier-stokes` | `divergence`, `laplacian`, `pressure_gradient` | 小さい速度場で発散と差分を確認する | 無次元数やgrid spacingをmetadataに保存する |
+| 差分法によるCFD | `fluid-dynamics/finite-difference-cfd` | `advect`, `diffuse`, `project`, `apply_boundary` | 小さい格子で境界条件とprojectionを確認する | cavity flowの速度場をCSVに出力する |
+| 格子Boltzmann法 | `fluid-dynamics/lattice-boltzmann` | `equilibrium`, `collide`, `stream`, `macroscopic` | 一様分布で密度と速度が保たれることを確認する | 障害物まわりの流れを保存する |
+
+## 検証と実装の観点
+
+流体シミュレーションでは、格子、境界条件、安定条件、保存量を分けて確認します。
+圧力、速度、分布関数を同じ関数に詰め込むと、誤差や不安定化の原因を追いにくくなります。
+
+- 差分演算、境界条件、time step、出力処理を分けて実装する。
+- divergence、mass、residualなど、問題に応じた診断量を確認する。
+- grid shape、spacing、Reynolds number、time step、境界条件をmetadataとして残す。
+- field dataはCSVで足りない場合、NumPy形式やHDF5などの配列形式も検討する。

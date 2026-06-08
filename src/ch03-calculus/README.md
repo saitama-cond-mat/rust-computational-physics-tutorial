@@ -32,3 +32,26 @@
 本章を終えることで、読者は微分・積分を数値的に計算する様々な手法を習得し、
 それらをRustで実装する能力を身につけます。これらの技術は、後続章で扱う
 微分方程式の数値解法や、より高度な物理シミュレーションの基盤となります。
+
+## 作業テーマ
+
+作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
+ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
+
+| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
+|---|---|---|---|---|
+| 数値微分 | `calculus/differentiation` | `forward_diff`, `central_diff`, `estimate_error` | `sin(x)` や低次多項式で解析解と比較する | 刻み幅ごとの誤差をCSVに出力する |
+| 数値積分 | `calculus/integration` | `trapezoidal_rule`, `simpson_rule`, `estimate_error` | 低次多項式を解析解と比較する | 分割数ごとの誤差をCSVに出力する |
+| ガウス求積法 | `calculus/gaussian-quadrature` | `gauss_legendre_2`, `map_interval` | 3次以下の多項式で厳密性を確認する | 分点数を切り替えられる形にする |
+| 適応型積分 | `calculus/adaptive-integration` | `adaptive_simpson`, `estimate_local_error` | 滑らかな関数で許容誤差を確認する | 再帰回数と区間分割をmetadataとして保存する |
+
+## 検証と実装の観点
+
+本章の実装では、公式をコードに写すだけでなく、既知の関数で精度を確認します。
+例えば、$sin x$ の微分、低次多項式の積分、解析解が分かる滑らかな関数を使うと、
+差分幅や分割数を変えたときの誤差の変化を追跡できます。
+
+- 微分では、前進差分・中心差分の誤差が刻み幅にどう依存するかを確認する。
+- 積分では、`n = 0`、分割数の偶奇、非滑らかな関数などの境界条件を明示する。
+- `differentiate`、`integrate`、`estimate_error` のように小さい関数へ分ける。
+- agentに実装を任せた場合も、比較対象、許容誤差、分割数をdiffで確認する。

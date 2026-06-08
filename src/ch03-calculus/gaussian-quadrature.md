@@ -105,8 +105,8 @@ fn main() {
     let result = gauss_legendre_5(f, a, b);
 
     println!("Gaussian Quadrature (n=5)");
-    println!("Result: {{:.16}}", result);
-    println!("Error:  {{:.2e}}", (result - exact).abs());
+    println!("Result: {:.16}", result);
+    println!("Error:  {:.2e}", (result - exact).abs());
 
     // 比較: シンプソン則 (n=10, 評価点数は11点)
     // ガウス積分(n=5)は評価点数が5点なので、それより多くの点数を使う条件で比較

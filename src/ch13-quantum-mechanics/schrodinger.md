@@ -65,11 +65,15 @@ num-complex = "0.4"
 ```rust
 use num_complex::Complex64; // 複素数型 (実部・虚部がf64)
 
+fn multiply_by_i(z: Complex64) -> Complex64 {
+    z * Complex64::i()
+}
+
 fn main() {
     let z = Complex64::new(1.0, 2.0); // 1 + 2i
-    let i = Complex64::i();
+    let result = multiply_by_i(z);
 
-    println!("z * i = {}", z * i); // (-2 + 1i)
+    println!("z * i = {}", result); // (-2 + 1i)
 }
 ```
 
