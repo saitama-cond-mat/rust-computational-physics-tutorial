@@ -47,3 +47,9 @@ Rustプログラムで温度を変えながらこれらの量を測定すると�
 これを**有限サイズ効果**と呼びます。
 
 より精密な解析を行うには、システムサイズ $L$ を変えながら測定を行い、$L -> infinity$ への外挿を行う**有限サイズスケーリング (Finite Size Scaling)** という手法が用いられます。
+
+## 参考リンク
+
+- [Phase transition - Wikipedia](https://en.wikipedia.org/wiki/Phase_transition)
+- [Critical phenomena - Wikipedia](https://en.wikipedia.org/wiki/Critical_phenomena)
+- [Scale invariance - Wikipedia](https://en.wikipedia.org/wiki/Scale_invariance)

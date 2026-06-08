@@ -44,6 +44,85 @@ $$ A(x arrow x') = min (1, exp(-beta Delta E)) $$
 ```rust,noplayground
 use rand::RngExt;
 
+struct ChainResult {
+    samples: Vec<f64>,
+    accepted: usize,
+}
+
+struct SampleStats {
+    mean: f64,
+    variance: f64,
+    std_dev: f64,
+}
+
+fn standard_normal_unnormalized(x: f64) -> f64 {
+    (-0.5 * x * x).exp()
+}
+
+fn metropolis_step<R, F>(x: f64, delta: f64, rng: &mut R, target: &F) -> (f64, bool)
+where
+    R: RngExt + ?Sized,
+    F: Fn(f64) -> f64,
+{
+    // 1. 候補 x' を現在の位置 x の近傍 [-δ, δ] から提案
+    let x_next = x + rng.random_range(-delta..delta);
+
+    // 2. 受理確率 A = min(1, p(x') / p(x)) の計算
+    // 比をとることで、規格化定数がキャンセルされる
+    let ratio = target(x_next) / target(x);
+    let acceptance_prob = ratio.min(1.0);
+
+    // 3. 受理判定
+    if rng.random::<f64>() < acceptance_prob {
+        (x_next, true)
+    } else {
+        (x, false)
+    }
+}
+
+fn metropolis_sample<R, F>(
+    rng: &mut R,
+    x_init: f64,
+    delta: f64,
+    n_steps: usize,
+    target: F,
+) -> ChainResult
+where
+    R: RngExt + ?Sized,
+    F: Fn(f64) -> f64,
+{
+    let mut x = x_init;
+    let mut samples = Vec::with_capacity(n_steps);
+    let mut accepted = 0;
+
+    for _ in 0..n_steps {
+        let (x_next, was_accepted) = metropolis_step(x, delta, rng, &target);
+        x = x_next;
+        if was_accepted {
+            accepted += 1;
+        }
+        samples.push(x);
+    }
+
+    ChainResult { samples, accepted }
+}
+
+fn sample_stats(samples: &[f64]) -> SampleStats {
+    let n = samples.len() as f64;
+    let mean = samples.iter().sum::<f64>() / n;
+    let variance = samples
+        .iter()
+        .map(|&x| (x - mean).powi(2))
+        .sum::<f64>()
+        / n;
+
+    SampleStats {
+        mean,
+        variance,
+        std_dev: variance.sqrt(),
+    }
+}
+
 fn main() {
     println!("目標分布: 標準正規分布 N(0, 1)");
     println!("提案分布: 一様ランダムウォーク");
@@ -57,9 +136,6 @@ fn main() {
     let n_steps = 100_000;
     let burn_in = n_steps / 10; // 最初の10%をバーンイン期間とする
 
-    // 目標分布（規格化定数は不要）
-    let p_unnormalized = |x: f64| (-0.5 * x * x).exp();
-
     println!("パラメータ:");
     println!("  初期値 x₀ = {}", x_init);
     println!("  ステップ幅 δ = {}", delta);
@@ -67,62 +143,40 @@ fn main() {
     println!("  バーンイン期間 = {} ステップ\n", burn_in);
 
     // サンプリング実行
-    let mut x = x_init;
-    let mut samples = Vec::with_capacity(n_steps);
-    let mut accepted = 0;
-
-    for _ in 0..n_steps {
-        // 1. 候補 x' を現在の位置 x の近傍 [-δ, δ] から提案
-        let x_next = x + rng.random_range(-delta..delta);
-
-        // 2. 受理確率 A = min(1, p(x') / p(x)) の計算
-        // 比をとることで、規格化定数がキャンセルされる
-        let ratio = p_unnormalized(x_next) / p_unnormalized(x);
-        let acceptance_prob = ratio.min(1.0);
-
-        // 3. 受理判定
-        if rng.random::<f64>() < acceptance_prob {
-            x = x_next;
-            accepted += 1;
-        }
-
-        samples.push(x);
-    }
+    let chain = metropolis_sample(
+        &mut rng,
+        x_init,
+        delta,
+        n_steps,
+        standard_normal_unnormalized,
+    );
 
     // 統計量の計算
-    let acceptance_rate = (accepted as f64) / (n_steps as f64);
+    let acceptance_rate = (chain.accepted as f64) / (n_steps as f64);
 
     // バーンイン後のサンプルで統計を計算
-    let valid_samples = &samples[burn_in..];
-    let n = valid_samples.len() as f64;
-    let mean = valid_samples.iter().sum::<f64>() / n;
-    let variance = valid_samples
-        .iter()
-        .map(|&x| (x - mean).powi(2))
-        .sum::<f64>()
-        / n;
-    let std_dev = variance.sqrt();
+    let valid_samples = &chain.samples[burn_in..];
+    let valid_stats = sample_stats(valid_samples);
 
     // バーンイン前の統計（比較のため）
-    let burnin_samples = &samples[0..burn_in];
-    let mean_burnin = burnin_samples.iter().sum::<f64>() / (burn_in as f64);
+    let burnin_stats = sample_stats(&chain.samples[0..burn_in]);
 
     // 結果の表示
     println!("--- 結果 ---");
     println!("受理率: {:.2}%", acceptance_rate * 100.0);
     println!("  (理想的には 20-50% 程度が効率的)\n");
 
-    println!("バーンイン期間の平均: {:.6}", mean_burnin);
+    println!("バーンイン期間の平均: {:.6}", burnin_stats.mean);
     println!("  (初期値 {} から定常分布へ収束中)\n", x_init);
 
     println!("バーンイン後の統計 ({} サンプル):", valid_samples.len());
-    println!("  平均:       {:.6}  (理論値: 0.0)", mean);
-    println!("  標準偏差:   {:.6}  (理論値: 1.0)", std_dev);
-    println!("  分散:       {:.6}  (理論値: 1.0)", variance);
+    println!("  平均:       {:.6}  (理論値: 0.0)", valid_stats.mean);
+    println!("  標準偏差:   {:.6}  (理論値: 1.0)", valid_stats.std_dev);
+    println!("  分散:       {:.6}  (理論値: 1.0)", valid_stats.variance);
 
     println!("\n理論値との誤差:");
-    println!("  平均の誤差: {:.6}", mean.abs());
-    println!("  標準偏差の誤差: {:.6}", (std_dev - 1.0).abs());
+    println!("  平均の誤差: {:.6}", valid_stats.mean.abs());
+    println!("  標準偏差の誤差: {:.6}", (valid_stats.std_dev - 1.0).abs());
 }
 ```
 
@@ -149,6 +203,11 @@ fn main() {
 - **メトロポリス法** は、受理確率を適切に設定することで**詳細釣合い**を実現し、目標分布への収束を保証する。
 - 分布の絶対値が分からなくても、**比さえ計算できればサンプリング可能**である点が、物理学における強力な武器となる。
 
+## 参考リンク
+
+- [Markov chain Monte Carlo - Wikipedia](https://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo)
+- [Metropolis-Hastings algorithm - Wikipedia](https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm)
+
 ---
 
-第9章はこれで終わりです。[次章](../ch10-classical-mechanics/)からは、これらの数値手法で具体的な物理シミュレーションを解いてみましょう。
+本章はこれで終わりです。[古典力学シミュレーション](../ch10-classical-mechanics/)からは、これらの数値手法で具体的な物理シミュレーションを解いてみましょう。

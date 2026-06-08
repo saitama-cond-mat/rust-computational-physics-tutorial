@@ -30,35 +30,48 @@ $$ vb(x)_(n+1) = vb(x)_n - alpha grad f(vb(x)_n) $$
 $$ grad f = (pdv(f, x), pdv(f, y)) = (2x, 2y) $$
 
 ```rust
-fn main() {
-    // 目的関数とその勾配
-    let f = |x: &[f64]| x[0].powi(2) + x[1].powi(2);
-    let grad = |x: &[f64]| vec![2.0 * x[0], 2.0 * x[1]];
+fn sphere(x: &[f64]) -> f64 {
+    x[0].powi(2) + x[1].powi(2)
+}
 
-    let mut x = vec![2.0, 1.0]; // 初期値
+fn sphere_gradient(x: &[f64]) -> Vec<f64> {
+    vec![2.0 * x[0], 2.0 * x[1]]
+}
 
-    let alpha = 0.4;            // 学習率
+fn gradient_norm(g: &[f64]) -> f64 {
+    g.iter().map(|v| v.powi(2)).sum::<f64>().sqrt()
+}
 
-    let max_iter = 100;
-
+fn gradient_descent(mut x: Vec<f64>, alpha: f64, tolerance: f64, max_iter: usize) -> (Vec<f64>, f64, usize) {
     for i in 0..max_iter {
-        let current_val = f(&x);
-        let g = grad(&x);
+        let current_val = sphere(&x);
+        let g = sphere_gradient(&x);
 
         // 勾配の大きさが十分小さくなったら終了
-        let g_norm: f64 = g.iter().map(|v| v.powi(2)).sum::<f64>().sqrt();
-        if g_norm < 1e-6 {
-            println!("\n収束しました: x={:?}, f(x)={:.6} (反復: {})", x, current_val, i);
-            return;
+        if gradient_norm(&g) < tolerance {
+            return (x, current_val, i);
         }
 
         // 更新 x = x - alpha * grad
-        for j in 0..2 {
+        for j in 0..x.len() {
             x[j] -= alpha * g[j];
         }
 
         println!("iter {}: x={:?}, f(x)={:.6}", i, x, current_val);
     }
+
+    let value = sphere(&x);
+    (x, value, max_iter)
+}
+
+fn main() {
+    let x0 = vec![2.0, 1.0]; // 初期値
+    let alpha = 0.4;            // 学習率
+    let tolerance = 1e-6;
+    let max_iter = 100;
+
+    let (x, value, iter) = gradient_descent(x0, alpha, tolerance, max_iter);
+    println!("\n終了: x={:?}, f(x)={:.6} (反復: {})", x, value, iter);
 }
 ```
 
@@ -77,7 +90,7 @@ fn main() {
 
 ## 実用的なライブラリ (argmin)
 
-勾配降下法は単純ですが、収束が遅い場合があります（特に谷が細長い場合）。実務でより複雑な問題を解くには、[argmin](https://crates.io/crates/argmin) クレートなどの最適化ライブラリを使用するのが一般的です。
+勾配降下法は単純ですが、収束が遅い場合があります（特に谷が細長い場合）。実務でより複雑な問題を解くには、[argmin](https://docs.rs/argmin/latest/argmin/) クレートなどの最適化ライブラリを使用するのが一般的です。
 
 ここでは、最適化のベンチマークとして有名な **Rosenbrock関数** を、強力な準ニュートン法の一種である **L-BFGS法** で解いてみます。
 
@@ -144,9 +157,13 @@ impl Gradient for Rosenbrock {
     }
 }
 
+fn rosenbrock_initial_param() -> Array1<f64> {
+    array![-1.2, 1.0]
+}
+
 fn main() {
     let cost = Rosenbrock {};
-    let init_param = array![-1.2, 1.0];
+    let init_param = rosenbrock_initial_param();
 
     // L-BFGSソルバーの設定
     // 準ニュートン法では、更新の方向を決めた後に「どれだけ進むか」を決める
@@ -188,4 +205,4 @@ fn main() {
 
 ---
 
-第7章はこれで終わりです。次は[第8章: フーリエ変換](../ch06-fourier/)に進みましょう。
+本章はこれで終わりです。次は[フーリエ解析](../ch06-fourier/)に進みましょう。

@@ -15,8 +15,12 @@ $$ A vb(x) = vb(b) $$
 最も簡単な方法は、`Solve` トレイトの `solve` メソッドを使うことです。
 
 ```rust,noplayground
-use ndarray::{arr1, arr2};
+use ndarray::{arr1, arr2, Array1, Array2};
 use ndarray_linalg::Solve;
+
+fn solve_system(a: &Array2<f64>, b: &Array1<f64>) -> Array1<f64> {
+    a.solve(b).expect("Failed to solve")
+}
 
 fn main() {
     // 係数行列 A
@@ -27,7 +31,7 @@ fn main() {
     let b = arr1(&[9.0, 8.0]);
 
     // Ax = b を解く
-    let x = a.solve(&b).expect("Failed to solve");
+    let x = solve_system(&a, &b);
 
     println!("Solution x = {}", x);
     // 期待される解:
@@ -59,25 +63,30 @@ $$ L (U vb(x)) = vb(b) $$
 LU分解を一度だけ作り、その分解結果を使い回すことが重要です。
 
 ```rust,noplayground
-use ndarray::{arr1, arr2};
+use ndarray::{arr1, arr2, Array1, Array2};
 use ndarray_linalg::{Factorize, Solve}; // LU分解のために必要
+
+fn solve_two_rhs_with_factorization(
+    a: &Array2<f64>,
+    b1: &Array1<f64>,
+    b2: &Array1<f64>,
+) -> (Array1<f64>, Array1<f64>) {
+    let f = a.factorize().expect("Factorization failed");
+    let x1 = f.solve(b1).expect("Failed to solve b1");
+    let x2 = f.solve(b2).expect("Failed to solve b2");
+    (x1, x2)
+}
 
 fn main() {
     let a = arr2(&[[3.0, 1.0],
                    [1.0, 2.0]]);
 
-    // LU分解を実行
-    let f = a.factorize().expect("Factorization failed");
-
     // 1つ目の b に対して解く
     let b1 = arr1(&[9.0, 8.0]);
-    let x1 = f.solve(&b1).expect("Failed to solve b1");
-    println!("x1 = {}", x1);
-
-    // 2つ目の b に対して解く（LU分解の結果を再利用するため高速）
     // 3x + y = 4, x + 2y = 3 -> x = 1, y = 1
     let b2 = arr1(&[4.0, 3.0]);
-    let x2 = f.solve(&b2).expect("Failed to solve b2");
+    let (x1, x2) = solve_two_rhs_with_factorization(&a, &b1, &b2);
+    println!("x1 = {}", x1);
     println!("x2 = {}", x2);
 }
 ```
@@ -95,9 +104,13 @@ $$ A = L L^T quad ("または " L L^*) $$
 コレスキー分解はLU分解に比べて計算量が約半分で済み、数値的にも非常に安定しています。物理の問題（例：バネ系や構造解析の剛性行列、拡散問題の係数行列など）では、行列が対称正定値になることがよくあります。
 
 ```rust,noplayground
-use ndarray::arr2;
+use ndarray::{arr2, Array2};
 use ndarray_linalg::Cholesky;
 use ndarray_linalg::UPLO;
+
+fn cholesky_lower(a: &Array2<f64>) -> Array2<f64> {
+    a.cholesky(UPLO::Lower).expect("Cholesky failed")
+}
 
 fn main() {
     // 対称正定値行列
@@ -105,7 +118,7 @@ fn main() {
                    [1.0, 4.0]]);
 
     // コレスキー分解 (Lower triangular)
-    let l = a.cholesky(UPLO::Lower).expect("Cholesky failed");
+    let l = cholesky_lower(&a);
 
     println!("L =\n{}", l);
     println!("L * L^T =\n{}", l.dot(&l.t()));
@@ -118,11 +131,22 @@ fn main() {
 
 ## 数値的安定性と条件数
 
-連立方程式を解く際、**条件数 (Condition Number)** が重要になります。条件数が非常に大きい行列は「悪条件（Ill-conditioned）」であると言われ、数値計算の誤差が解に大きな影響を与えます。
+連立方程式を解く際、**条件数 (Condition Number)** が重要になります。条件数は、行列に対する入力の小さな変化や丸め誤差が、解にどれだけ増幅されうるかを表す指標です。
+
+正則行列 $A$ と、同じ種類の行列ノルムを用いて、条件数は次のように定義されます。
 
 $$ kappa(A) = norm(A) dot norm(A^(-1)) $$
 
+条件数が非常に大きい行列は「悪条件（ill-conditioned）」であると言われます。この場合、$A$ や $vb(b)$ のわずかな誤差が、解 $vb(x)$ に大きく現れる可能性があります。逆に条件数が小さい行列は、相対的に安定に解きやすい行列です。
+
+LAPACK などの線形代数ライブラリでは、条件数そのものではなく、その逆数 $1 / kappa(A)$（reciprocal condition number, `rcond`）を推定することも多くあります。`rcond` が $0$ に近いほど、行列が特異に近い、または数値的に扱いにくいことを示します。
+
 物理シミュレーションで奇妙な結果が出た場合、行列が特異に近い（条件数が大きい）状態になっていないか確認することが重要です。
+
+## 参考リンク
+
+- [Condition number - Wikipedia](https://en.wikipedia.org/wiki/Condition_number)
+- [LU decomposition - Wikipedia](https://en.wikipedia.org/wiki/LU_decomposition)
 
 ## まとめ
 

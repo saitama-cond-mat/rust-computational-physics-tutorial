@@ -34,43 +34,53 @@ $$ norm(vb(x))_p = ( sum_i abs(x_i)^p )^(1/p) $$
 よく使われるのは $L^2$ ノルム（ユークリッドノルム）と $L^infinity$ ノルム（最大値ノルム）です。
 
 ```rust,noplayground
-use ndarray::arr1;
+use ndarray::{arr1, Array1};
 use ndarray_linalg::Norm;
+
+fn vector_norms(x: &Array1<f64>) -> (f64, f64, f64) {
+    (x.norm_l2(), x.norm_l1(), x.norm_max())
+}
 
 fn main() {
     let x = arr1(&[3.0, 4.0]);
+    let (norm_l2, norm_l1, norm_max) = vector_norms(&x);
 
     // L2ノルム: √(3² + 4²) = 5.0
-    println!("L2 norm: {}", x.norm_l2());
+    println!("L2 norm: {}", norm_l2);
 
     // L1ノルム: |3| + |4| = 7.0
-    println!("L1 norm: {}", x.norm_l1());
+    println!("L1 norm: {}", norm_l1);
 
     // 最大値ノルム: max(|3|, |4|) = 4.0
-    println!("Max norm: {}", x.norm_max());
+    println!("Max norm: {}", norm_max);
 }
 ```
 
 ### 行列ノルム
 
-行列 $A$ の演算子ノルムも同様に計算できます。
+行列 $A$ では、誘導ノルム（1ノルム、無限大ノルム）や Frobenius ノルムなどを使います。Frobenius ノルムは全要素をまとめて測る便利な行列ノルムですが、ベクトルノルムから誘導される演算子ノルムではありません。
 
 ```rust,noplayground
-use ndarray::arr2;
+use ndarray::{arr2, Array2};
 use ndarray_linalg::OperationNorm;
+
+fn matrix_norms(a: &Array2<f64>) -> (f64, f64, f64) {
+    (
+        a.opnorm_one().unwrap(),
+        a.opnorm_inf().unwrap(),
+        a.opnorm_fro().unwrap(),
+    )
+}
 
 fn main() {
     let a = arr2(&[[1.0, 2.0],
                    [3.0, 4.0]]);
 
-    let norm_one = a.opnorm_one().unwrap();
-    let norm_inf = a.opnorm_inf().unwrap();
-    let norm_fro = a.opnorm_fro().unwrap();
+    let (norm_one, norm_inf, norm_fro) = matrix_norms(&a);
 
-    // 行列のL2演算子ノルム
-    println!("Operator L2 1-norm: {}", norm_one);
-    println!("Operator L2 infinity norm: {}", norm_inf);
-    println!("Operator L2 Frobenius norm: {}", norm_fro);
+    println!("Matrix 1-norm: {}", norm_one);
+    println!("Matrix infinity norm: {}", norm_inf);
+    println!("Frobenius norm: {}", norm_fro);
 
     // Frobeniusノルム（全要素の二乗和の平方根）
     // ndarray-linalg では `norm` は L2ノルムを指すことが多いですが、
@@ -90,14 +100,17 @@ fn main() {
 $$ tr(A) = sum_i A_(i i) $$
 
 ```rust,noplayground
-use ndarray::arr2;
+use ndarray::{arr2, Array2};
+
+fn trace(a: &Array2<f64>) -> f64 {
+    a.diag().sum()
+}
 
 fn main() {
     let a = arr2(&[[1.0, 2.0],
                    [3.0, 4.0]]);
 
-    let trace = a.diag().sum();
-    println!("Trace: {}", trace); // 1.0 + 4.0 = 5.0
+    println!("Trace: {}", trace(&a)); // 1.0 + 4.0 = 5.0
 }
 ```
 
@@ -106,16 +119,19 @@ fn main() {
 行列式は `ndarray-linalg` の `det()` メソッドで計算できます。
 
 ```rust,noplayground
-use ndarray::arr2;
+use ndarray::{arr2, Array2};
 use ndarray_linalg::Determinant;
+
+fn determinant(a: &Array2<f64>) -> f64 {
+    a.det().unwrap()
+}
 
 fn main() {
     let a = arr2(&[[1.0, 2.0],
                    [3.0, 4.0]]);
 
     // det(A) = 1*4 - 2*3 = -2
-    let det = a.det().unwrap();
-    println!("Determinant: {}", det);
+    println!("Determinant: {}", determinant(&a));
 }
 ```
 
@@ -128,19 +144,27 @@ fn main() {
 
 $$ A A^(-1) = A^(-1) A = I $$
 
-数値計算の観点からは、連立一次方程式 $A vb(x) = vb(b)$ を解くために**逆行列を明示的に求めることは推奨されません**（計算コストが高く、数値的に不安定になりやすいため）。方程式を解く場合は、次節で扱う `solve()` やLU分解を用いるべきです。
+数値計算の観点からは、連立一次方程式 $A vb(x) = vb(b)$ を解くために**逆行列を明示的に求めて $vb(x) = A^(-1) vb(b)$ と計算することは推奨されません**。主な理由は数値安定性です。特に係数行列 $A$ の条件数
+
+$$ kappa(A) = norm(A) norm(A^(-1)) $$
+
+が大きい（ill-conditioned、悪条件）場合、入力データや丸め誤差の小さなずれが解に大きく増幅されます。方程式を解く場合は、次節で扱う `solve()` やLU分解のように、逆行列を作らずに連立方程式を直接解く手法を用いるべきです。
 
 しかし、物理学の公式など、逆行列そのものが必要な場合もあります（例：グリーン関数の計算）。
 
 ```rust,noplayground
-use ndarray::arr2;
+use ndarray::{arr2, Array2};
 use ndarray_linalg::Inverse;
+
+fn inverse_matrix(a: &Array2<f64>) -> Array2<f64> {
+    a.inv().expect("Singular matrix")
+}
 
 fn main() {
     let a = arr2(&[[1.0, 2.0],
                    [3.0, 4.0]]);
 
-    let a_inv = a.inv().expect("Singular matrix");
+    let a_inv = inverse_matrix(&a);
 
     println!("Inverse matrix:\n{}", a_inv);
 
@@ -153,4 +177,4 @@ fn main() {
 
 - 線形代数の高度な機能には `ndarray-linalg` を使用する。
 - ノルム、行列式、逆行列といった基本的な演算は、対応するトレイト（`Norm`, `Determinant`, `Inverse`）をインポートすることで利用可能になる。
-- 逆行列の計算はコストが高いため、単に方程式を解くだけなら避けるべきである。
+- 単に方程式を解くだけなら、逆行列を作って $A^(-1) vb(b)$ を計算するのではなく、`solve()` や分解済み行列を使う。特に条件数が大きい行列では、丸め誤差や入力誤差が解に大きく増幅されやすい。

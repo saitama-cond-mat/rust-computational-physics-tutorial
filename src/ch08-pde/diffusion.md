@@ -43,7 +43,7 @@ $$ r = D (Delta t)/(Delta x^2) lt.eq 1/2 $$
 
 $$ (u_i^(n+1) - u_i^n) / (Delta t) = D/2 [ (pdv(u, x, 2))_i^n + (pdv(u, x, 2))_i^(n+1) ] $$
 
-これは常に安定ですが、各ステップで連立一次方程式を解く必要があります。これについては[第6章](../ch04-linear-algebra/linear-systems.md)で学んだLU分解などの手法が応用できます。
+線形拡散方程式に対しては、クランク・ニコルソン法は時間刻みに関して無条件安定です。ただし、$Delta t$を大きくしすぎると精度が落ちたり、初期条件や境界条件によっては減衰する数値振動が目立つことがあります。また、各ステップで連立一次方程式を解く必要があります。これについては[連立一次方程式](../ch04-linear-algebra/linear-systems.md)で学んだLU分解などの手法が応用できます。
 
 ## Rustによる実装 (陽解法)
 
@@ -52,6 +52,52 @@ $$ (u_i^(n+1) - u_i^n) / (Delta t) = D/2 [ (pdv(u, x, 2))_i^n + (pdv(u, x, 2))_i
 ```rust,noplayground
 use ndarray::Array1;
 
+fn diffusion_number(d_coeff: f64, dt: f64, dx: f64) -> f64 {
+    d_coeff * dt / (dx * dx)
+}
+
+fn point_source_initial(nx: usize, amplitude: f64) -> Array1<f64> {
+    let mut u = Array1::<f64>::zeros(nx);
+    u[nx / 2] = amplitude;
+    u
+}
+
+fn ftcs_step(u: &Array1<f64>, r: f64) -> Array1<f64> {
+    let nx = u.len();
+    let mut u_next = Array1::<f64>::zeros(nx);
+
+    // 境界を除く内部点を更新
+    for i in 1..nx - 1 {
+        u_next[i] = u[i] + r * (u[i + 1] - 2.0 * u[i] + u[i - 1]);
+    }
+
+    // 境界条件 (固定境界: ディリクレ条件)
+    u_next[0] = 0.0;
+    u_next[nx - 1] = 0.0;
+
+    u_next
+}
+
+fn evolve_diffusion(
+    mut u: Array1<f64>,
+    r: f64,
+    nt: usize,
+    sample_interval: usize,
+) -> (Array1<f64>, Vec<(usize, f64)>) {
+    let center = u.len() / 2;
+    let mut samples = Vec::new();
+
+    for n in 0..nt {
+        u = ftcs_step(&u, r);
+
+        if n % sample_interval == 0 {
+            samples.push((n, u[center]));
+        }
+    }
+
+    (u, samples)
+}
+
 fn main() {
     let nx = 50; // 空間分割数
     let nt = 500; // 時間ステップ数
@@ -59,7 +105,7 @@ fn main() {
     let dt = 0.2;
     let d_coeff = 1.0; // 拡散係数
 
-    let r = d_coeff * dt / (dx * dx);
+    let r = diffusion_number(d_coeff, dt, dx);
     println!("拡散数 r = {:.3}", r);
 
     if r > 0.5 {
@@ -67,28 +113,11 @@ fn main() {
     }
 
     // 初期状態: 中央に熱源がある（デルタ関数的な初期分布）
-    let mut u = Array1::<f64>::zeros(nx);
-    u[nx / 2] = 100.0;
+    let u0 = point_source_initial(nx, 100.0);
+    let (_u_final, samples) = evolve_diffusion(u0, r, nt, 100);
 
-    // 時間発展ループ
-    for n in 0..nt {
-        let mut u_next = Array1::<f64>::zeros(nx);
-
-        // 境界を除く内部点を更新 (スライスを用いた並列化も可能)
-        for i in 1..nx - 1 {
-            u_next[i] = u[i] + r * (u[i + 1] - 2.0 * u[i] + u[i - 1]);
-        }
-
-        // 境界条件 (固定境界: ディリクレ条件)
-        u_next[0] = 0.0;
-        u_next[nx - 1] = 0.0;
-
-        u = u_next;
-
-        // 100ステップごとに中央の値を表示
-        if n % 100 == 0 {
-            println!("Step {}: u[center] = {:.4}", n, u[nx / 2]);
-        }
+    for (step, center_value) in samples {
+        println!("Step {}: u[center] = {:.4}", step, center_value);
     }
 }
 ```
@@ -111,7 +140,12 @@ Step 400: u[center] = 3.1458
 
 - **拡散方程式** は、時間1階・空間2階の偏微分方程式。
 - **FTCS法（陽解法）** は実装が容易だが、安定性条件$r lt.eq 1/2$という厳しい制約がある。
-- **陰解法** を用いると無条件安定になるが、計算コスト（連立一次方程式の求解）が増大する。
+- **クランク・ニコルソン法などの陰的手法** を用いると安定性の制約を大きく緩和できるが、精度のための時間刻み選択と連立一次方程式の求解が必要になる。
+
+## 参考リンク
+
+- [Heat equation - Wikipedia](https://en.wikipedia.org/wiki/Heat_equation)
+- [Crank-Nicolson method - Wikipedia](https://en.wikipedia.org/wiki/Crank%E2%80%93Nicolson_method)
 
 ---
 

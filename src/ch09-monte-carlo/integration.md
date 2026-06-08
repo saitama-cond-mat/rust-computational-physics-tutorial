@@ -4,7 +4,7 @@
 > **本節のポイント**
 >
 > - 期待値と積分の関係を理解し、大数の法則に基づくモンテカルロ積分の原理を学ぶ。
-> - 中心極限定理に基づき、積分の統計誤差が次元に依存せず $O(1/sqrt(M))$ で収束することを導く。
+> - 中心極限定理に基づき、独立サンプルで分散が有限な場合に積分の統計誤差が $O(1/sqrt(M))$ で収束することを導く。
 > - `rayon`を用いた並列化の際、乱数生成器を各スレッドで独立に管理する手法（`map_init`）を習得する。
 
 乱数を用いて定積分の近似値を求める手法を**モンテカルロ積分**と呼びます。
@@ -33,7 +33,7 @@ V[I_M] = V[ V/M sum f(vb(x)_i) ] = V^2 / M^2 sum V[f(vb(x)_i)] = V^2 / M^2 dot M
 $$
 
 標本平均の標準偏差（統計誤差）はこれの平方根をとって$V sqrt(V[f] / M)$となります。
-この結果は、**誤差が次元$d$に依存せず、常にサンプル数の平方根$1/sqrt(M)$に反比例して減少する**ことを示しています。これが、高次元積分においてモンテカルロ法が決定論的手法（台形則など）に対して圧倒的に有利になる理由です。
+この結果は、独立サンプルで分散$V[f]$が有限なら、標本数に対する収束率が$O(1/sqrt(M))$になることを示しています。この収束率そのものは空間次元$d$を直接含みませんが、分散$V[f]$や有効なサンプリング分布は次元と被積分関数に強く依存します。したがって、高次元積分でモンテカルロ法が有利になるのは、格子法のように点数が$N^d$で増えることを避けられる一方で、分散を抑える工夫が必要になるためです。
 
 ## 実装例1：ヒット・オア・ミス法（円周率の推定）
 
@@ -42,10 +42,11 @@ $$
 ```rust,noplayground
 use rand::RngExt;
 
-fn main() {
-    let m = 1_000_000;
+fn estimate_pi_hit_or_miss<R>(rng: &mut R, m: usize) -> f64
+where
+    R: RngExt + ?Sized,
+{
     let mut hits = 0;
-    let mut rng = rand::rngs::ThreadRng::default();
 
     for _ in 0..m {
         // [0, 1) の範囲で一様にサンプリング
@@ -60,7 +61,14 @@ fn main() {
 
     // 正方形の面積 (1.0) に対する円の面積 (pi/4) の比を利用
     // (hits / m) approx (pi / 4)  =>  pi approx 4 * (hits / m)
-    let pi_est = 4.0 * (hits as f64) / (m as f64);
+    4.0 * (hits as f64) / (m as f64)
+}
+
+fn main() {
+    let m = 1_000_000;
+    let mut rng = rand::rngs::ThreadRng::default();
+    let pi_est = estimate_pi_hit_or_miss(&mut rng, m);
+
     println!("Estimated pi = {:.6}", pi_est);
 }
 ```
@@ -77,9 +85,7 @@ fn main() {
 use rand::Rng;
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
-fn main() {
-    let m = 100_000_000;
-
+fn estimate_pi_parallel(m: u64) -> f64 {
     // 並列イテレータによる集計
     let hits: u64 = (0..m)
         .into_par_iter()
@@ -94,7 +100,13 @@ fn main() {
         )
         .sum();
 
-    let pi_est = 4.0 * (hits as f64) / (m as f64);
+    4.0 * (hits as f64) / (m as f64)
+}
+
+fn main() {
+    let m = 100_000_000;
+    let pi_est = estimate_pi_parallel(m);
+
     println!("Estimated pi = {:.8}", pi_est);
 }
 ```
@@ -108,7 +120,13 @@ fn main() {
 
 - **モンテカルロ積分**は、数学的には積分を確率変数の期待値として捉え、大数の法則を利用して近似する手法である。
 - **統計誤差$1/sqrt(M)$** の収束は遅いため、大規模計算では`rayon`などを用いた並列化が実用的である。
-- **次元の呪い**を受けないという特性が、現代物理学の多体問題や統計力学において極めて重要である。
+- 格子法のような$N^d$の点数増加を直接は受けないため、現代物理学の多体問題や統計力学で重要である。ただし、分散や有効サンプル数の評価は不可欠である。
+
+## 参考リンク
+
+- [Monte Carlo integration - Wikipedia](https://en.wikipedia.org/wiki/Monte_Carlo_integration)
+- [Law of large numbers - Wikipedia](https://en.wikipedia.org/wiki/Law_of_large_numbers)
+- [Central limit theorem - Wikipedia](https://en.wikipedia.org/wiki/Central_limit_theorem)
 
 ---
 

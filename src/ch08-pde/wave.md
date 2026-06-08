@@ -50,7 +50,7 @@ $$ arrow.r u_i^1 = u_i^0 + Delta t V_i + 1/2 C^2 (u_(i+1)^0 - 2u_i^0 + u_(i-1)^0
 
 ## 安定性条件(CFL条件)
 
-波動の数値計算においては、[前節](diffusion.md)でも触れたCFL条件が重要です。
+波動の数値計算においては、[差分法の基礎](finite-difference.md)でも触れたCFL条件が重要です。この節で使う1次元の中心差分スキームでは、以下の条件が安定性の目安になります。
 
 $$ C = v (Delta t)/(Delta x) lt.eq 1 $$
 
@@ -74,35 +74,26 @@ $$ C = v (Delta t)/(Delta x) lt.eq 1 $$
 ```rust,noplayground
 use ndarray::Array1;
 
-fn main() {
-    let nx = 100;
-    let nt = 300;
-    let dx = 0.1;
-    let dt = 0.05;
-    let v = 1.0; // 波の速度
+fn cfl_number(wave_speed: f64, dt: f64, dx: f64) -> f64 {
+    wave_speed * dt / dx
+}
 
-    // CFL条件のチェック
-    let c = v * dt / dx;
-    println!("CFL数 = {:.3}", c);
-    if c > 1.0 {
-        eprintln!("Warning: 不安定な条件 (CFL > 1) です！");
-    }
-
-    // 3つの時間ステップを保持
-    let mut u_prev = Array1::<f64>::zeros(nx); // u^(n-1)
-    let mut u_curr = Array1::<f64>::zeros(nx); // u^n
-    let mut u_next = Array1::<f64>::zeros(nx); // u^(n+1)
-
-    // 1. 初期条件の設定 (t=0)
-    // ガウス波束を中心に配置
+fn gaussian_pulse(nx: usize, dx: f64, sigma: f64) -> Array1<f64> {
+    let mut u = Array1::<f64>::zeros(nx);
     let center = (nx / 2) as f64 * dx;
-    let sigma = 1.0_f64;
+
     for i in 0..nx {
         let x = i as f64 * dx;
-        u_curr[i] = (-(x - center).powi(2) / (2.0 * sigma.powi(2))).exp();
+        u[i] = (-(x - center).powi(2) / (2.0 * sigma.powi(2))).exp();
     }
 
-    // 2. 最初のステップ (n=1) の計算
+    u
+}
+
+fn first_wave_step(u_curr: &Array1<f64>, c: f64) -> Array1<f64> {
+    let nx = u_curr.len();
+    let mut u_next = Array1::<f64>::zeros(nx);
+
     // 初期速度 0 と仮定
     let c2 = c * c;
     for i in 1..nx - 1 {
@@ -112,28 +103,75 @@ fn main() {
     u_next[0] = 0.0;
     u_next[nx - 1] = 0.0;
 
-    // バッファの更新
-    u_prev.assign(&u_curr);
-    u_curr.assign(&u_next);
+    u_next
+}
 
-    // 3. 時間発展ループ (n=2, 3, ...)
+fn wave_step(u_prev: &Array1<f64>, u_curr: &Array1<f64>, c: f64) -> Array1<f64> {
+    let nx = u_curr.len();
+    let mut u_next = Array1::<f64>::zeros(nx);
+    let c2 = c * c;
+
+    for i in 1..nx - 1 {
+        u_next[i] = 2.0 * u_curr[i] - u_prev[i]
+            + c2 * (u_curr[i + 1] - 2.0 * u_curr[i] + u_curr[i - 1]);
+    }
+
+    // 境界条件
+    u_next[0] = 0.0;
+    u_next[nx - 1] = 0.0;
+
+    u_next
+}
+
+fn evolve_wave(
+    u0: Array1<f64>,
+    c: f64,
+    nt: usize,
+    sample_interval: usize,
+) -> (Array1<f64>, Vec<(usize, f64)>) {
+    let center = u0.len() / 2;
+    let mut samples = Vec::new();
+
+    let mut u_prev = u0;
+    let mut u_curr = first_wave_step(&u_prev, c);
+
     for n in 2..nt {
-        for i in 1..nx - 1 {
-            u_next[i] = 2.0 * u_curr[i] - u_prev[i]
-                + c2 * (u_curr[i + 1] - 2.0 * u_curr[i] + u_curr[i - 1]);
+        let u_next = wave_step(&u_prev, &u_curr, c);
+
+        if n % sample_interval == 0 {
+            samples.push((n, u_next[center]));
         }
 
-        // 境界条件
-        u_next[0] = 0.0;
-        u_next[nx - 1] = 0.0;
+        u_prev = u_curr;
+        u_curr = u_next;
+    }
 
-        if n % 50 == 0 {
-            println!("Step {}: u[center] = {:.4}", n, u_next[nx / 2]);
-        }
+    (u_curr, samples)
+}
 
-        // バッファの更新 (値をコピーせずに代入したい場合は工夫が必要だが、ここでは単純に)
-        u_prev.assign(&u_curr);
-        u_curr.assign(&u_next);
+fn main() {
+    let nx = 100;
+    let nt = 300;
+    let dx = 0.1;
+    let dt = 0.05;
+    let v = 1.0; // 波の速度
+
+    // CFL条件のチェック
+    let c = cfl_number(v, dt, dx);
+    println!("CFL数 = {:.3}", c);
+    if c > 1.0 {
+        eprintln!("Warning: 不安定な条件 (CFL > 1) です！");
+    }
+
+    // 1. 初期条件の設定 (t=0)
+    // ガウス波束を中心に配置
+    let u0 = gaussian_pulse(nx, dx, 1.0);
+
+    // 2. 最初のステップと時間発展
+    let (_u_final, samples) = evolve_wave(u0, c, nt, 50);
+
+    for (step, center_value) in samples {
+        println!("Step {}: u[center] = {:.4}", step, center_value);
     }
 }
 ```
@@ -158,6 +196,11 @@ Step 250: u[center] = -0.0337
 - 数値解法には、過去・現在・未来の**3つの時刻の格子点データ**が必要。
 - **初期速度条件**を適切に処理するために、最初の1ステップ目は特別な更新式を用いる。
 - 安定性のためには **CFL条件($C lt.eq 1$)** を厳守する必要がある。
+
+## 参考リンク
+
+- [Wave equation - Wikipedia](https://en.wikipedia.org/wiki/Wave_equation)
+- [Courant-Friedrichs-Lewy condition - Wikipedia](https://en.wikipedia.org/wiki/Courant%E2%80%93Friedrichs%E2%80%93Lewy_condition)
 
 ---
 

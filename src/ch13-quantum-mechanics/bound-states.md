@@ -14,12 +14,11 @@
 
 離散化する場合、境界条件として両端で波動関数がゼロ（$psi_0 = psi_N = 0$）となるようにします。
 
-## 固有値計算の実装（逆べき乗法）
+## 固有値計算の実装（虚時間発展法）
 
-行列の全ての固有値を求めるには高度なアルゴリズム（QR法など）が必要ですが、**最小の固有値（基底状態）** だけなら、**逆べき乗法 (Inverse Power Method)** で比較的簡単に求められます。
+行列の全ての固有値を求めるには高度なアルゴリズム（QR法など）が必要ですが、**最小の固有値（基底状態）** だけなら、ハミルトニアンを波動関数に作用させる反復法で求められます。
 
-逆べき乗法は、適当な初期ベクトル $vb(x)$ に対して、行列 $vb(H)$ の逆行列を繰り返し掛けることで、絶対値最小の固有値に属する固有ベクトルへ収束させる手法です。
-（ここではさらに簡略化して、$vb(H) - sigma vb(I)$ のようなシフトを用いず、単純に絶対値最小の固有値を探索します）
+この節のコード例では、逆行列を明示的に解く逆べき乗法ではなく、**虚時間発展法 (Imaginary Time Evolution)** を使います。時間を $t -> -i tau$ と置き換えると、高いエネルギー成分が指数関数的に減衰するため、反復と正規化を繰り返すことで基底状態へ近づきます。
 
 ### Rustコード例
 
@@ -103,10 +102,16 @@ fn main() {
 
 ### 虚時間発展法
 
-上記のコード例では、逆べき乗法の代わりに**虚時間発展法 (Imaginary Time Evolution)** を使用しました。
+上記のコード例では、**虚時間発展法 (Imaginary Time Evolution)** を使用しました。
 シュレーディンガー方程式の時間を $t -> -i tau$ と置換すると、拡散方程式になります。
 
 $$ pdv(psi, tau) = - hat(H) psi $$
 
 解は $psi(tau) = sum c_n e^(- E_n tau) phi_n$ となり、$tau -> infinity$ で最小のエネルギー $E_0$ を持つ項（基底状態）以外は指数関数的に減衰して消滅します。
 これは基底状態を求めるための非常に汎用的で強力な手法です。
+
+## 参考リンク
+
+- [Time-independent Schrodinger equation - Wikipedia](https://en.wikipedia.org/wiki/Schr%C3%B6dinger_equation#Time-independent_equation)
+- [Imaginary time - Wikipedia](https://en.wikipedia.org/wiki/Imaginary_time)
+- [Power iteration - Wikipedia](https://en.wikipedia.org/wiki/Power_iteration)

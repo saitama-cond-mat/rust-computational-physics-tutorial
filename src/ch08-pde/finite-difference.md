@@ -17,7 +17,7 @@
 
 ## 偏微分の差分近似
 
-[第5章](../ch03-calculus/)で学んだ数値微分の手法を、偏微分にも適用します。これらの公式は、テイラー展開から導くことができます。
+[数値微分と数値積分](../ch03-calculus/)で学んだ数値微分の手法を、偏微分にも適用します。これらの公式は、テイラー展開から導くことができます。
 
 点$x$における関数$u(x)$を$Delta x$だけずれた点でテイラー展開すると：
 $$ u(x + Delta x) = u(x) + pdv(u, x) Delta x + 1/2 pdv(u, x, 2) (Delta x)^2 + 1/6 pdv(u, x, 3) (Delta x)^3 + O(Delta x^4) $$
@@ -61,12 +61,12 @@ PDEの数値計算において最も重要な概念の一つが**安定性**で�
 
 ### CFL条件 (Courant-Friedrichs-Lewy Condition)
 
-波動の伝播などを解く際、「数値的な情報の伝達速度が、物理的な波の速度を上回っていなければならない」という条件です。
-波の速度を$c$とすると、以下の条件が必要になります。
+波動の伝播などを陽的な差分スキームで解く際、「数値的な情報の伝達速度が、物理的な波の速度を上回っていなければならない」という条件です。
+1次元波動方程式の標準的な中心差分スキームでは、波の速度を$c$とすると、以下の条件が必要になります。
 
 $$ c (Delta t)/(Delta x) lt.eq 1 $$
 
-この条件を満たさない場合、計算は不安定になります。
+この条件を満たさない場合、計算は不安定になります。具体的な上限値は方程式、空間次元、離散化スキームによって変わります。
 
 ## 境界条件
 
@@ -98,6 +98,14 @@ $$ (u_1 - u_(-1)) / (2 Delta x) = 0 arrow.r u_(-1) = u_1 $$
 use ndarray::{Array1, s};
 use std::f64::consts::PI;
 
+fn centered_first_derivative(u: &Array1<f64>, dx: f64) -> Array1<f64> {
+    let nx = u.len();
+
+    // du/dx[i] = (u[i+1] - u[i-1]) / (2*dx)
+    // s![2..] は 2番目以降、s![..nx-2] は 最後から2つ目までを指す
+    (&u.slice(s![2..]) - &u.slice(s![..nx - 2])) / (2.0 * dx)
+}
+
 fn main() {
     let nx = 100;
     let x_min = 0.0;
@@ -111,9 +119,7 @@ fn main() {
     let u = x.mapv(|v| v.sin());
 
     // 3. 中心差分による数値微分を一括計算
-    // du/dx[i] = (u[i+1] - u[i-1]) / (2*dx)
-    // s![2..] は 2番目以降、s![..nx-2] は 最後から2つ目までを指す
-    let du_dx_num = (&u.slice(s![2..]) - &u.slice(s![..nx - 2])) / (2.0 * dx);
+    let du_dx_num = centered_first_derivative(&u, dx);
 
     // 4. 解析解 (cos(x)) との比較
     let x_inner = x.slice(s![1..nx - 1]);
@@ -150,6 +156,11 @@ Error:     6.68e-4
 - 空間には中心差分、時間には前進差分（または後退差分）がよく用いられる。
 - **CFL条件**などの安定性条件を満たすように刻み幅$Delta t, Delta x$を選ぶ必要がある。
 - 境界条件にはディリクレ、ノイマン、周期境界などがある。
+
+## 参考リンク
+
+- [Finite difference method - Wikipedia](https://en.wikipedia.org/wiki/Finite_difference_method)
+- [Courant-Friedrichs-Lewy condition - Wikipedia](https://en.wikipedia.org/wiki/Courant%E2%80%93Friedrichs%E2%80%93Lewy_condition)
 
 ---
 

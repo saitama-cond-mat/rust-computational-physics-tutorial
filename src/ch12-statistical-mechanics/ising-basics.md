@@ -31,5 +31,11 @@ $$ Z = sum_({s}) e^(- beta H({s})) $$
 この $Z$ を計算できれば、内部エネルギーや比熱、磁化といったあらゆる熱力学量が求まります。
 しかし、スピン数が $N$ のとき、可能な配置の総数は $2^N$ となり、少し大きな系（例：$10 times 10$ でも $2^100$ 通り）では計算不能な大きさになります。
 
-そこで登場するのが、[第11章](../ch09-monte-carlo/)で学んだ**マルコフ連鎖モンテカルロ法 (MCMC)** です。
+そこで登場するのが、[モンテカルロ法](../ch09-monte-carlo/)で学んだ**マルコフ連鎖モンテカルロ法 (MCMC)** です。
 すべての配置を足し合わせるのではなく、ボルツマン分布に従って「確からしい」配置をサンプリングすることで、物理量を近似的に計算します。
+
+## 参考リンク
+
+- [Ising model - Wikipedia](https://en.wikipedia.org/wiki/Ising_model)
+- [Boltzmann distribution - Wikipedia](https://en.wikipedia.org/wiki/Boltzmann_distribution)
+- [Partition function (statistical mechanics) - Wikipedia](https://en.wikipedia.org/wiki/Partition_function_(statistical_mechanics))

@@ -32,25 +32,16 @@ $$ f(x) = 0 $$
 例として、$x^2 - 2 = 0$ を解いて $sqrt(2)$ を求めてみましょう。
 
 ```rust
-fn main() {
-    // 解きたい関数: f(x) = x^2 - 2
-    let f = |x: f64| x * x - 2.0;
-
-    // 初期区間 [a, b]
-    // f(1.0) = -1.0, f(2.0) = 2.0 なので、この間に解がある
-    let mut a = 1.0;
-    let mut b = 2.0;
-
-    let tolerance = 1e-8; // 許容誤差
-    let max_iter = 100;   // 最大反復回数（無限ループ防止）
-
+fn bisection<F>(f: F, mut a: f64, mut b: f64, tolerance: f64, max_iter: usize) -> Option<(f64, usize)>
+where
+    F: Fn(f64) -> f64,
+{
     for i in 0..max_iter {
         let c = (a + b) / 2.0;
         let fc = f(c);
 
         if fc.abs() < tolerance || (b - a).abs() < tolerance {
-            println!("解が見つかりました: x = {:.10} (反復回数: {})", c, i + 1);
-            return;
+            return Some((c, i + 1));
         }
 
         // f(a) * f(c) < 0 なら左側に解がある
@@ -61,7 +52,21 @@ fn main() {
         }
     }
 
-    println!("収束しませんでした。");
+    None
+}
+
+fn main() {
+    // 解きたい関数: f(x) = x^2 - 2
+    let f = |x: f64| x * x - 2.0;
+
+    let tolerance = 1e-8; // 許容誤差
+    let max_iter = 100;   // 最大反復回数（無限ループ防止）
+
+    // 初期区間 [1.0, 2.0] には解がある
+    match bisection(f, 1.0, 2.0, tolerance, max_iter) {
+        Some((root, iter)) => println!("解が見つかりました: x = {:.10} (反復回数: {})", root, iter),
+        None => println!("収束しませんでした。"),
+    }
 }
 ```
 
@@ -92,30 +97,40 @@ $$ x_(n+1) = x_n - f(x_n) / (f'(x_n)) $$
 同様に $x^2 - 2 = 0$ を解きます。ここでは導関数 $f'(x) = 2x$ を利用します。
 
 ```rust
-fn main() {
-    let f = |x: f64| x * x - 2.0;
-    let df = |x: f64| 2.0 * x; // f(x) の導関数
-
-    let mut x = 1.0; // 初期値
-    let tolerance = 1e-8;
-    let max_iter = 100;
-
+fn newton<F, G>(f: F, df: G, mut x: f64, tolerance: f64, max_iter: usize) -> Option<(f64, usize)>
+where
+    F: Fn(f64) -> f64,
+    G: Fn(f64) -> f64,
+{
     for i in 0..max_iter {
         let fx = f(x);
 
         if fx.abs() < tolerance {
-             println!("解が見つかりました: x = {:.10} (反復回数: {})", x, i);
-             return;
+            return Some((x, i));
         }
 
         let dfx = df(x);
         // 接線の傾きが0に近いと発散の危険がある
         if dfx.abs() < 1e-10 {
-            println!("微分値が0に近づきました。");
-            break;
+            return None;
         }
 
         x -= fx / dfx;
+    }
+
+    None
+}
+
+fn main() {
+    let f = |x: f64| x * x - 2.0;
+    let df = |x: f64| 2.0 * x; // f(x) の導関数
+
+    let tolerance = 1e-8;
+    let max_iter = 100;
+
+    match newton(f, df, 1.0, tolerance, max_iter) {
+        Some((root, iter)) => println!("解が見つかりました: x = {:.10} (反復回数: {})", root, iter),
+        None => println!("収束しませんでした。"),
     }
 }
 ```
@@ -138,7 +153,7 @@ fn main() {
 ### 実用的なライブラリ (Brent法)
 
 実務で求根を行う場合、Brent法を自前で実装するのは複雑でバグの原因になりやすいため、通常はライブラリを使用します。
-Rustでは、例えば [roots](https://crates.io/crates/roots) クレートなどが利用できます。
+Rustでは、例えば [roots](https://docs.rs/roots/latest/roots/) クレートなどが利用できます。
 
 ```toml
 [dependencies]
@@ -151,15 +166,17 @@ roots = "0.0.8"
 use roots::find_root_brent;
 use roots::SimpleConvergency;
 
-fn main() {
+fn solve_sqrt2_with_brent() -> Result<f64, roots::SearchError> {
     let f = |x: f64| x * x - 2.0;
     let mut convergency = SimpleConvergency { eps: 1e-15f64, max_iter: 30 };
 
     // 区間 [1.0, 2.0] で解を探す
     // find_root_brent(初期区間始点, 初期区間終点, 関数, 収束条件)
-    let root = find_root_brent(1.0, 2.0, &f, &mut convergency);
+    find_root_brent(1.0, 2.0, &f, &mut convergency)
+}
 
-    match root {
+fn main() {
+    match solve_sqrt2_with_brent() {
         Ok(val) => println!("解: {}", val),
         Err(e) => println!("エラー: {:?}", e),
     }

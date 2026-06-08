@@ -109,3 +109,9 @@ impl FluidSolver {
 
 このシミュレーションを実行すると、容器の中心に大きな渦（一次渦）が発生し、四隅に小さな渦（二次渦）ができる様子が観察できます。
 流体のシミュレーションは計算量が非常に多いため、Rustの高速性が大いに活きる分野です。
+
+## 参考リンク
+
+- [Computational fluid dynamics - Wikipedia](https://en.wikipedia.org/wiki/Computational_fluid_dynamics)
+- [Navier-Stokes equations - Wikipedia](https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_equations)
+- [Projection method (fluid dynamics) - Wikipedia](https://en.wikipedia.org/wiki/Projection_method_(fluid_dynamics))

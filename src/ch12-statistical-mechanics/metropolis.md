@@ -1,7 +1,11 @@
 # メトロポリス法
 
 イジング模型のシミュレーションにおいて最も標準的なアルゴリズムが、**メトロポリス法 (Metropolis Method)** です。
-これは、あるスピン配置から別の配置への遷移確率を適切に定めることで、最終的に系がボルツマン分布に従うようにする手法（詳細釣り合い条件の利用）です。
+これは、あるスピン配置から別の配置への遷移確率を適切に定めることで、
+ボルツマン分布を定常分布にもつマルコフ連鎖を構成する手法です。
+詳細釣り合いは、目標分布が定常分布になることを保証する十分条件です。
+ただし、任意の初期状態からその分布へ収束するためには、連鎖が状態空間を十分に探索できること、
+すなわちエルゴード性も必要です。
 
 ## アルゴリズムの手順
 
@@ -111,4 +115,12 @@ impl IsingModel {
 ```
 
 このコードでは、`step` 関数を呼び出すたびに、平均して各スピンが1回更新される試行（1 Monte Carlo Step, 1 MCS）が行われます。
-平衡状態に達するまで（バーンイン期間）空回しした後、物理量を測定する必要があります。
+平衡状態に達するまでの初期過程は、MCMC一般では burn-in と呼ばれることもありますが、
+統計物理の文脈では thermalization（熱化）と呼ぶのが一般的です。
+物理量は、十分に熱化した後に測定する必要があります。
+
+## 参考リンク
+
+- [Metropolis-Hastings algorithm - Wikipedia](https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm)
+- [Detailed balance - Wikipedia](https://en.wikipedia.org/wiki/Detailed_balance)
+- [Markov chain Monte Carlo - Wikipedia](https://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo)

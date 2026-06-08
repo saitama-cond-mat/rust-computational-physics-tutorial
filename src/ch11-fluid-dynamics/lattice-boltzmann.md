@@ -119,3 +119,9 @@ impl LBMSolver {
 本章では、流体力学シミュレーションの2つの主要なアプローチを紹介しました。
 差分法による直接解法（MAC法など）は物理的な直感と結びつきやすく、標準的な手法として確立されています。
 一方、格子ボルツマン法 (LBM) は、その単純さと並列性から、特に複雑な形状や大規模計算において強力な選択肢となります。
+
+## 参考リンク
+
+- [Lattice Boltzmann methods - Wikipedia](https://en.wikipedia.org/wiki/Lattice_Boltzmann_methods)
+- [Boltzmann equation - Wikipedia](https://en.wikipedia.org/wiki/Boltzmann_equation)
+- [Bhatnagar-Gross-Krook operator - Wikipedia](https://en.wikipedia.org/wiki/Bhatnagar%E2%80%93Gross%E2%80%93Krook_operator)

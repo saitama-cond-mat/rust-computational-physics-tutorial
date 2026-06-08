@@ -39,7 +39,7 @@ FFTを利用するため、計算量は $O(N log N)$ となり非常に高速で
 
 ## Rustによる実装方針
 
-スプリット演算子法を実装するには、[第8章](../ch06-fourier/)で紹介した `rustfft` クレートを使用します。
+スプリット演算子法を実装するには、[フーリエ解析](../ch06-fourier/)で紹介した `rustfft` クレートを使用します。
 
 ```rust
 // 擬似コード
@@ -63,3 +63,9 @@ fn step(psi: &mut Vec<Complex64>) {
 
 この手法は、ガウス波束の運動やトンネル効果のシミュレーションなどに非常に適しています。
 次節では、これを用いてトンネル効果を見てみましょう。
+
+## 参考リンク
+
+- [Time-dependent Schrodinger equation - Wikipedia](https://en.wikipedia.org/wiki/Schr%C3%B6dinger_equation#Time-dependent_equation)
+- [Crank-Nicolson method - Wikipedia](https://en.wikipedia.org/wiki/Crank%E2%80%93Nicolson_method)
+- [Strang splitting - Wikipedia](https://en.wikipedia.org/wiki/Strang_splitting)

@@ -130,10 +130,17 @@ fn main() {
 ## パフォーマンスと並列化
 
 粒子数$N$が増えると、力計算の二重ループがボトルネックとなります（計算量$O(N^2)$）。
-これを解決するためには、[第16章](../ch14-parallel/rayon.md)で学ぶ`Rayon`を用いた並列計算や、計算量を$O(N)$に抑える**近接リスト法**などの工夫が必要になります。
+これを解決するためには、[Rayonによるデータ並列化](../ch14-parallel/rayon.md)で学ぶ`Rayon`を用いた並列計算や、計算量を$O(N)$に抑える**近接リスト法**などの工夫が必要になります。
 
 ## まとめ
 
 本章では、単純な落体から多数の粒子系まで、古典力学のシミュレーション手法を学びました。
 特に**シンプレクティック積分**の重要性と、`ndarray`を用いたベクトル演算の実装方法は、物理シミュレーション全般に応用できる極めて重要なテクニックです。
+
+## 参考リンク
+
+- [Molecular dynamics - Wikipedia](https://en.wikipedia.org/wiki/Molecular_dynamics)
+- [Lennard-Jones potential - Wikipedia](https://en.wikipedia.org/wiki/Lennard-Jones_potential)
+- [Periodic boundary conditions - Wikipedia](https://en.wikipedia.org/wiki/Periodic_boundary_conditions)
+
 [次章](../ch11-fluid-dynamics/)では、これらをさらに発展させ、連続体の力学である「流体力学」について学びます。

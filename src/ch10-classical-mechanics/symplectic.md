@@ -1,6 +1,6 @@
 # シンプレクティック積分
 
-[第9章](../ch07-ode/)で学んだルンゲ＝クッタ法（RK4）は非常に高精度ですが、天体の軌道計算や分子動力学シミュレーションのように「エネルギー保存則が成り立つ系（ハミルトン系）」を長時間計算する場合、**エネルギーが徐々に保存されなくなる**という問題があります。
+[常微分方程式](../ch07-ode/)で学んだルンゲ＝クッタ法（RK4）は非常に高精度ですが、天体の軌道計算や分子動力学シミュレーションのように「エネルギー保存則が成り立つ系（ハミルトン系）」を長時間計算する場合、**エネルギーが徐々に保存されなくなる**という問題があります。
 
 本節では、ハミルトン系の幾何学的構造（シンプレクティック構造）を保存するように設計された**シンプレクティック積分法**について学びます。
 
@@ -148,3 +148,10 @@ $$ tilde(H) = H + Delta t H_1 + Delta t^2 H_2 + dots $$
 - 真のエネルギー $H$ は、この保存量 $tilde(H)$ の周りを $O(Delta t^k)$ の幅で振動し続けるため、長時間経過しても誤差が累積（ドリフト）することはありません。
 
 これが、シンプレクティック積分が「エネルギーを保存する」と言われる理由の幾何学的な正体です。
+
+## 参考リンク
+
+- [Symplectic integrator - Wikipedia](https://en.wikipedia.org/wiki/Symplectic_integrator)
+- [Verlet integration - Wikipedia](https://en.wikipedia.org/wiki/Verlet_integration)
+- [Hamiltonian mechanics - Wikipedia](https://en.wikipedia.org/wiki/Hamiltonian_mechanics)
+- [Liouville's theorem (Hamiltonian) - Wikipedia](https://en.wikipedia.org/wiki/Liouville%27s_theorem_(Hamiltonian))

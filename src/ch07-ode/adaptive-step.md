@@ -48,7 +48,7 @@ $$ h_("next") = h_("old") times S times ( epsilon / Delta )^(1/5) $$
 
 ## Rustにおける実装： `ode_solvers`クレート
 
-適応型ステップ制御を自前で実装する場合、多くの係数（ブッチャー配列）を正確に記述する必要があり、バグの温床になりがちです。実務や高度な研究では、信頼性の高いライブラリを利用するのが賢明です。Rustでは[`ode_solvers`](https://crates.io/crates/ode_solvers)が広く使われています。
+適応型ステップ制御を自前で実装する場合、多くの係数（ブッチャー配列）を正確に記述する必要があり、バグの温床になりがちです。実務や高度な研究では、信頼性の高いライブラリを利用するのが賢明です。Rustでは[`ode_solvers`](https://docs.rs/ode_solvers/)が広く使われています。
 
 ### ライブラリの利用例
 
@@ -72,9 +72,13 @@ impl System<f64, State> for Oscillator {
     }
 }
 
+fn oscillator_initial_state() -> State {
+    State::new(1.0, 0.0)
+}
+
 fn main() {
     let system = Oscillator;
-    let y0 = State::new(1.0, 0.0);
+    let y0 = oscillator_initial_state();
     let (t_start, t_end) = (0.0, 10.0);
 
     // Dormand-Prince 5(4) 法を使用
@@ -115,6 +119,13 @@ fn main() {
 - **適応型刻み幅制御**は、誤差を推定しながらステップ幅を動的に変更する。
 - **埋め込み型手法**を用いることで、少ない追加コストで誤差推定が可能。
 - 変化の激しい系や、長時間のシミュレーションにおいて、精度と速度を両立させるための必須技術である。
+
+## 参考リンク
+
+- [Adaptive step size - Wikipedia](https://en.wikipedia.org/wiki/Adaptive_step_size)
+- [Runge-Kutta-Fehlberg method - Wikipedia](https://en.wikipedia.org/wiki/Runge%E2%80%93Kutta%E2%80%93Fehlberg_method)
+- [Dormand-Prince method - Wikipedia](https://en.wikipedia.org/wiki/Dormand%E2%80%93Prince_method)
+- [`ode_solvers` documentation](https://docs.rs/ode_solvers/)
 
 ---
 

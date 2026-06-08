@@ -11,14 +11,14 @@
 
 ## Rustにおける乱数: `rand`クレート
 
-Rustの数値計算において、乱数は[`rand`](https://crates.io/crates/rand)クレートとそのエコシステムを通じて提供されます。
+Rustの数値計算において、乱数は[`rand`](https://docs.rs/rand/latest/rand/)クレートとそのエコシステムを通じて提供されます。
 
 ### 依存関係
 
 ```toml
 [dependencies]
 rand = "0.10"
-rand_chacha = "0.10" # 高高品質な疑似乱数生成器
+rand_chacha = "0.10" # 高品質な疑似乱数生成器
 rand_distr = "0.6" # 特定の統計分布
 ```
 
@@ -32,9 +32,7 @@ rand_distr = "0.6" # 特定の統計分布
 use rand::{RngExt, SeedableRng};
 use rand_chacha::ChaCha8Rng;
 
-fn main() {
-    // 32バイトのシード（種）を固定することで、常に同じ乱数列を得る
-    let seed = [0u8; 32];
+fn fixed_random_values(seed: [u8; 32]) -> (f64, i32) {
     // シードから生成器を初期化
     let mut rng = ChaCha8Rng::from_seed(seed);
 
@@ -42,6 +40,14 @@ fn main() {
     let x: f64 = rng.random();
     // 1 から 100 までの整数の範囲から一様乱数を生成
     let n: i32 = rng.random_range(1..=100);
+
+    (x, n)
+}
+
+fn main() {
+    // 32バイトのシード（種）を固定することで、常に同じ乱数列を得る
+    let seed = [0u8; 32];
+    let (x, n) = fixed_random_values(seed);
 
     println!("Fixed x: {}, n: {}", x, n);
 }
