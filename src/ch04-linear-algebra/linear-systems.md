@@ -8,19 +8,15 @@ $$ A vb(x) = vb(b) $$
 
 ## 直接法による解法
 
-密行列（Dense Matrix）の場合、ガウスの消去法（より具体的にはLU分解）を用いるのが一般的です。`ndarray-linalg` は、LAPACKのルーチン（`dgesv`など）を呼び出すことで、これを高速に実行します。
+密行列（Dense Matrix）の場合、ガウスの消去法（より具体的にはLU分解）を用いるのが一般的です。`ndarray-linalg` の `solve()` は、一般行列に対して LU 分解を行い、その分解結果を使って連立方程式を解きます。LAPACK のルーチン名で言えば、分解は `*getrf`、分解済み行列による求解は `*getrs` に対応します。
 
 ### `solve` メソッド
 
 最も簡単な方法は、`Solve` トレイトの `solve` メソッドを使うことです。
 
 ```rust,noplayground
-use ndarray::{arr1, arr2, Array1, Array2};
+use ndarray::{arr1, arr2};
 use ndarray_linalg::Solve;
-
-fn solve_system(a: &Array2<f64>, b: &Array1<f64>) -> Array1<f64> {
-    a.solve(b).expect("Failed to solve")
-}
 
 fn main() {
     // 係数行列 A
@@ -31,7 +27,7 @@ fn main() {
     let b = arr1(&[9.0, 8.0]);
 
     // Ax = b を解く
-    let x = solve_system(&a, &b);
+    let x = a.solve(&b).expect("Failed to solve");
 
     println!("Solution x = {}", x);
     // 期待される解:
@@ -45,7 +41,7 @@ fn main() {
 
 同じ行列 $A$ に対して、異なる $vb(b)$ で何度も方程式を解く必要がある場合、
 毎回 `solve` を呼ぶのは非効率です。
-`solve` は内部で $O(N^3)$ のコストがかかるLU分解を行っているからです。
+`solve` は内部で $O(N^3)$ のコストがかかるLU分解（`*getrf` 相当）を行い、その後に前進・後退代入（`*getrs` 相当）で解いているからです。
 
 一度LU分解を行って分解結果を保存しておけば、
 次回以降は前進・後退代入だけで解を得ることができます。
@@ -104,13 +100,9 @@ $$ A = L L^T quad ("または " L L^*) $$
 コレスキー分解はLU分解に比べて計算量が約半分で済み、数値的にも非常に安定しています。物理の問題（例：バネ系や構造解析の剛性行列、拡散問題の係数行列など）では、行列が対称正定値になることがよくあります。
 
 ```rust,noplayground
-use ndarray::{arr2, Array2};
+use ndarray::arr2;
 use ndarray_linalg::Cholesky;
 use ndarray_linalg::UPLO;
-
-fn cholesky_lower(a: &Array2<f64>) -> Array2<f64> {
-    a.cholesky(UPLO::Lower).expect("Cholesky failed")
-}
 
 fn main() {
     // 対称正定値行列
@@ -118,7 +110,7 @@ fn main() {
                    [1.0, 4.0]]);
 
     // コレスキー分解 (Lower triangular)
-    let l = cholesky_lower(&a);
+    let l = a.cholesky(UPLO::Lower).expect("Cholesky failed");
 
     println!("L =\n{}", l);
     println!("L * L^T =\n{}", l.dot(&l.t()));
@@ -143,6 +135,14 @@ LAPACK などの線形代数ライブラリでは、条件数そのものでは�
 
 物理シミュレーションで奇妙な結果が出た場合、行列が特異に近い（条件数が大きい）状態になっていないか確認することが重要です。
 
+## 反復法について
+
+ここまでに扱った `solve()`、LU分解、コレスキー分解は、行列を明示的に持って分解する**直接法**です。一方、大規模な問題では、CG法やGMRES法などの**反復法**が有効になることがあります。
+
+反復法は、行列 $A$ を完全な密行列として保持できない場合でも、積 $A vb(x)$ を高速に計算できれば使えます。典型例は、$A$ が疎行列で行列ベクトル積を非ゼロ要素だけから計算できる場合や、$A$ が微分演算子・畳み込み・FFTを含む作用素として実装されている場合です。
+
+ただし、反復法の収束は条件数、固有値・特異値の分布、前処理（preconditioning）の有無に強く依存します。単に大規模だから反復法が必ず速いわけではなく、「$A vb(x)$ が安く、十分な収束が得られるか」を確認する必要があります。
+
 ## 参考リンク
 
 - [Condition number - Wikipedia](https://en.wikipedia.org/wiki/Condition_number)
@@ -154,3 +154,4 @@ LAPACK などの線形代数ライブラリでは、条件数そのものでは�
 - 同じ係数行列で何度も解く場合は、`factorize` でLU分解の結果を保存する。
   分解には $O(N^3)$ かかるが、分解済みなら各右辺は $O(N^2)$ で解ける。
 - 行列が対称正定値であることが分かっている場合は、コレスキー分解 (`Cholesky`) を用いると効率的である。
+- 大規模問題では、$A vb(x)$ を高速に計算できるなら反復法も候補になる。

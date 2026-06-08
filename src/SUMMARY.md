@@ -90,6 +90,7 @@
   - [イジング模型の基礎](./ch12-statistical-mechanics/ising-basics.md)
   - [メトロポリス法](./ch12-statistical-mechanics/metropolis.md)
   - [相転移とクリティカル現象](./ch12-statistical-mechanics/phase-transition.md)
+  - [2D Ising実践演習](./ch12-statistical-mechanics/ising-exercise.md)
   - [その他の格子模型](./ch12-statistical-mechanics/other-models.md)
 
 - [量子力学](./ch13-quantum-mechanics/README.md)

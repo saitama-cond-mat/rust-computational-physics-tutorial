@@ -41,7 +41,7 @@ $$ m dv(vb(x), t, 2) = vb(F)(vb(x), vb(v), t) $$
 | 質点系の運動 | `classical-mechanics/particle-motion` | `force`, `state_derivative`, `rk4_step` | 空気抵抗なしの放物運動を解析解と比較する | 軌道をCSVに出力する |
 | シンプレクティック積分 | `classical-mechanics/symplectic` | `euler_cromer_step`, `velocity_verlet_step`, `energy` | 調和振動子でエネルギーの変化を確認する | Euler法と長時間安定性を比較する |
 | Kepler問題 | `classical-mechanics/kepler` | `acceleration`, `energy`, `angular_momentum`, `step_verlet` | 円軌道のエネルギーと角運動量を確認する | 軌道と保存量をCSVに出力する |
-| 分子動力学 | `classical-mechanics/molecular-dynamics` | `pair_force`, `apply_periodic`, `kinetic_energy` | 2粒子系で力の向きと作用反作用を確認する | 温度、運動エネルギー、ポテンシャルエネルギーを保存する |
+| 分子動力学 | `classical-mechanics/molecular-dynamics` | `minimum_image`, `pair_force`, `compute_forces`, `kinetic_energy` | 周期境界、LJ力のゼロ点、作用反作用を確認する | SoA化し、`cargo bench`で力計算を比較する |
 
 ## 検証と実装の観点
 

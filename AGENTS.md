@@ -87,6 +87,10 @@ Editing Modeを使います。
 - main textに詳細なinstallation手順、網羅的なsyntax list、長い実装例を入れすぎないでください。
 - 詳細情報が必要な場合は、公式Rust documentation、公式crate documentationへのlinkを置くか、
   AI agentに調査させる演習にします。
+- 演習問題では、関数名、module名、テストケースを解答仕様のように細かく指定しすぎないでください。
+  必要な物理・数値的観点、検証すべき性質、失敗しやすい箇所を示し、
+  具体的な関数分割やテスト選定は、学習者とAI agentがPLAN段階でbrainstormする余地を残します。
+  ただし、本文で導入すべき核心的な数式、保存すべき物理量、既知の解析解は明示して構いません。
 - 小さい例と演習checkの標準言語はRustです。
 - Rust例では `use ...::prelude::*` や `use module::*` のglob importを禁止します。
   必要な型、関数、traitを明示的にimportします。

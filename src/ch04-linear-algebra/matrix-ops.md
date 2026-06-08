@@ -34,25 +34,20 @@ $$ norm(vb(x))_p = ( sum_i abs(x_i)^p )^(1/p) $$
 よく使われるのは $L^2$ ノルム（ユークリッドノルム）と $L^infinity$ ノルム（最大値ノルム）です。
 
 ```rust,noplayground
-use ndarray::{arr1, Array1};
+use ndarray::arr1;
 use ndarray_linalg::Norm;
-
-fn vector_norms(x: &Array1<f64>) -> (f64, f64, f64) {
-    (x.norm_l2(), x.norm_l1(), x.norm_max())
-}
 
 fn main() {
     let x = arr1(&[3.0, 4.0]);
-    let (norm_l2, norm_l1, norm_max) = vector_norms(&x);
 
     // L2ノルム: √(3² + 4²) = 5.0
-    println!("L2 norm: {}", norm_l2);
+    println!("L2 norm: {}", x.norm_l2());
 
     // L1ノルム: |3| + |4| = 7.0
-    println!("L1 norm: {}", norm_l1);
+    println!("L1 norm: {}", x.norm_l1());
 
     // 最大値ノルム: max(|3|, |4|) = 4.0
-    println!("Max norm: {}", norm_max);
+    println!("Max norm: {}", x.norm_max());
 }
 ```
 
@@ -60,27 +55,23 @@ fn main() {
 
 行列 $A$ では、誘導ノルム（1ノルム、無限大ノルム）や Frobenius ノルムなどを使います。Frobenius ノルムは全要素をまとめて測る便利な行列ノルムですが、ベクトルノルムから誘導される演算子ノルムではありません。
 
-```rust,noplayground
-use ndarray::{arr2, Array2};
-use ndarray_linalg::OperationNorm;
+特に、誘導2ノルム（スペクトルノルム）は最大特異値で表せます。
 
-fn matrix_norms(a: &Array2<f64>) -> (f64, f64, f64) {
-    (
-        a.opnorm_one().unwrap(),
-        a.opnorm_inf().unwrap(),
-        a.opnorm_fro().unwrap(),
-    )
-}
+$$ norm(A)_2 = max_(vb(x) != 0) (norm(A vb(x))_2) / (norm(vb(x))_2) = sigma_("max")(A) $$
+
+ここで $sigma_("max")(A)$ は $A$ の最大特異値です。実対称行列では固有値の絶対値の最大値と一致しますが、一般の行列では固有値ではなく特異値で評価する点に注意します。
+
+```rust,noplayground
+use ndarray::arr2;
+use ndarray_linalg::OperationNorm;
 
 fn main() {
     let a = arr2(&[[1.0, 2.0],
                    [3.0, 4.0]]);
 
-    let (norm_one, norm_inf, norm_fro) = matrix_norms(&a);
-
-    println!("Matrix 1-norm: {}", norm_one);
-    println!("Matrix infinity norm: {}", norm_inf);
-    println!("Frobenius norm: {}", norm_fro);
+    println!("Matrix 1-norm: {}", a.opnorm_one().unwrap());
+    println!("Matrix infinity norm: {}", a.opnorm_inf().unwrap());
+    println!("Frobenius norm: {}", a.opnorm_fro().unwrap());
 
     // Frobeniusノルム（全要素の二乗和の平方根）
     // ndarray-linalg では `norm` は L2ノルムを指すことが多いですが、
@@ -100,17 +91,13 @@ fn main() {
 $$ tr(A) = sum_i A_(i i) $$
 
 ```rust,noplayground
-use ndarray::{arr2, Array2};
-
-fn trace(a: &Array2<f64>) -> f64 {
-    a.diag().sum()
-}
+use ndarray::arr2;
 
 fn main() {
     let a = arr2(&[[1.0, 2.0],
                    [3.0, 4.0]]);
 
-    println!("Trace: {}", trace(&a)); // 1.0 + 4.0 = 5.0
+    println!("Trace: {}", a.diag().sum()); // 1.0 + 4.0 = 5.0
 }
 ```
 
@@ -119,19 +106,15 @@ fn main() {
 行列式は `ndarray-linalg` の `det()` メソッドで計算できます。
 
 ```rust,noplayground
-use ndarray::{arr2, Array2};
+use ndarray::arr2;
 use ndarray_linalg::Determinant;
-
-fn determinant(a: &Array2<f64>) -> f64 {
-    a.det().unwrap()
-}
 
 fn main() {
     let a = arr2(&[[1.0, 2.0],
                    [3.0, 4.0]]);
 
     // det(A) = 1*4 - 2*3 = -2
-    println!("Determinant: {}", determinant(&a));
+    println!("Determinant: {}", a.det().unwrap());
 }
 ```
 
@@ -153,18 +136,14 @@ $$ kappa(A) = norm(A) norm(A^(-1)) $$
 しかし、物理学の公式など、逆行列そのものが必要な場合もあります（例：グリーン関数の計算）。
 
 ```rust,noplayground
-use ndarray::{arr2, Array2};
+use ndarray::arr2;
 use ndarray_linalg::Inverse;
-
-fn inverse_matrix(a: &Array2<f64>) -> Array2<f64> {
-    a.inv().expect("Singular matrix")
-}
 
 fn main() {
     let a = arr2(&[[1.0, 2.0],
                    [3.0, 4.0]]);
 
-    let a_inv = inverse_matrix(&a);
+    let a_inv = a.inv().expect("Singular matrix");
 
     println!("Inverse matrix:\n{}", a_inv);
 

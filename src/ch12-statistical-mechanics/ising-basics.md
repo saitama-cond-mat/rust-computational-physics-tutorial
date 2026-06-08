@@ -34,6 +34,11 @@ $$ Z = sum_({s}) e^(- beta H({s})) $$
 そこで登場するのが、[モンテカルロ法](../ch09-monte-carlo/)で学んだ**マルコフ連鎖モンテカルロ法 (MCMC)** です。
 すべての配置を足し合わせるのではなく、ボルツマン分布に従って「確からしい」配置をサンプリングすることで、物理量を近似的に計算します。
 
+## 総合演習への接続
+
+[2D Ising実践演習](./ising-exercise.md)では、2次元正方格子イジング模型の厳密解について、導出ではなく検証に必要な性質を note にまとめます。
+臨界温度、自発磁化、有限サイズでは $chevron.l M chevron.r = 0$ になる対称性、$chevron.l |M| chevron.r$ と $chevron.l M^2 chevron.r$ の使い分けを整理してから、実装計画に進みます。
+
 ## 参考リンク
 
 - [Ising model - Wikipedia](https://en.wikipedia.org/wiki/Ising_model)

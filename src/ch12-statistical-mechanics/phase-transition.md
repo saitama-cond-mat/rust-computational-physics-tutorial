@@ -48,6 +48,20 @@ Rustプログラムで温度を変えながらこれらの量を測定すると�
 
 より精密な解析を行うには、システムサイズ $L$ を変えながら測定を行い、$L -> infinity$ への外挿を行う**有限サイズスケーリング (Finite Size Scaling)** という手法が用いられます。
 
+## 総合演習への接続
+
+[2D Ising実践演習](./ising-exercise.md)では、Binder parameter
+
+$$ U_L = 1 - chevron.l M^4 chevron.r / (3 chevron.l M^2 chevron.r^2) $$
+
+を使って有限サイズスケーリングを調べます。
+異なる格子サイズの $U_L(T)$ が交差する温度を、オンサーガーの厳密解
+
+$$ k_B T_c / J = 2 / ln(1 + sqrt(2)) approx 2.269 $$
+
+と比較します。
+また、低温の有限時間シミュレーションでなぜ $chevron.l M chevron.r$ がゼロに見えないことがあるのかを、対称性とエルゴード性の観点から考えます。
+
 ## 参考リンク
 
 - [Phase transition - Wikipedia](https://en.wikipedia.org/wiki/Phase_transition)
