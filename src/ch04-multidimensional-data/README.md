@@ -26,8 +26,12 @@
 - **[多次元配列とメモリレイアウト](./memory-layout.md)**
   flattening、row-major、column-major、stride、view/copyの違いをRustの配列で確認します。
 
+- **[高機能tensor library tenferro](./tenferro.md)**
+  AD、GPU、einsum、linear algebraを含む高機能なtensor stackとしてのtenferroを確認します。
+
 - **[外部クレートの活用（ndarray入門）](./ndarray.md)**
-  Rustの科学技術計算でよく使われる`ndarray`クレートの基本を確認します。
+  Rustの科学技術計算で標準的に使われる軽量な`ndarray`クレートと、
+  LAPACK系の線形代数を使う`ndarray-linalg`の位置づけを確認します。
 
 - **[データ保存とmetadata](./data-storage.md)**
   CSV、HDF5、NumPy形式、metadataの使い分けを整理します。

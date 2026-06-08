@@ -3,9 +3,9 @@
 > [!NOTE]
 > **本節のポイント**
 >
-> - Rustの科学技術計算における中核クレート`ndarray`の基本を学ぶ。
+> - Rustの科学技術計算における標準的で軽量な配列クレート`ndarray`の基本を学ぶ。
 > - `ndarray`を用いて、ベクトルや行列といった多次元配列を効率的に作成・操作する方法を習得する。
-> - ベクトル・行列の四則演算、内積・行列積、スライシングといった基本的な線形代数演算に習熟する。
+> - `ndarray-linalg`が、LAPACK系の線形代数を`ndarray`に接続するcrateであることを確認する。
 >
 > 本節は、前節「[1次元データから多次元データへ](./arrays-vectors.md)」と「[多次元配列とメモリレイアウト](./memory-layout.md)」で学んだ内容を土台としています。
 
@@ -17,9 +17,17 @@
 - **演算の煩雑さ**: 行列の積や転置といった基本的な演算も、手動でループを実装する必要があり、コードが冗長かつエラーが発生しやすくなります。
 - **パフォーマンス**: 最適化された線形代数ライブラリ（BLASなど）の恩恵を受けにくく、手実装のループでは高いパフォーマンスを得るのが困難です。
 
-このような課題を解決するのが、**`ndarray`** クレートです。`ndarray`は、PythonにおけるNumPyや、C++におけるEigenのように、Rustで多次元配列を効率的かつ直感的に扱うための豊富な機能を提供します。これはRustの科学技術計算エコシステムにおいて、最も基本的かつ重要なクレートの一つです。
+このような課題を解決する基本的な選択肢が、**`ndarray`** クレートです。
+`ndarray`は、RustでN次元配列、array view、多次元slicing、効率的な演算を扱うための
+標準的で軽量なcrateです。
 
-本節では、この`ndarray`の基本的な使い方を学び、効率的な数値計算のための土台を築きます。
+さらに、固有値分解、特異値分解、線形方程式の求解などの既存LAPACK系の線形代数を
+`ndarray` と接続したい場合は、**`ndarray-linalg`** が候補になります。
+これは `ndarray` の `ArrayBase` に線形代数機能を提供し、
+外部のLAPACK実装を利用するcrateです。
+
+本節では、まず`ndarray`の基本的な使い方を学び、
+必要に応じて`ndarray-linalg`へ進む位置づけを確認します。
 
 ## `ndarray`のセットアップ
 
@@ -31,6 +39,11 @@ ndarray = "0.17"
 ```
 
 バージョンは執筆時点のものです。最新版は[crates.io](https://crates.io/crates/ndarray)で確認できます。
+
+`ndarray-linalg`を使う場合は、LAPACK backendも選ぶ必要があります。
+一次情報では、OpenBLAS、Netlib、Intel MKLなどのbackend featureから1つを選ぶ形です。
+教材では詳細なbackend構築手順には踏み込みません。
+必要になった時点で、公式documentationを確認して、使用環境に合うbackendを選びます。
 
 ソースコードの先頭には、`ndarray`の主要な機能に簡単にアクセスするための`prelude`を導入しておくと便利です。
 
@@ -114,6 +127,9 @@ fn main() {
 ### 行列の作成
 
 行列もベクトルと同様、様々な方法で作成できます。
+`ndarray` のowned arrayは、標準では row-major、つまり同じ行の隣接要素が
+メモリ上で連続する配置です。これはC-orderとも呼ばれます。
+`Array2::from_shape_vec((rows, cols), data)` に渡す `data` も、この順序で解釈されます。
 
 ```rust,noplayground
 use ndarray::{arr2, Array2};
@@ -142,6 +158,14 @@ fn main() {
     println!("eye =\n{}", eye);
 }
 ```
+
+> [!NOTE]
+> **layoutとstride**
+>
+> `ndarray` では、配列がshapeとstrideを持ちます。
+> owned arrayを普通に作る場合は row-major と考えてよいですが、
+> slice、transpose、view ではstrideが変わります。
+> 性能や外部ライブラリとの接続が重要な場合は、shapeだけでなくstrideも確認します。
 
 ### 行列演算
 
@@ -174,7 +198,11 @@ fn main() {
 }
 ```
 
-これらの演算は、内部的に最適化された数値計算ライブラリ（BLAS）と連携することが可能であり（feature flag `blas`で有効化）、手動のループ実装に比べて大幅に高速です。
+`ndarray` 自体でも、基本的な行列積や要素ごとの演算を扱えます。
+一方、分解、固有値、特異値分解、線形方程式の求解など、
+LAPACK系の機能が必要な場合は `ndarray-linalg` を使います。
+`ndarray-linalg` はbackend featureと外部libraryの設定に依存するため、
+小さい演習で不用意に必須化しません。
 
 ## スライシング
 
@@ -275,14 +303,21 @@ m + v (column-wise broadcast) =
 
 - **高階関数**: `map`, `fold`, `zip`など、配列を効率的に操作するメソッド。
 - **軸に沿った操作**: `sum`, `mean`, `max`, `min`などを特定の軸（行方向や列方向）に沿って計算。
-- **豊富な線形代数機能**: `ndarray-linalg`クレートと組み合わせることで、逆行列、固有値問題、特異値分解（SVD）などの高度な計算が可能になります。
+- **LAPACK系の線形代数**: `ndarray-linalg`クレートと組み合わせることで、分解、固有値問題、特異値分解（SVD）、線形方程式の求解などを扱えます。
 
 ## まとめ
 
-本節では、Rustの科学技術計算における中核的なクレートである`ndarray`の基本的な使い方を学びました。
+本節では、Rustの科学技術計算でよく使われる軽量な配列クレート`ndarray`の基本的な使い方を学びました。
 
 - `Array1`（ベクトル）と`Array2`（行列）の作成方法と、それらの間の基本的な演算（四則演算、内積、行列積）を習得しました。
 - `s![]`マクロを用いた柔軟なスライシング機能により、配列の一部を効率的に参照・操作できることを見ました。
 - ブロードキャスト機能により、形状の異なる配列間でも直感的な演算が可能であることを学びました。
 
-`ndarray`は、Rustでパフォーマンスが要求される数値計算コードを記述する上で、事実上の標準ツールとなっています。本書でも以降の章で、微分方程式の求解や物理シミュレーションの実装に`ndarray`を全面的に活用していきます。
+`ndarray`は、Rustで多次元配列を扱う標準的な軽量crateです。
+LAPACK系の線形代数が必要な場合は `ndarray-linalg` も確認します。
+
+一次情報:
+
+- `ndarray`: <https://github.com/rust-ndarray/ndarray>
+- `ndarray-linalg`: <https://github.com/rust-ndarray/ndarray-linalg>
+- `ndarray-linalg` API: <https://rust-ndarray.github.io/ndarray-linalg/ndarray_linalg/>

@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 390" role="img" aria-labelledby="title desc">
+  <title id="title">Row-major and column-major memory layout</title>
+  <desc id="desc">The same 2 by 3 matrix is stored in a different linear order in row-major and column-major layout.</desc>
+  <text x="410" y="38" text-anchor="middle" font-family="Arial, sans-serif" font-size="20" font-weight="700">2 x 3 matrix and memory order</text>
+  <g font-family="Arial, sans-serif" font-size="15">
+    <rect x="60" y="72" width="90" height="45" fill="#fff" stroke="#444"/>
+    <rect x="150" y="72" width="90" height="45" fill="#fff" stroke="#444"/>
+    <rect x="240" y="72" width="90" height="45" fill="#fff" stroke="#444"/>
+    <rect x="60" y="117" width="90" height="45" fill="#fff" stroke="#444"/>
+    <rect x="150" y="117" width="90" height="45" fill="#fff" stroke="#444"/>
+    <rect x="240" y="117" width="90" height="45" fill="#fff" stroke="#444"/>
+    <text x="105" y="100" text-anchor="middle">a11</text>
+    <text x="195" y="100" text-anchor="middle">a12</text>
+    <text x="285" y="100" text-anchor="middle">a13</text>
+    <text x="105" y="145" text-anchor="middle">a21</text>
+    <text x="195" y="145" text-anchor="middle">a22</text>
+    <text x="285" y="145" text-anchor="middle">a23</text>
+  </g>
+  <text x="165" y="190" text-anchor="middle" font-family="Arial, sans-serif" font-size="14">mathematical shape: 2 rows x 3 columns</text>
+
+  <text x="550" y="88" font-family="Arial, sans-serif" font-size="16" font-weight="700">Row-major</text>
+  <text x="550" y="114" font-family="Arial, sans-serif" font-size="13">C, many C-style arrays</text>
+  <g font-family="Arial, sans-serif" font-size="12">
+    <rect x="500" y="130" width="55" height="34" fill="#eef4ff" stroke="#456eb0"/><text x="528" y="152" text-anchor="middle">a11</text>
+    <rect x="555" y="130" width="55" height="34" fill="#eef4ff" stroke="#456eb0"/><text x="583" y="152" text-anchor="middle">a12</text>
+    <rect x="610" y="130" width="55" height="34" fill="#eef4ff" stroke="#456eb0"/><text x="638" y="152" text-anchor="middle">a13</text>
+    <rect x="665" y="130" width="55" height="34" fill="#eef4ff" stroke="#456eb0"/><text x="693" y="152" text-anchor="middle">a21</text>
+    <rect x="720" y="130" width="55" height="34" fill="#eef4ff" stroke="#456eb0"/><text x="748" y="152" text-anchor="middle">a22</text>
+  </g>
+  <text x="694" y="187" font-family="Arial, sans-serif" font-size="12">a23 ...</text>
+
+  <text x="550" y="240" font-family="Arial, sans-serif" font-size="16" font-weight="700">Column-major</text>
+  <text x="550" y="266" font-family="Arial, sans-serif" font-size="13">MATLAB, Fortran</text>
+  <g font-family="Arial, sans-serif" font-size="12">
+    <rect x="500" y="282" width="55" height="34" fill="#eaf8ef" stroke="#4c8f42"/><text x="528" y="304" text-anchor="middle">a11</text>
+    <rect x="555" y="282" width="55" height="34" fill="#eaf8ef" stroke="#4c8f42"/><text x="583" y="304" text-anchor="middle">a21</text>
+    <rect x="610" y="282" width="55" height="34" fill="#eaf8ef" stroke="#4c8f42"/><text x="638" y="304" text-anchor="middle">a12</text>
+    <rect x="665" y="282" width="55" height="34" fill="#eaf8ef" stroke="#4c8f42"/><text x="693" y="304" text-anchor="middle">a22</text>
+    <rect x="720" y="282" width="55" height="34" fill="#eaf8ef" stroke="#4c8f42"/><text x="748" y="304" text-anchor="middle">a13</text>
+  </g>
+  <text x="694" y="340" font-family="Arial, sans-serif" font-size="12">a23 ...</text>
+  <text x="410" y="370" text-anchor="middle" font-family="Arial, sans-serif" font-size="14">Shape and memory layout are different concepts.</text>
+</svg>

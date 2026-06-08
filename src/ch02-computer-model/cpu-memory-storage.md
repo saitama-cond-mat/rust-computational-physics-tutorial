@@ -10,6 +10,74 @@
 大きな配列を扱う場合、CPUはメモリからデータが届くのを待っていることがあります。
 このような場合、コードの速さは浮動小数点演算の回数だけでは決まりません。
 
+## 大まかな接続
+
+現代のPCやサーバのCPUには、通常、複数のcoreがあります。
+各coreが命令を実行し、複数coreを使うと並列計算につながります。
+CPUの中またはCPUパッケージの近くにはcacheがあります。
+CPUは、memory controller を通してDRAMとデータをやり取りします。
+一方、NVMe SSDは通常PCI Express (PCIe) に接続され、
+SSD内部のNVMe controllerがNAND flashを制御します。
+
+```d2
+direction: right
+
+cpu: {
+  label: "CPU package"
+
+  cores: {
+    label: "CPU cores\ncore 0, core 1, ..."
+  }
+
+  cache: {
+    label: "L1/L2/L3 cache"
+  }
+
+  memctl: {
+    label: "memory controller"
+  }
+
+  pcie: {
+    label: "PCIe root complex"
+  }
+
+  cores -> cache
+}
+
+dram: {
+  label: "DRAM\nmain memory"
+}
+
+pch: {
+  label: "chipset / PCH\noptional path"
+}
+
+ssd: {
+  label: "NVMe SSD"
+
+  nvme: {
+    label: "NVMe controller"
+  }
+
+  nand: {
+    label: "NAND flash"
+  }
+
+  nvme -> nand
+}
+
+cpu.memctl -> dram: "memory channels"
+cpu.pcie -> ssd.nvme: "PCIe lanes\nCPU-attached"
+cpu.pcie -> pch: "PCIe / chipset link"
+pch -> ssd.nvme: "PCIe lanes\nchipset-attached"
+```
+
+したがって、「CPUとSSDが直接つながる」と言う場合でも、通常は
+CPU側のPCIe root complexからPCIeレーンでNVMe SSDに接続される、という意味です。
+CPUがSSD内部のNAND flashをメモリのように直接読み書きするわけではありません。
+また、マザーボード上のM.2スロットによっては、CPU直結ではなく
+chipset/PCH 経由で接続されることもあります。
+
 ## 実行中のデータ
 
 プログラムを実行すると、入力ファイルや実行ファイルの内容はメモリに読み込まれます。
