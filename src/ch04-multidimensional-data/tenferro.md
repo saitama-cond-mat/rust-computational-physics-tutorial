@@ -6,7 +6,7 @@
 > - `ndarray` は、現時点でRustの標準的で軽量なN次元配列crateです。
 > - tenferro は、AD、GPU、einsum、linear algebra まで含む高機能なtensor stackです。
 > - tenferro のowned dense tensorは column-major です。
-> - tenferro はpre-1.0なので、AI agentに任せる場合も一次情報を確認します。
+> - tenferro はpre-1.0なので、AI agentに任せる場合もrepositoryとdocumentationを確認します。
 
 1次元の所有データには、通常 `Vec<f64>` を使います。
 関数に渡すときは、`&[f64]` や `&mut [f64]` を使うのが基本です。
@@ -21,7 +21,7 @@ tenferro が候補になります。
 ## tenferroの位置づけ
 
 tenferro-rs は、Rust-native な dense tensor computation stack です。
-一次情報のREADMEでは、typed tensor computation、immediate execution、
+READMEでは、typed tensor computation、immediate execution、
 traced graph execution、automatic differentiation、linear algebra、einsum、FFT、
 CPU/CUDA backend control を対象にしています。
 
@@ -125,7 +125,7 @@ tenferro を紹介します。
 既存LAPACK workflowには `ndarray-linalg`、
 PyTorch/JAX相当のtensor workflowには tenferro、という使い分けを意識します。
 
-一次情報:
+参照:
 
 - <https://github.com/tensor4all/tenferro-rs>
 - <https://tensor4all.org/tenferro-rs/>

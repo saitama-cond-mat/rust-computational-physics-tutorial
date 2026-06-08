@@ -54,6 +54,8 @@ Learning Modeを使います。
 - 採点を求められた場合は、その演習のnotesに基づいて評価します。
 - すべての演習で、algorithmが関数やmoduleに分かれているか、
   hidden global mutable stateに依存していないか確認します。
+- Rust例では `use ...::prelude::*` や `use module::*` のglob importを禁止します。
+  必要な型、関数、traitを明示的にimportします。
 - 1次元数値データの所有storageには `Vec<f64>` を使い、
   関数の引数と戻り値では `&[f64]` や `&mut [f64]` を優先します。
 - 2次元以上の数値配列では、軽量で標準的な配列には `ndarray`、
@@ -84,12 +86,14 @@ Editing Modeを使います。
 - 詳細情報が必要な場合は、公式Rust documentation、公式crate documentationへのlinkを置くか、
   AI agentに調査させる演習にします。
 - 小さい例と演習checkの標準言語はRustです。
+- Rust例では `use ...::prelude::*` や `use module::*` のglob importを禁止します。
+  必要な型、関数、traitを明示的にimportします。
 - 1次元数値例では、所有storageに `Vec<f64>`、関数の引数に `&[f64]` や `&mut [f64]` を使います。
 - 2次元以上の数値配列例では、軽量な配列例には `ndarray` を使います。
   LAPACK系の線形代数が主題の場合は `ndarray-linalg` を使います。
-  その場合は、一次情報でbackend featureと外部library要件を確認します。
+  その場合は、公式documentationやrepositoryでbackend featureと外部library要件を確認します。
   AD、GPU、einsum、linear algebra を含むtensor workflowが主題の場合は tenferro を使います。
-  tenferro はpre-1.0なので、一次情報でAPI、crate名、import path、featureを確認します。
+  tenferro はpre-1.0なので、公式documentationやrepositoryでAPI、crate名、import path、featureを確認します。
 - notebookを必須にしないでください。Cargo test、小さいbinary、command-line runで確認できる例を優先します。
 - AI grading promptを教材本文に直接書かないでください。
   採点基準は `Notes` や演習の確認項目として自然に書きます。

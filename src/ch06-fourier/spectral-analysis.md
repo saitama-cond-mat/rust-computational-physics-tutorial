@@ -64,7 +64,9 @@ use rustfft::FftPlanner;
 use ndarray::{Array1, Array};
 use num_complex::Complex64;
 use std::f64::consts::PI;
-use plotters::prelude::*;
+use plotters::prelude::{
+    BitMapBackend, ChartBuilder, IntoDrawingArea, LineSeries, RED, WHITE,
+};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let n = 1024;

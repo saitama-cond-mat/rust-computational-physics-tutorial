@@ -17,8 +17,8 @@ ndarray-linalg = { version = "0.18", features = ["openblas-system"] } # 環境�
 コード内では、トレイトをインポートすることでメソッドが拡張されます。
 
 ```rust,ignore
-use ndarray::prelude::*;
-use ndarray_linalg::prelude::*; // 線形代数のトレイトを取り込む
+use ndarray::{arr1, arr2};
+use ndarray_linalg::{Determinant, Inverse, Norm, OperationNorm};
 ```
 
 ## ノルム (Norm)

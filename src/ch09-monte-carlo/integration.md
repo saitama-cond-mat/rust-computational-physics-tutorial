@@ -74,8 +74,8 @@ fn main() {
 ### `rayon` と `map_init` の活用
 
 ```rust,noplayground
-use rand::RngExt;
-use rayon::prelude::*;
+use rand::Rng;
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 fn main() {
     let m = 100_000_000;

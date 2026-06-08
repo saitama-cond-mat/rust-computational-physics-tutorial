@@ -58,14 +58,13 @@ ode_solvers = "0.6"
 ```
 
 ```rust,noplayground
-use ode_solvers::dopri5::*;
-use ode_solvers::*;
+use ode_solvers::{Dopri5, System, Vector2};
 
 type State = Vector2<f64>;
 
 struct Oscillator;
 
-impl ode_solvers::System<f64, State> for Oscillator {
+impl System<f64, State> for Oscillator {
     fn system(&self, _t: f64, y: &State, dy: &mut State) {
         // 単振動: dx/dt = v, dv/dt = -x
         dy[0] = y[1];

@@ -23,8 +23,8 @@ Rayonの最大の特徴は、標準ライブラリのイテレータ (`iter()`, 
 並列化の効果が分かりやすい例として、大量の乱数を用いた円周率の計算を考えます。
 
 ```rust
-use rayon::prelude::*;
-use rand::prelude::*;
+use rand::Rng;
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 fn estimate_pi(n_samples: usize) -> f64 {
     // 各サンプルが独立しているため、並列化が非常に容易
@@ -58,8 +58,8 @@ fn main() {
 [第11章の分子動力学](../ch11-fluid-dynamics/)などで、全粒子ペアに対して力を計算する場面を考えます。
 
 ```rust
-use rayon::prelude::*;
-use ndarray::Array2;
+use ndarray::{Array2, Axis};
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 fn compute_forces_parallel(positions: &Array2<f64>, forces: &mut Array2<f64>) {
     let n = positions.nrows();

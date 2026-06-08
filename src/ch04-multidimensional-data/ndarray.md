@@ -41,17 +41,12 @@ ndarray = "0.17"
 バージョンは執筆時点のものです。最新版は[crates.io](https://crates.io/crates/ndarray)で確認できます。
 
 `ndarray-linalg`を使う場合は、LAPACK backendも選ぶ必要があります。
-一次情報では、OpenBLAS、Netlib、Intel MKLなどのbackend featureから1つを選ぶ形です。
+OpenBLAS、Netlib、Intel MKLなどのbackend featureから1つを選ぶ形です。
 教材では詳細なbackend構築手順には踏み込みません。
 必要になった時点で、公式documentationを確認して、使用環境に合うbackendを選びます。
 
-ソースコードの先頭には、`ndarray`の主要な機能に簡単にアクセスするための`prelude`を導入しておくと便利です。
-
-```rust,ignore
-use ndarray::prelude::*;
-```
-
-本節のコード例では、個別の型を`use`宣言で明示的にインポートすることで、どの機能が`ndarray`から来ているかを分かりやすくします。
+本書のコード例では、個別の型、関数、traitを`use`宣言で明示的にインポートします。
+これにより、どの機能がどのcrateから来ているかを追いやすくします。
 
 ```rust,ignore
 use ndarray::{arr1, arr2, Array, Array1, Array2, Axis};
@@ -316,7 +311,7 @@ m + v (column-wise broadcast) =
 `ndarray`は、Rustで多次元配列を扱う標準的な軽量crateです。
 LAPACK系の線形代数が必要な場合は `ndarray-linalg` も確認します。
 
-一次情報:
+参照:
 
 - `ndarray`: <https://github.com/rust-ndarray/ndarray>
 - `ndarray-linalg`: <https://github.com/rust-ndarray/ndarray-linalg>
