@@ -33,16 +33,49 @@ flattening を明示すると、メモリ上の並び、境界条件、ファイ
 
 多次元配列の並べ方には、主に次の2つがあります。
 
-- row-major: 行方向に連続する。C/C++、Rustの多くの表現、NumPyの標準に近い。
-- column-major: 列方向に連続する。Fortran、MATLAB、LAPACK/BLASの文脈でよく出る。
+- row-major: 同じ行の要素が連続する。C/C++、`ndarray`、NumPyの標準に近い。
+- column-major: 同じ列の要素が連続する。Fortran、MATLAB、Julia、LAPACK/BLAS、Eigen3でよく使われる。
 
 どちらが正しいという話ではありません。重要なのは、配列を作る側、計算する側、保存する側、読む側で同じ約束を使うことです。
+
+![row-major と column-major の違い](../images/ch02/array-layout.svg)
+
+ここでは、`ny` 行 `nx` 列の配列を考えます。
+`i` を行index、`j` を列indexとすると、row-major では典型的に次の対応になります。
+
+```text
+index(i, j) = i * nx + j
+```
+
+このとき、`j` を1つ増やすとメモリ上でも隣の要素へ進みます。
+`i` を1つ増やすと `nx` 要素分だけ進みます。
+
+column-major では、同じ形の配列を次のように対応させます。
+
+```text
+index(i, j) = j * ny + i
+```
+
+このとき、`i` を1つ増やすとメモリ上でも隣の要素へ進みます。
+`j` を1つ増やすと `ny` 要素分だけ進みます。
 
 ## stride
 
 stride は、ある軸に沿って添字を1つ進めたとき、メモリ上で何要素進むかを表します。
 連続した配列ではアクセスが速く、stride が大きいアクセスでは
 cache line に載ったデータを十分に使えないことがあります。
+
+`ny` 行 `nx` 列の2次元配列では、典型的には次のようになります。
+
+row-major:
+
+- `j` 方向の stride: 1
+- `i` 方向の stride: `nx`
+
+column-major:
+
+- `i` 方向の stride: 1
+- `j` 方向の stride: `ny`
 
 例えば row-major の2次元配列では、同じ行の隣接要素を読むループは連続アクセスになります。
 
@@ -57,6 +90,48 @@ for i in 0..ny {
 
 計算量だけでなく、メモリアクセスの順序も性能に影響します。
 大きな配列を扱う章では、loop order、cache、memory bandwidth を意識します。
+
+逆に、row-major の配列を列方向に読むと、`nx` 要素ずつ飛ぶアクセスになります。
+
+```rust
+for j in 0..nx {
+    for i in 0..ny {
+        let value = u[idx(i, j, nx)];
+        // valueを使う
+    }
+}
+```
+
+小さい配列では差が見えないこともあります。
+しかし、大きな配列や何度も繰り返す計算では、この違いが実行時間に効きます。
+
+## N次元の場合
+
+多次元配列でも考え方は同じです。
+shape を `(n0, n1, ..., n_{d-1})`、添字を `(i0, i1, ..., i_{d-1})`
+と書くと、index は各添字とstrideの積の和になります。
+
+```text
+index = i0 * stride0 + i1 * stride1 + ... + i_{d-1} * stride_{d-1}
+```
+
+row-major では右端の添字が最も速く変わります。
+
+```text
+strides = (n1 * n2 * ... * n_{d-1}, ..., n_{d-1}, 1)
+```
+
+column-major では左端の添字が最も速く変わります。
+
+```text
+strides = (1, n0, n0 * n1, ..., n0 * n1 * ... * n_{d-2})
+```
+
+この規約は、数学的な shape そのものとは別です。
+同じ `2 x 3` の行列でも、row-major と column-major では
+1次元bufferへの並び方が変わります。
+`ndarray` のような配列型では、shape に加えて stride などのmetadataを持つことで、
+同じbufferをさまざまな見方で扱えます。
 
 ## view、copy、reshape
 

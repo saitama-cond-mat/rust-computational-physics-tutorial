@@ -13,7 +13,7 @@
 - [計算機の基本モデル](./ch02-computer-model/README.md)
   - [CPU・メモリ・ストレージ](./ch02-computer-model/cpu-memory-storage.md)
   - [latency・bandwidth・cache line](./ch02-computer-model/latency-bandwidth-cache.md)
-  - [連続アクセス・stride・データ配置](./ch02-computer-model/data-layout.md)
+  - [連続アクセスと1次元データ](./ch02-computer-model/data-layout.md)
   - [stackとheap](./ch02-computer-model/stack-heap.md)
 
 - [Rustで数値計算を書く最小セット](./ch03-rust-numerics/README.md)

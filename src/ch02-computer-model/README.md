@@ -10,8 +10,7 @@
 - CPU、メモリ、ストレージの役割
 - latency と bandwidth
 - cache と cache line
-- 連続アクセスと飛び飛びアクセス
-- row-major、column-major、stride
+- 1次元データの連続アクセスと飛び飛びアクセス
 - stack と heap
 
 本章の目的は、CPU architecture を詳しく学ぶことではありません。
@@ -26,8 +25,8 @@ SIMD、並列化を扱うときに、なぜデータ配置が重要なのかを�
 - **[latency・bandwidth・cache line](./latency-bandwidth-cache.md)**
   メモリアクセスの遅さ、帯域、cache line の直感を確認します。
 
-- **[連続アクセス・stride・データ配置](./data-layout.md)**
-  配列の並びと loop order が性能に効く理由を見ます。
+- **[連続アクセスと1次元データ](./data-layout.md)**
+  `Vec<f64>` のような1次元データで、連続アクセスが性能に効く理由を見ます。
 
 - **[stackとheap](./stack-heap.md)**
   小さい値と大きな配列がどこに置かれるかを確認します。
