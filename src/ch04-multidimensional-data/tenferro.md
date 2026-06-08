@@ -87,6 +87,103 @@ stack全体を本書では tenferro と呼びますが、実際のprojectでは�
 | `tenferro-einsum` | einsum と contraction planning |
 | `tenferro-fft` | FFT operations |
 
+## 小さいコード例
+
+tenferroの公式documentationでは、CPU backendでtensorを作り、
+行列積、linear solve、SVD、QR、einsum、AD、GPU backend へ進む例が示されています。
+ここでは、できることが見えるように、行列積、einsum、ADの入口だけを見ます。
+
+まず、通常のtensor計算ではCPU backendを明示して演算を呼びます。
+
+```rust,ignore
+use tenferro_cpu::CpuBackend;
+use tenferro_runtime::{tensor, Tensor};
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut backend = CpuBackend::new();
+
+    let lhs = Tensor::from_vec_col_major(
+        vec![2, 2],
+        vec![1.0_f64, 2.0, 0.0, 1.0],
+    );
+    let rhs = Tensor::from_vec_col_major(vec![2, 1], vec![3.0_f64, 4.0]);
+
+    let out = tensor::matmul(&lhs, &rhs, &mut backend)?;
+
+    assert_eq!(out.shape(), &[2, 1]);
+    println!("{:?}", out.as_slice::<f64>().unwrap());
+
+    Ok(())
+}
+```
+
+添字記法でtensor contractionを書く場合は `tenferro-einsum` を使います。
+`einsum` はcoreではなくextension crateなので、compiled executionではruntime登録も必要です。
+
+```rust,ignore
+use tenferro_cpu::CpuBackend;
+use tenferro_runtime::{GraphCompiler, GraphExecutor, TracedTensor};
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let a = TracedTensor::from_vec_col_major(
+        vec![2, 3],
+        vec![1.0_f64, 2.0, 3.0, 4.0, 5.0, 6.0],
+    );
+    let b = TracedTensor::from_vec_col_major(
+        vec![3, 2],
+        vec![1.0_f64, 2.0, 3.0, 4.0, 5.0, 6.0],
+    );
+
+    let mut compiler = GraphCompiler::new();
+    let c = tenferro_einsum::traced_tensor::einsum(
+        &mut compiler,
+        &[&a, &b],
+        "ij,jk->ik",
+    )?;
+    let program = compiler.compile(&c)?;
+
+    let mut executor = GraphExecutor::new(CpuBackend::new());
+    executor.register_extension(tenferro_einsum::register_runtime)?;
+    let result = executor.run(&program)?;
+
+    assert_eq!(result.shape(), &[2, 2]);
+    println!("{:?}", result.as_slice::<f64>().unwrap());
+
+    Ok(())
+}
+```
+
+ADには、PyTorch風にscalar lossへ `backward()` するeager workflowと、
+JAX風にgraphから `grad`、`vjp`、`jvp` を作るtraced workflowがあります。
+次は、`sum(x * x)` の勾配が `2x` になることをtraced workflowで確認する例です。
+
+```rust,ignore
+use tenferro_ad::AdContext;
+use tenferro_cpu::CpuBackend;
+use tenferro_runtime::{GraphCompiler, GraphExecutor, TracedTensor};
+
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let x = TracedTensor::from_vec_col_major(vec![3], vec![1.0_f64, 2.0, 3.0]);
+    let loss = (&x * &x).reduce_sum(&[0]);
+
+    let ad = AdContext::builder().with_core_rules().build()?;
+    let grad = ad.grad(&loss, &x)?;
+
+    let mut compiler = GraphCompiler::new();
+    let program = compiler.compile(&grad)?;
+    let mut executor = GraphExecutor::new(CpuBackend::new());
+    let result = executor.run(&program)?;
+
+    assert_eq!(result.shape(), &[3]);
+    assert_eq!(result.as_slice::<f64>().unwrap(), &[2.0, 4.0, 6.0]);
+
+    Ok(())
+}
+```
+
+線形方程式を解く場合は `tenferro-linalg`、ADやgraph実行が必要な場合は
+`EagerTensor` や `TracedTensor` に進みます。
+
 ## `Cargo.lock`を残す
 
 Git dependency を使う場合、`Cargo.lock` には実際に解決されたGit revisionが記録されます。
@@ -113,7 +210,7 @@ tenferro はpre-1.0です。
 Public API、crate boundary、backend contract、feature flag、内部設計は変わる可能性があります。
 そのため、AI agentの生成コードをそのまま信頼せず、現在のrepositoryとdocumentationで確認します。
 
-## 第4章での位置づけ
+## 本章での位置づけ
 
 本章では、まず標準的で軽量な `ndarray` を確認します。
 LAPACK系の線形代数が必要なら `ndarray-linalg` を確認します。

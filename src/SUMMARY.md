@@ -25,8 +25,8 @@
 - [多次元データと配列](./ch04-multidimensional-data/README.md)
   - [1次元データから多次元データへ](./ch04-multidimensional-data/arrays-vectors.md)
   - [多次元配列とメモリレイアウト](./ch04-multidimensional-data/memory-layout.md)
-  - [高機能tensor library tenferro](./ch04-multidimensional-data/tenferro.md)
   - [外部クレートの活用（ndarray入門）](./ch04-multidimensional-data/ndarray.md)
+  - [高機能tensor library tenferro](./ch04-multidimensional-data/tenferro.md)
   - [データ保存とmetadata](./ch04-multidimensional-data/data-storage.md)
 
 # 第2部: 数値計算手法

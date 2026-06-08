@@ -80,8 +80,10 @@ Editing Modeを使います。
   notesとして編集します。
 - Markdown sourceは読みやすく保ちます。通常の文章は80-100文字程度で折り返し、
   code block、table、URL、front matter、構文に敏感な行は壊さないでください。
-- cross-reference文には、固定の章番号や節番号をなるべく書かないでください。
-  descriptiveなlink textを優先します。
+- cross-reference文では、固定の章番号や節番号による参照を禁止し、
+  自動reference機能のみを使います。固定番号は本文に埋め込まず、
+  Markdown/mdBookのlinkで対象見出しを指し、`SUMMARY.md`由来の自動番号に任せます。
+  link textは内容名を使います。
 - main textに詳細なinstallation手順、網羅的なsyntax list、長い実装例を入れすぎないでください。
 - 詳細情報が必要な場合は、公式Rust documentation、公式crate documentationへのlinkを置くか、
   AI agentに調査させる演習にします。
