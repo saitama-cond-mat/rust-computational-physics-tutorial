@@ -10,7 +10,7 @@ CPU、メモリ、cache、stack、heap といった計算機の基本モデル�
 
 - `f64`、`usize`、浮動小数点数
 - 複素数と `num-complex`
-- 関数、`let`、`mut`、`if`、`for`
+- 関数、trait、`let`、`mut`、`if`、`for`
 - `Vec<f64>`、配列、slice
 - 所有権、借用、可変借用
 - `struct`、`Result`
@@ -24,7 +24,7 @@ agent に実装を任せる場合でも、関数の入力と出力、どのデ�
 ## 本章の構成
 
 - **[数値型・関数・小さいテスト](./numbers-functions-tests.md)**
-  `f64`、`usize`、関数、制御構造、`cargo test`による小さい検証を扱います。
+  `f64`、`usize`、関数、trait、制御構造、`cargo test`による小さい検証を扱います。
 
 - **[浮動小数点演算と誤差](./floating-point.md)**
   丸め誤差、桁落ち、情報落ち、浮動小数点数の比較、複素数、

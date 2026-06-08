@@ -1,226 +1,102 @@
-# 高機能tensor library tenferro
+# 発展的なテンソルライブラリ tenferro
 
 > [!NOTE]
 > **本節のポイント**
 >
-> - `ndarray` は、現時点でRustの標準的で軽量なN次元配列crateです。
-> - tenferro は、AD、GPU、einsum、linear algebra まで含む高機能なtensor stackです。
-> - tenferro のowned dense tensorは column-major です。
-> - tenferro はpre-1.0なので、AI agentに任せる場合もrepositoryとdocumentationを確認します。
+> - まずは `Vec<f64>`、`&[f64]`、`ndarray` を基本にする。
+> - tenferro は、より高機能なテンソル計算が必要になったときの発展的な選択肢である。
+> - tenferro は本書の著者の1人が開発に関わるライブラリである。
+> - tenferro の密なテンソルは column-major（列優先）なので、`ndarray` の標準的な row-major（行優先）と混同しない。
+> - tenferro は開発中のライブラリなので、使う場合は公式リポジトリとドキュメントで現在のAPIを確認する。
 
 1次元の所有データには、通常 `Vec<f64>` を使います。
 関数に渡すときは、`&[f64]` や `&mut [f64]` を使うのが基本です。
 
 2次元以上の配列を軽く扱うだけなら、`ndarray` が自然な選択肢です。
-`ndarray` はRust ecosystemで広く使われており、標準的な軽量配列として扱いやすいcrateです。
+本書の多くの例でも、まず `ndarray` を使います。
 
-一方、PyTorch や JAX のように、tensor演算、automatic differentiation、
-GPU execution、einsum、linear algebra を同じ設計の中で扱いたい場合は、
-tenferro が候補になります。
+tenferro は、それより発展的なテンソル計算のためのライブラリです。
+ここでいうテンソルは、ベクトルや行列をさらに多次元にした数値配列だと思えば十分です。
+単に2次元配列を持つためだけなら、tenferro は大きすぎる選択になりがちです。
 
-## tenferroの位置づけ
+本書で tenferro を紹介する理由の1つは、本書の著者の1人が開発に関わっているためです。
+Rustで科学技術計算を発展させるときに、どのような機能が必要になり、
+どこに実装上の注意があるかを考える具体例として扱います。
 
-tenferro-rs は、Rust-native な dense tensor computation stack です。
-READMEでは、typed tensor computation、immediate execution、
-traced graph execution、automatic differentiation、linear algebra、einsum、FFT、
-CPU/CUDA backend control を対象にしています。
+## どのような場合に使うか
 
-`ndarray` は軽量な配列crateです。
-`ndarray-linalg` は、その `ndarray` にLAPACK系の線形代数を接続するcrateです。
-tenferro は、それより高機能なtensor library stackです。
-単に2次元配列を持つだけでなく、次のような用途を想定します。
+tenferro は、次のような機能を同じ枠組みで扱いたい場合に候補になります。
 
-- automatic differentiation を使う。
-- GPU上でtensor演算を行う。
-- einsumやtensor contractionを使う。
-- linear algebraをbackend経由で使う。
-- PyTorch eager execution や JAX traced execution に近いworkflowをRustで扱う。
+- **自動微分**:
+  計算式から、微分や勾配を自動的に計算する機能です。
+  最適化問題や逆問題で使うことがあります。
+- **GPU実行**:
+  CPUではなくGPU上で大きなテンソル演算を実行します。
+  ただし、CPUとGPUの間でデータを移す時間も考える必要があります。
+- **テンソル縮約**:
+  添字を持つ多次元配列について、ある添字に関して和を取る演算です。
+  行列積もテンソル縮約の一例です。
+  Python/NumPy では `einsum` という名前でよく使われます。
+- **線形代数やFFTとの接続**:
+  行列分解、連立方程式、フーリエ変換などをテンソル計算の流れの中で扱います。
 
-tenferro は単一の機能ではなく、複数のlayerを持ちます。
+このような機能が必要でなければ、まず `ndarray` と `ndarray-linalg` で十分かを考えます。
 
-| やりたいこと | 入口 |
-| --- | --- |
-| scalar type がコンパイル時に決まる通常のtensor計算 | `TypedTensor<T, R>` |
-| dtype を実行時に選ぶ、またはbackend dispatchを使う | `Tensor` |
-| PyTorch風に即時実行し、必要なら scalar loss に `backward()` を使う | `EagerTensor` と `EagerRuntime` |
-| JAX風にgraphを作り、`grad`、`vjp`、`jvp`、graph再利用を使う | `TracedTensor`、`GraphCompiler`、`GraphExecutor<B>` |
-| CUDA実行 | 同じtensor APIと明示的なupload/download |
+## メモリレイアウト
 
-## memory layout
+tenferro の密なテンソルは column-major（列優先）です。
+つまり、左端の添字がメモリ上で最も速く変わります。
 
-tenferro の dense tensor は column-major です。
-つまり、左端のdimensionがメモリ上で最も速く変わります。
-
-例えば、論理的な `[2, 3]` matrixを
+例えば、論理的な `2 x 3` の行列を
 
 ```text
 [[1, 2, 3],
  [4, 5, 6]]
 ```
 
-と書くと、column-major のflat bufferは次です。
+と書くと、column-major の1次元バッファは次の順序になります。
 
 ```text
 [1, 4, 2, 5, 3, 6]
 ```
 
-これは `ndarray` の標準的な row-major layout とは違います。
-row-major のdataをtenferroへ渡す境界では、`from_vec_row_major` のような変換用APIを使います。
-逆に、tenferro の物理順序に従うbufferを渡す場合は `from_vec_col_major` を使います。
+これは `ndarray` の標準的な row-major（行優先）とは違います。
+`ndarray` やNumPyの標準的な並びからtenferroへデータを渡す場合は、
+どちらの順序のバッファなのかを必ず確認します。
 
-layoutの違いは、バグにも性能差にもつながります。
-AI agentに実装を任せる場合も、入力dataが row-major なのか column-major なのかを明示します。
+AI agent に実装を任せる場合も、入力データが row-major なのか column-major なのか、
+各軸が何を意味するのかを明示します。
+この確認を省くと、shape は合っていても、物理的には転置されたデータを計算してしまうことがあります。
 
-## crate構成
+## 使う前に確認すること
 
-GitHub READMEによると、tenferro-rs はmulti-crate workspaceです。
-stack全体を本書では tenferro と呼びますが、実際のprojectでは必要なcrateを選んで依存します。
+tenferro は開発中のライブラリです。
+本書では、現在のAPIを暗記することは目的にしません。
+実際に使う場合は、公式リポジトリとドキュメントを確認してから、
+小さい検証用プロジェクトで試します。
 
-| crate | 用途 |
-| --- | --- |
-| `tenferro-tensor` | tensor値、typed tensor、view、dtype/runtime tensor contract、backend trait |
-| `tenferro-cpu` | CPU backend execution |
-| `tenferro-gpu` | CUDA/ROCm backend support と明示的なdevice transfer |
-| `tenferro-runtime` | eager/traced execution、graph compilation、extension runtime |
-| `tenferro-ad` | automatic differentiation |
-| `tenferro-linalg` | linear algebra operations |
-| `tenferro-einsum` | einsum と contraction planning |
-| `tenferro-fft` | FFT operations |
+AI agent に tenferro を使ったコードを書かせる場合は、少なくとも次を確認します。
 
-## 小さいコード例
+- 参照した公式ドキュメントまたはリポジトリ。
+- `Cargo.toml` に書いたクレート名。
+- どの名前を `use` したか。
+- `Cargo.lock` に記録されたGitのrevision。
+- CPUで実行するのか、GPUで実行するのか。
+- CPUとGPUの間でデータを移す場所。
+- 入出力バッファの並び順。
+- 各軸の意味。
+- 小さい入力で期待値を手計算できるテスト。
 
-tenferroの公式documentationでは、CPU backendでtensorを作り、
-行列積、linear solve、SVD、QR、einsum、AD、GPU backend へ進む例が示されています。
-ここでは、できることが見えるように、行列積、einsum、ADの入口だけを見ます。
-
-まず、通常のtensor計算ではCPU backendを明示して演算を呼びます。
-
-```rust,ignore
-use tenferro_cpu::CpuBackend;
-use tenferro_runtime::{tensor, Tensor};
-
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut backend = CpuBackend::new();
-
-    let lhs = Tensor::from_vec_col_major(
-        vec![2, 2],
-        vec![1.0_f64, 2.0, 0.0, 1.0],
-    );
-    let rhs = Tensor::from_vec_col_major(vec![2, 1], vec![3.0_f64, 4.0]);
-
-    let out = tensor::matmul(&lhs, &rhs, &mut backend)?;
-
-    assert_eq!(out.shape(), &[2, 1]);
-    println!("{:?}", out.as_slice::<f64>().unwrap());
-
-    Ok(())
-}
-```
-
-添字記法でtensor contractionを書く場合は `tenferro-einsum` を使います。
-`einsum` はcoreではなくextension crateなので、compiled executionではruntime登録も必要です。
-
-```rust,ignore
-use tenferro_cpu::CpuBackend;
-use tenferro_runtime::{GraphCompiler, GraphExecutor, TracedTensor};
-
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let a = TracedTensor::from_vec_col_major(
-        vec![2, 3],
-        vec![1.0_f64, 2.0, 3.0, 4.0, 5.0, 6.0],
-    );
-    let b = TracedTensor::from_vec_col_major(
-        vec![3, 2],
-        vec![1.0_f64, 2.0, 3.0, 4.0, 5.0, 6.0],
-    );
-
-    let mut compiler = GraphCompiler::new();
-    let c = tenferro_einsum::traced_tensor::einsum(
-        &mut compiler,
-        &[&a, &b],
-        "ij,jk->ik",
-    )?;
-    let program = compiler.compile(&c)?;
-
-    let mut executor = GraphExecutor::new(CpuBackend::new());
-    executor.register_extension(tenferro_einsum::register_runtime)?;
-    let result = executor.run(&program)?;
-
-    assert_eq!(result.shape(), &[2, 2]);
-    println!("{:?}", result.as_slice::<f64>().unwrap());
-
-    Ok(())
-}
-```
-
-ADには、PyTorch風にscalar lossへ `backward()` するeager workflowと、
-JAX風にgraphから `grad`、`vjp`、`jvp` を作るtraced workflowがあります。
-次は、`sum(x * x)` の勾配が `2x` になることをtraced workflowで確認する例です。
-
-```rust,ignore
-use tenferro_ad::AdContext;
-use tenferro_cpu::CpuBackend;
-use tenferro_runtime::{GraphCompiler, GraphExecutor, TracedTensor};
-
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let x = TracedTensor::from_vec_col_major(vec![3], vec![1.0_f64, 2.0, 3.0]);
-    let loss = (&x * &x).reduce_sum(&[0]);
-
-    let ad = AdContext::builder().with_core_rules().build()?;
-    let grad = ad.grad(&loss, &x)?;
-
-    let mut compiler = GraphCompiler::new();
-    let program = compiler.compile(&grad)?;
-    let mut executor = GraphExecutor::new(CpuBackend::new());
-    let result = executor.run(&program)?;
-
-    assert_eq!(result.shape(), &[3]);
-    assert_eq!(result.as_slice::<f64>().unwrap(), &[2.0, 4.0, 6.0]);
-
-    Ok(())
-}
-```
-
-線形方程式を解く場合は `tenferro-linalg`、ADやgraph実行が必要な場合は
-`EagerTensor` や `TracedTensor` に進みます。
-
-## `Cargo.lock`を残す
-
-Git dependency を使う場合、`Cargo.lock` には実際に解決されたGit revisionが記録されます。
-tenferro のように開発中のcrateでは、このrevisionが再現性に関わります。
-
-exercise project を提出・保存するときは、`Cargo.lock` も残します。
-これにより、後から同じAPIで再実行できる可能性が高くなります。
-
-## AI agentに任せる場合
-
-AI agent に tenferro を使ったコードを書かせる場合も、少なくとも次を確認します。
-
-- 参照したdocumentationまたはrepository。
-- `Cargo.toml` に書いたcrate名。
-- `use` したimport path。
-- `Cargo.lock` に記録されたGit revision。
-- CPU/CUDA のどちらで実行するか。
-- CPU/GPU間のupload/downloadが明示されているか。
-- 入出力bufferが row-major か column-major か。
-- 各axisの意味。
-- 入力shapeを検査する小さいテスト。
-
-tenferro はpre-1.0です。
-Public API、crate boundary、backend contract、feature flag、内部設計は変わる可能性があります。
-そのため、AI agentの生成コードをそのまま信頼せず、現在のrepositoryとdocumentationで確認します。
+`Cargo.lock` には、実際に解決されたクレートのversionやGitのrevisionが記録されます。
+開発中のクレートを使う場合、後から同じAPIで再実行できるかどうかに関わるので、
+演習プロジェクトでも `Cargo.lock` を残します。
 
 ## 本章での位置づけ
 
 本章では、まず標準的で軽量な `ndarray` を確認します。
 LAPACK系の線形代数が必要なら `ndarray-linalg` を確認します。
-そのうえで、AD、GPU、einsum、linear algebra が必要な場合の高機能な選択肢として
-tenferro を紹介します。
-
-`ndarray` と tenferro は排他的ではありません。
-小さい配列操作や既存Rust ecosystemとの接続には `ndarray`、
-既存LAPACK workflowには `ndarray-linalg`、
-PyTorch/JAX相当のtensor workflowには tenferro、という使い分けを意識します。
+そのうえで、自動微分、GPU実行、テンソル縮約のような機能が必要になった場合の
+発展的な選択肢として tenferro を紹介します。
 
 参照:
 

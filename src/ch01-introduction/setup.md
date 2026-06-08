@@ -181,6 +181,14 @@ Rustのコードを記述するためのエディタや統合開発環境（IDE�
 
 ただし、特定のツールを必須とはしません。各ツールのインストール方法、料金、利用条件は変わる可能性があるため、本書では詳細な手順や比較は扱いません。利用する場合は、それぞれの公式情報を確認してください。
 
+実践的な導入資料として、CompPhysHack 2026 の講義資料と、
+AtelierArith による coding agents のハンズオン資料も参考になります。
+後者では、Claude Code や Cursor などの coding agent を用いた開発の進め方が、
+演習を通して紹介されています。
+
+- [CompPhysHack 2026](https://qc-hybrid.github.io/CompPhysHack2026/)
+- [CompPhysHack2026HandsOn by AtelierArith](https://atelierarith.github.io/CompPhysHack2026HandsOn/)
+
 AI coding agent は、演習用プロジェクトや本書のリポジトリのルートディレクトリで起動し、
 `Cargo.toml`、`src`ディレクトリ、テスト、差分を参照できる状態にします。
 agent に任せた変更は、`cargo check`や`cargo test`で確認し、
