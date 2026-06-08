@@ -29,6 +29,22 @@ mise run build
 2. `pagefind --site book` - 検索インデックスを生成
 3. `lychee book/` - リンクチェック
 
+### Rustコードブロックの自動実行
+
+Markdown中のコードブロックに `rust,run` を指定すると、`mdbook build` 時に
+そのコードを一時的なCargoプロジェクトとして実行し、標準出力をページに自動挿入します。
+
+````markdown
+```rust,run
+fn main() {
+    println!("hello");
+}
+```
+````
+
+通常の `rust` コードブロックは実行されません。`rust,run` のコードがコンパイルまたは
+実行に失敗すると、`mdbook build` も失敗します。
+
 ### ローカルプレビュー
 
 ```bash

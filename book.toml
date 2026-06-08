@@ -4,6 +4,11 @@ authors = ["sakuraba07"]
 language = "ja"
 src = "src"
 
+[preprocessor.run-rust]
+command = "python3 tools/mdbook_run_rust.py"
+timeout-seconds = 20
+output-label = "実行結果："
+
 [preprocessor.d2]
 inline = false
 output-dir = "d2"
