@@ -13,7 +13,7 @@
   Rustの型システム、所有権、Cargo、テストが、計算コードとAI agent の出力を検査する足場になることを説明します。
 
 - **[開発環境のセットアップ](./setup.md)**
-  Rust toolchain、`cargo`、`gnuplot`、エディタ、任意のAI coding agent について確認します。
+  Rust toolchain、`cargo`、`gnuplot`、エディタ、推奨するAI coding agent の位置づけについて確認します。
 
 - **[数値計算結果の可視化](./plotting.md)**
   Rustで計算し、結果をCSVやバイナリ形式で保存し、保存済みデータから図を作る方針を説明します。表形式データでは`gnuplot`を標準の可視化手段として使います。

@@ -7,14 +7,20 @@
 - [Rustと計算物理学](./ch01-introduction/README.md)
   - [なぜRustなのか](./ch01-introduction/why-rust.md)
   - [開発環境のセットアップ](./ch01-introduction/setup.md)
-  - [数値計算の結果の描画](./ch01-introduction/plotting.md)
+  - [数値計算結果の可視化](./ch01-introduction/plotting.md)
   - [本書の使い方](./ch01-introduction/how-to-use.md)
 
-- [数値計算の基礎](./ch02-basics/README.md)
-  - [浮動小数点演算と誤差](./ch02-basics/floating-point.md)
-  - [配列・スライス・ベクタの基礎](./ch02-basics/arrays-vectors.md)
+- [Rustで数値計算を書く最小セット](./ch02-rust-numerics/README.md)
+  - [数値型・関数・小さいテスト](./ch02-rust-numerics/numbers-functions-tests.md)
+  - [浮動小数点演算と誤差](./ch02-rust-numerics/floating-point.md)
+  - [Vecとスライス](./ch02-rust-numerics/vec-slices-ownership.md)
+  - [Resultとmodule境界](./ch02-rust-numerics/result-modules.md)
+
+- [多次元データと配列](./ch02-basics/README.md)
+  - [1次元データから多次元データへ](./ch02-basics/arrays-vectors.md)
+  - [多次元配列とメモリレイアウト](./ch02-basics/memory-layout.md)
   - [外部クレートの活用（ndarray入門）](./ch02-basics/ndarray.md)
-  - [高精度演算（double-double型とxprec-rs）](./ch02-basics/high-precision.md)
+  - [データ保存とmetadata](./ch02-basics/data-storage.md)
 
 # 第2部: 数値計算手法
 
@@ -97,3 +103,4 @@
 - [付録B: 有用なクレート集](./appendix/b-crates.md)
 - [付録C: デバッグとトラブルシューティング](./appendix/c-debugging.md)
 - [付録D: 数学的背景](./appendix/d-math-background.md)
+- [付録E: 高精度演算](./appendix/e-high-precision.md)

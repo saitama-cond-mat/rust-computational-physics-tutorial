@@ -16,6 +16,8 @@
   Rustで科学計算コードを書くときの作法として必要な箇所に差し込む。
 - AI agent はコードを正しくしてくれる存在ではなく、note、plan、実装、
   検証、diff review を補助する道具として扱う。
+- 本書では AI coding agent の利用を推奨する。ただし特定のツールを
+  必須にはしない。
 - AI を使って学ぶ場合は、単発の質問に答える Chat 型ではなく、
   リポジトリを読み、コードを編集し、テストを実行し、差分を説明できる
   エージェント型を標準の利用形態として扱う。
@@ -45,6 +47,8 @@
   本書の演習では、問題設定、実装、テスト、可視化、検証、diff review を
   行き来できるエージェント型を推奨する。
 - 詳細なインストール手順、料金、ツール比較は本文に入れない。
+- 「任意で使ってもよい」ではなく、「利用を推奨するが、検証責任は人間に
+  残る」と書く。
 - 本文は当面、日本語のまま進める。
 - 図のラベルや図中テキストは、基本的に英語にする。
 - コード、数式、コマンド、file path、crate 名、関数名、
@@ -168,15 +172,14 @@
     - model、algorithm、io、plot、benchmark を混ぜない。
     - diff review
 
-#### 第3章 多次元データと tensor library `[既存/調整/移植]`
+#### 第3章 多次元データと配列 `[既存/調整/移植]`
 
 - 目的:
   - 第2章では1次元データと関数境界までを扱い、第3章では多次元データ、
-    memory layout、外部 tensor/array library、結果保存へ進む。
+    memory layout、外部 array library、結果保存へ進む。
   - `ndarray` は本書の基本的な多次元配列 crate として扱う。
-  - `tenferro-rs` は `ndarray` の置き換えではなく、CPU/GPU backend、
-    einsum、FFT、AD、traced graph などへ進む発展的な tensor stack として
-    位置づける。
+  - `tenferro-rs` のような発展的な tensor stack は、この章の必須要素には
+    しない。必要なら後続の発展トピックで扱う。
   - 高精度演算は入口には重いため、付録Eへ移動する。
 - 小節案:
   - 3.1 多次元配列と flattening `[既存/調整/移植]`
@@ -204,26 +207,12 @@
     - axis
     - view
     - slicing
-  - 3.6 `tenferro-rs` の位置づけ `[新規]`
-    - tensor stack
-    - typed tensor と runtime dtype
-    - 明示的な CPU/GPU backend
-    - einsum / contraction
-    - FFT
-    - automatic differentiation
-    - pre-1.0 のため API 変更に注意する。
-  - 3.7 `ndarray` と `tenferro-rs` の使い分け `[新規]`
-    - 通常の2次元配列、基礎的な数値計算、既存例では `ndarray` を使う。
-    - tensor contraction、backend 制御、AD、GPU、traced graph が必要な
-      発展的演習では `tenferro-rs` を候補にする。
-    - 本書では `tenferro-rs` を必須依存にせず、発展的な導線として扱う。
-  - 3.8 結果保存と metadata の入口 `[新規]`
+  - 3.6 結果保存と metadata の入口 `[新規]`
     - parameter
     - input size
     - random seed
     - 実行条件
     - crate version
-    - backend
     - compute と plot の分離
 - memory layout、`ndarray`、`tenferro-rs` の話は、第5章の matrix multiplication、
   第16章の profiling、SIMD、並列化へつなげる。
