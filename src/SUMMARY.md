@@ -10,17 +10,23 @@
   - [数値計算結果の可視化](./ch01-introduction/plotting.md)
   - [本書の使い方](./ch01-introduction/how-to-use.md)
 
-- [Rustで数値計算を書く最小セット](./ch02-rust-numerics/README.md)
-  - [数値型・関数・小さいテスト](./ch02-rust-numerics/numbers-functions-tests.md)
-  - [浮動小数点演算と誤差](./ch02-rust-numerics/floating-point.md)
-  - [Vecとスライス](./ch02-rust-numerics/vec-slices-ownership.md)
-  - [Resultとmodule境界](./ch02-rust-numerics/result-modules.md)
+- [計算機の基本モデル](./ch02-computer-model/README.md)
+  - [CPU・メモリ・ストレージ](./ch02-computer-model/cpu-memory-storage.md)
+  - [latency・bandwidth・cache line](./ch02-computer-model/latency-bandwidth-cache.md)
+  - [連続アクセス・stride・データ配置](./ch02-computer-model/data-layout.md)
+  - [stackとheap](./ch02-computer-model/stack-heap.md)
 
-- [多次元データと配列](./ch02-basics/README.md)
-  - [1次元データから多次元データへ](./ch02-basics/arrays-vectors.md)
-  - [多次元配列とメモリレイアウト](./ch02-basics/memory-layout.md)
-  - [外部クレートの活用（ndarray入門）](./ch02-basics/ndarray.md)
-  - [データ保存とmetadata](./ch02-basics/data-storage.md)
+- [Rustで数値計算を書く最小セット](./ch03-rust-numerics/README.md)
+  - [数値型・関数・小さいテスト](./ch03-rust-numerics/numbers-functions-tests.md)
+  - [浮動小数点演算と誤差](./ch03-rust-numerics/floating-point.md)
+  - [Vecとスライス](./ch03-rust-numerics/vec-slices-ownership.md)
+  - [Resultとmodule境界](./ch03-rust-numerics/result-modules.md)
+
+- [多次元データと配列](./ch04-multidimensional-data/README.md)
+  - [1次元データから多次元データへ](./ch04-multidimensional-data/arrays-vectors.md)
+  - [多次元配列とメモリレイアウト](./ch04-multidimensional-data/memory-layout.md)
+  - [外部クレートの活用（ndarray入門）](./ch04-multidimensional-data/ndarray.md)
+  - [データ保存とmetadata](./ch04-multidimensional-data/data-storage.md)
 
 # 第2部: 数値計算手法
 

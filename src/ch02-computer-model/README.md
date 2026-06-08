@@ -1,0 +1,36 @@
+# 計算機の基本モデル
+
+計算物理のコードは、数式だけでなく、実際の計算機の上で動きます。
+同じ計算量のアルゴリズムでも、メモリ上のデータの並びやアクセス順序によって、
+実行時間が大きく変わることがあります。
+
+本章では、Rustに入る前に、数値計算コードを読むための計算機モデルを確認します。
+ここで扱う内容は Rust 固有ではありません。C/C++、Fortran、Python/NumPy でも重要です。
+
+- CPU、メモリ、ストレージの役割
+- latency と bandwidth
+- cache と cache line
+- 連続アクセスと飛び飛びアクセス
+- row-major、column-major、stride
+- stack と heap
+
+本章の目的は、CPU architecture を詳しく学ぶことではありません。
+以降の章で `Vec<f64>`、多次元配列、`ndarray`、PDE、行列演算、
+SIMD、並列化を扱うときに、なぜデータ配置が重要なのかを理解することです。
+
+## 本章の構成
+
+- **[CPU・メモリ・ストレージ](./cpu-memory-storage.md)**
+  計算がどこで行われ、データがどこに置かれるかを整理します。
+
+- **[latency・bandwidth・cache line](./latency-bandwidth-cache.md)**
+  メモリアクセスの遅さ、帯域、cache line の直感を確認します。
+
+- **[連続アクセス・stride・データ配置](./data-layout.md)**
+  配列の並びと loop order が性能に効く理由を見ます。
+
+- **[stackとheap](./stack-heap.md)**
+  小さい値と大きな配列がどこに置かれるかを確認します。
+
+本章を終えると、以降の章で出てくる配列操作や性能の話を、
+プログラミング言語だけではなく計算機の動きとして読めるようになります。

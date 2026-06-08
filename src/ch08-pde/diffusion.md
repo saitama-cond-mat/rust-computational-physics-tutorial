@@ -43,7 +43,7 @@ $$ r = D (Delta t)/(Delta x^2) lt.eq 1/2 $$
 
 $$ (u_i^(n+1) - u_i^n) / (Delta t) = D/2 [ (pdv(u, x, 2))_i^n + (pdv(u, x, 2))_i^(n+1) ] $$
 
-これは常に安定ですが、各ステップで連立一次方程式を解く必要があります。これについては[第4章](../ch04-linear-algebra/linear-systems.md)で学んだLU分解などの手法が応用できます。
+これは常に安定ですが、各ステップで連立一次方程式を解く必要があります。これについては[第6章](../ch04-linear-algebra/linear-systems.md)で学んだLU分解などの手法が応用できます。
 
 ## Rustによる実装 (陽解法)
 

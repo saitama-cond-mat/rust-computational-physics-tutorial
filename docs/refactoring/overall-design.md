@@ -101,14 +101,52 @@
 - 第1章 README は章全体の入口として薄くし、詳細は `why-rust.md`,
   `setup.md`, `plotting.md`, `how-to-use.md` に分ける。
 
-#### 第2章 Rustで数値計算を書く最小セット `[新規]`
+#### 第2章 計算機の基本モデル `[新規]`
+
+- 目的:
+  - Rustに入る前に、数値計算コードが実際の計算機上でどう動くかを
+    言語非依存の基礎として確認する。
+  - CPU、memory、storage、latency、bandwidth、cache line、stride、
+    stack、heap を、数値計算で必要な範囲に絞って扱う。
+  - cache や memory bandwidth の話を、具体的なPDEやSIMD演習より前に置く。
+- 分量:
+  - CPU architecture の教科書にはしない。
+  - 数値計算で効く直感を優先し、詳細な階層cache、TLB、NUMAなどは
+    後続の性能章に回す。
+- 小節案:
+  - 2.1 CPU、memory、storage
+    - 計算する場所
+    - 実行中のデータ
+    - ファイル保存との違い
+  - 2.2 latency と bandwidth
+    - 待ち時間
+    - データを運ぶ速度
+    - compute bound
+    - memory bandwidth bound
+  - 2.3 cache と cache line
+    - cache の役割
+    - cache line
+    - 連続アクセスが有利な理由
+  - 2.4 row-major、column-major、stride
+    - 多次元データはメモリ上では1次元
+    - loop order
+    - 飛び飛びアクセス
+  - 2.5 stack と heap
+    - stack に置かれる小さい値
+    - stack size の上限
+    - 巨大な固定長配列は避ける
+    - 大きな配列はheapに置く
+
+#### 第3章 Rustで数値計算を書く最小セット `[新規]`
 
 - 目的:
   - Rust Book を置き換えるのではなく、以降の計算物理コードを書くための
     Rust と数値データの最小導入に絞る。
-  - `f64`、浮動小数点の最小知識、`Vec<f64>`、slice、stack、heap、
-    所有権、借用を同じ章で扱い、1次元の数値計算関数を書いて
+  - `f64`、浮動小数点の最小知識、`Vec<f64>`、slice、所有権、借用を扱い、
+    1次元の数値計算関数を書いて
     `cargo test` で確認できる状態を作る。
+  - 第2章で見た stack、heap、メモリ上のデータ配置を、
+    Rustの所有権、借用、slice の説明へ接続する。
   - 文法説明は抽象例ではなく、数値計算で使う短い関数、配列、
     テストに結びつける。
 - 分量:
@@ -116,21 +154,22 @@
   - trait、generic、lifetime、macro、async、unsafe、concurrency は深追いしない。
   - 詳しい Rust 文法は Rust Book を必要に応じて参照する。
 - 小節案:
-  - 2.1 Cargo project と実行方法
+  - 3.1 Cargo project と実行方法
     - `Cargo.toml`
     - `src/main.rs`
     - `src/lib.rs`
     - `cargo run`
     - `cargo test`
-  - 2.2 数値型と浮動小数点の最小知識
+  - 3.2 数値型と浮動小数点の最小知識
     - `f64`
     - `usize`
+    - 複素数と `num-complex`
     - 型推論
     - 整数と浮動小数点数の変換
     - 丸め誤差
     - `NaN` / `inf`
     - 浮動小数点比較と許容誤差
-  - 2.3 変数、関数、制御構造
+  - 3.3 変数、関数、制御構造
     - `let`
     - `mut`
     - `fn`
@@ -139,31 +178,29 @@
     - `if`
     - `for`
     - range
-  - 2.4 stack、heap、所有権、借用
-    - stack に置かれる値
-    - heap に置かれるデータ
+  - 3.4 所有権、借用、可変借用
     - `Vec<f64>` が持つデータ
     - 所有権
     - 借用
     - 可変借用
-  - 2.5 `Vec<f64>` と slice
+  - 3.5 `Vec<f64>` と slice
     - 所有する1次元データとしての `Vec<f64>`
     - 関数境界としての `&[f64]`
     - 更新を伴う関数境界としての `&mut [f64]`
     - data ownership と function boundary
-  - 2.6 `struct` と `Result`
+  - 3.6 `struct` と `Result`
     - parameter
     - simulation state
     - 入力不正
     - 収束失敗
     - 配列サイズ不一致
     - `panic!` してよい場合
-  - 2.7 小さい単体テスト
+  - 3.7 小さい単体テスト
     - `#[test]`
     - `assert!`
     - 浮動小数点の許容誤差
     - 小さい手計算可能な入力
-  - 2.8 module 分割と agent に渡しやすい単位
+  - 3.8 module 分割と agent に渡しやすい単位
     - `src/lib.rs`
     - `src/main.rs`
     - `src/bin/*.rs`
@@ -172,57 +209,55 @@
     - model、algorithm、io、plot、benchmark を混ぜない。
     - diff review
 
-#### 第3章 多次元データと配列 `[既存/調整/移植]`
+#### 第4章 多次元データと配列 `[既存/調整/移植]`
 
 - 目的:
-  - 第2章では1次元データと関数境界までを扱い、第3章では多次元データ、
+  - 第3章では1次元データと関数境界までを扱い、第4章では多次元データ、
     memory layout、外部 array library、結果保存へ進む。
+  - 第2章で見た cache line、stride、loop order の話を、
+    Rustの `Vec<f64>` と `ndarray` の具体的なデータ構造へ接続する。
   - `ndarray` は本書の基本的な多次元配列 crate として扱う。
   - `tenferro-rs` のような発展的な tensor stack は、この章の必須要素には
     しない。必要なら後続の発展トピックで扱う。
   - 高精度演算は入口には重いため、付録Eへ移動する。
 - 小節案:
-  - 3.1 多次元配列と flattening `[既存/調整/移植]`
+  - 4.1 多次元配列と flattening `[既存/調整/移植]`
     - 2D field
     - linear index
     - shape
     - indexing
-  - 3.2 memory layout `[移植]`
+  - 4.2 memory layout `[移植]`
     - row-major
     - column-major
     - stride
     - contiguous access
-  - 3.3 view、copy、reshape、transpose `[移植]`
+  - 4.3 view、copy、reshape、transpose `[移植]`
     - 参照だけの操作
     - 実データをコピーする操作
     - 意図しない allocation
-  - 3.4 cache、bandwidth、FLOPS の最小限の cost model `[移植]`
-    - loop order
-    - memory bandwidth bound
-    - compute bound
-  - 3.5 `ndarray` 入門 `[既存/調整]`
+  - 4.4 `ndarray` 入門 `[既存/調整]`
     - `Array1`
     - `Array2`
     - shape
     - axis
     - view
     - slicing
-  - 3.6 結果保存と metadata の入口 `[新規]`
+  - 4.5 結果保存と metadata の入口 `[新規]`
     - parameter
     - input size
     - random seed
     - 実行条件
     - crate version
     - compute と plot の分離
-- memory layout、`ndarray`、`tenferro-rs` の話は、第5章の matrix multiplication、
-  第16章の profiling、SIMD、並列化へつなげる。
+- memory layout、`ndarray`、`tenferro-rs` の話は、第6章の matrix multiplication、
+  第17章の profiling、SIMD、並列化へつなげる。
 
 ### 第2部: 数値計算手法
 
-- 既存の第3章から第9章を基本的に保存し、章番号を1つ後ろにずらす。
+- 既存の第3章から第9章を基本的に保存し、章番号を2つ後ろにずらす。
 - 各章の末尾に、検証、テスト、AI agent 利用時の確認点を短く足す。
 
-#### 第4章 数値微分と数値積分 `[既存/調整]`
+#### 第5章 数値微分と数値積分 `[既存/調整]`
 
 - 小節案:
   - 4.1 数値微分
@@ -248,7 +283,7 @@
     - `estimate_error(approx, exact)`
     - `run_convergence_check(...)`
 
-#### 第5章 線形代数 `[既存/調整]`
+#### 第6章 線形代数 `[既存/調整]`
 
 - 小節案:
   - 5.1 行列演算の基礎
@@ -282,7 +317,7 @@
     - 条件数
     - 既知解
 
-#### 第6章 非線形方程式と最適化 `[既存/調整]`
+#### 第7章 非線形方程式と最適化 `[既存/調整]`
 
 - 小節案:
   - 6.1 二分法
@@ -306,7 +341,7 @@
     - tolerance
     - error message
 
-#### 第7章 フーリエ解析 `[既存/調整]`
+#### 第8章 フーリエ解析 `[既存/調整]`
 
 - 小節案:
   - 7.1 離散 Fourier 変換
@@ -331,7 +366,7 @@
     - normalization
     - window
 
-#### 第8章 常微分方程式 `[既存/調整]`
+#### 第9章 常微分方程式 `[既存/調整]`
 
 - 小節案:
   - 8.1 Euler 法
@@ -354,7 +389,7 @@
     - norm
     - 無次元化
 
-#### 第9章 偏微分方程式 `[既存/調整]`
+#### 第10章 偏微分方程式 `[既存/調整]`
 
 - 小節案:
   - 9.1 差分法の基礎
@@ -379,7 +414,7 @@
     - stride
     - off-by-one
 
-#### 第10章 モンテカルロ法 `[既存/調整]`
+#### 第11章 モンテカルロ法 `[既存/調整]`
 
 - 小節案:
   - 10.1 乱数生成
@@ -406,11 +441,11 @@
 
 ### 第3部: 物理シミュレーション
 
-- 既存の第10章から第13章を基本的に保存し、章番号を1つ後ろにずらす。
+- 既存の第10章から第13章を基本的に保存し、章番号を2つ後ろにずらす。
 - 単なるコード例ではなく、小さい研究 project として、モデル、数値計算法、
   検証、結果保存を意識させる。
 
-#### 第11章 古典力学シミュレーション `[既存/調整]`
+#### 第12章 古典力学シミュレーション `[既存/調整]`
 
 - 小節案:
   - 11.1 質点系の運動
@@ -434,7 +469,7 @@
     - 単位系
     - metadata
 
-#### 第12章 流体力学 `[既存/調整]`
+#### 第13章 流体力学 `[既存/調整]`
 
 - 小節案:
   - 12.1 Navier-Stokes 方程式の基礎
@@ -458,7 +493,7 @@
     - metadata
     - plot from saved data
 
-#### 第13章 統計力学シミュレーション `[既存/調整/AI演習]`
+#### 第14章 統計力学シミュレーション `[既存/調整/AI演習]`
 
 - 小節案:
   - 13.1 Ising model の基礎
@@ -493,7 +528,7 @@
     - temperature scan
     - metadata
 
-#### 第14章 量子力学 `[既存/調整]`
+#### 第15章 量子力学 `[既存/調整]`
 
 - 小節案:
   - 14.1 Schrodinger 方程式の数値解法
@@ -520,72 +555,72 @@
 
 ### 第4部: 高度なトピック
 
-#### 第15章 共同開発フロー `[新規]`
+#### 第16章 共同開発フロー `[新規]`
 
 - 小節案:
-  - 15.1 local Git の復習
+  - 16.1 local Git の復習
     - `git status`
     - `git diff`
     - `git add`
     - `git commit`
-  - 15.2 GitHub の最小導入
+  - 16.2 GitHub の最小導入
     - repository
     - fork
     - branch
     - push
-  - 15.3 pull request
+  - 16.3 pull request
     - PR 本文
     - 何を変えたか
     - なぜ変えたか
     - どう確認したか
-  - 15.4 review と修正
+  - 16.4 review と修正
     - review comment
     - additional commit
     - checks
-  - 15.5 共同開発で扱わないこと
+  - 16.5 共同開発で扱わないこと
     - rebase の詳細
     - 複雑な merge conflict
     - release management
 
-#### 第16章 並列計算と性能測定 `[既存/調整/AI演習]`
+#### 第17章 並列計算と性能測定 `[既存/調整/AI演習]`
 
-- 既存の第14章を第16章へ移動・調整する。
+- 既存の第14章を第17章へ移動・調整する。
 - 現状の `src/ch14-parallel/simd.md` は、SIMD の概念、
   auto-vectorization、SoA/AoS の話としては有用だが、実践章としては
   まだ完結していない。
 - SoA のサンプルでは `ParticlesSoA` に `vx` が定義されていないのに
   `update_positions` で `p.vx` を使っているため、コード例として修正が必要。
 - 小節案:
-  - 16.1 Rayon によるデータ並列化
+  - 17.1 Rayon によるデータ並列化
     - iterator
     - parallel iterator
     - correctness first
-  - 16.2 performance measurement
+  - 17.2 performance measurement
     - `--release`
     - 入力サイズ
     - 実行環境
     - 複数回測定
-  - 16.3 profiling
+  - 17.3 profiling
     - bottleneck
     - memory bandwidth
     - compute bound
-  - 16.4 SIMD と memory layout
+  - 17.4 SIMD と memory layout
     - auto-vectorization
     - SoA
     - AoS
     - contiguous access
-  - 16.5 performance project `[AI演習]`
+  - 17.5 performance project `[AI演習]`
     - scalar baseline
     - SoA への変更
     - `cargo test` による結果一致
     - benchmark
     - CPU、Rust version、compile option
-  - 16.6 並列化後の注意
+  - 17.6 並列化後の注意
     - 結果の非決定性
     - 浮動小数点和の順序依存
     - random seed
     - thread 数
-  - 16.7 GPU 計算への展望
+  - 17.7 GPU 計算への展望
     - 本文では概念紹介に留める。
 
 ### 付録
@@ -610,7 +645,7 @@
 
 #### 付録E 高精度演算 `[既存/移動]`
 
-- 現行第2章の「高精度演算（double-double型とxprec-rs）」を移動する。
+- 旧第2章の「高精度演算（double-double型とxprec-rs）」を移動する。
 - 小節案:
   - E.1 高精度演算が必要になる場面
     - 桁落ち
