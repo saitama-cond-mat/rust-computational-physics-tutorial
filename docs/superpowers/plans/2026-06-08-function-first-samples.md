@@ -13,6 +13,7 @@
 ### Task 1: Update Global Exercise Guidance
 
 **Files:**
+
 - Modify: `src/ch05-workspace-setup/README.md`
 - Modify: Part 2 and Part 3 chapter README files that already have `作業テーマ`
 
@@ -27,11 +28,13 @@ For chapter README tables, make `ユニットテスト演習` mean: the function
 ### Task 2: Refactor Part 2 Samples
 
 **Files:**
+
 - Modify section Markdown files under `src/ch03-calculus` through `src/ch09-monte-carlo`.
 
 - [ ] **Step 1: Refactor calculus samples**
 
 Target files:
+
 - `src/ch03-calculus/differentiation.md`
 - `src/ch03-calculus/integration.md`
 - `src/ch03-calculus/gaussian-quadrature.md`
@@ -56,6 +59,7 @@ fn main() {
 - [ ] **Step 2: Refactor linear algebra samples**
 
 Target files:
+
 - `src/ch04-linear-algebra/matrix-ops.md`
 - `src/ch04-linear-algebra/linear-systems.md`
 - `src/ch04-linear-algebra/eigenvalue.md`
@@ -66,6 +70,7 @@ Keep crate-use examples concise, but move reusable calculations like residuals, 
 - [ ] **Step 3: Refactor nonlinear, Fourier, ODE, PDE, and Monte Carlo samples**
 
 Target files are those with `fn main()`-only blocks in:
+
 - `src/ch05-nonlinear`
 - `src/ch06-fourier`
 - `src/ch07-ode`
@@ -77,12 +82,14 @@ Prioritize computation functions over I/O. Do not over-engineer example crates.
 ### Task 3: Refactor Remaining Part 3 Samples
 
 **Files:**
+
 - Modify remaining `fn main()`-only samples under `src/ch13-quantum-mechanics`.
 - Review already structured examples in `src/ch10-classical-mechanics`, `src/ch11-fluid-dynamics`, and `src/ch12-statistical-mechanics` without large rewrites.
 
 - [ ] **Step 1: Refactor quantum mechanics samples**
 
 Target files:
+
 - `src/ch13-quantum-mechanics/schrodinger.md`
 - `src/ch13-quantum-mechanics/scattering.md`
 
@@ -95,6 +102,7 @@ If a file already has structs, methods, and named functions, only adjust exercis
 ### Task 4: Verification
 
 **Files:**
+
 - All modified Markdown files.
 
 - [ ] **Step 1: Scan for remaining `fn main()`-only samples**

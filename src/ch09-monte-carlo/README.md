@@ -44,12 +44,12 @@
 作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
 ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
 
-| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
-|---|---|---|---|---|
-| 乱数生成 | `monte-carlo/random-numbers` | `make_rng`, `sample_uniform`, `sample_normal` | seed固定で同じ列が出ることを確認する | 分布の平均と分散をCSVに出力する |
-| モンテカルロ積分 | `monte-carlo/integration` | `mc_integrate`, `mean`, `standard_error` | 既知積分値と標準誤差を比較する | 複数seedの独立試行を追加する |
-| 重点サンプリング | `monte-carlo/importance-sampling` | `sample_proposal`, `weight`, `estimate` | 重みつき推定量の平均を確認する | 一様サンプリングとの分散比較を追加する |
-| MCMC | `monte-carlo/mcmc` | `propose`, `accept`, `measure` | 固定seedで受理率と平均を確認する | burn-inとsampling intervalをmetadataに保存する |
+| テーマ           | 作業ディレクトリ                  | 構造化するコード                              | ユニットテスト演習                   | 拡張演習                                       |
+| ---------------- | --------------------------------- | --------------------------------------------- | ------------------------------------ | ---------------------------------------------- |
+| 乱数生成         | `monte-carlo/random-numbers`      | `make_rng`, `sample_uniform`, `sample_normal` | seed固定で同じ列が出ることを確認する | 分布の平均と分散をCSVに出力する                |
+| モンテカルロ積分 | `monte-carlo/integration`         | `mc_integrate`, `mean`, `standard_error`      | 既知積分値と標準誤差を比較する       | 複数seedの独立試行を追加する                   |
+| 重点サンプリング | `monte-carlo/importance-sampling` | `sample_proposal`, `weight`, `estimate`       | 重みつき推定量の平均を確認する       | 一様サンプリングとの分散比較を追加する         |
+| MCMC             | `monte-carlo/mcmc`                | `propose`, `accept`, `measure`                | 固定seedで受理率と平均を確認する     | burn-inとsampling intervalをmetadataに保存する |
 
 ## 検証と実装の観点
 

@@ -33,12 +33,12 @@
 作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
 ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
 
-| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
-|---|---|---|---|---|
-| Schrodinger方程式 | `quantum-mechanics/schrodinger` | `build_grid`, `potential`, `hamiltonian` | 小さい格子でHamiltonianの対称性を確認する | grid spacingと境界条件をmetadataに保存する |
-| 1次元束縛状態 | `quantum-mechanics/bound-states` | `solve_eigenstates`, `normalize`, `expectation_energy` | 井戸型ポテンシャルの低い準位を確認する | 固有状態とエネルギーをCSVに出力する |
-| 時間発展 | `quantum-mechanics/time-evolution` | `step_crank_nicolson`, `step_split_operator`, `norm` | norm保存を許容誤差つきで確認する | time stepを変えたnorm driftを比較する |
-| 散乱問題 | `quantum-mechanics/scattering` | `wave_packet`, `barrier`, `transmission_probability` | 初期波束の規格化を確認する | 透過率の障壁幅依存をCSVに出力する |
+| テーマ            | 作業ディレクトリ                   | 構造化するコード                                       | ユニットテスト演習                        | 拡張演習                                   |
+| ----------------- | ---------------------------------- | ------------------------------------------------------ | ----------------------------------------- | ------------------------------------------ |
+| Schrodinger方程式 | `quantum-mechanics/schrodinger`    | `build_grid`, `potential`, `hamiltonian`               | 小さい格子でHamiltonianの対称性を確認する | grid spacingと境界条件をmetadataに保存する |
+| 1次元束縛状態     | `quantum-mechanics/bound-states`   | `solve_eigenstates`, `normalize`, `expectation_energy` | 井戸型ポテンシャルの低い準位を確認する    | 固有状態とエネルギーをCSVに出力する        |
+| 時間発展          | `quantum-mechanics/time-evolution` | `step_crank_nicolson`, `step_split_operator`, `norm`   | norm保存を許容誤差つきで確認する          | time stepを変えたnorm driftを比較する      |
+| 散乱問題          | `quantum-mechanics/scattering`     | `wave_packet`, `barrier`, `transmission_probability`   | 初期波束の規格化を確認する                | 透過率の障壁幅依存をCSVに出力する          |
 
 ## 検証と実装の観点
 

@@ -38,12 +38,12 @@
 作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
 ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
 
-| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
-|---|---|---|---|---|
-| 数値微分 | `calculus/differentiation` | `forward_diff`, `central_diff`, `estimate_error` | `sin(x)` や低次多項式で解析解と比較する | 刻み幅ごとの誤差をCSVに出力する |
-| 数値積分 | `calculus/integration` | `trapezoidal_rule`, `simpson_rule`, `estimate_error` | 低次多項式を解析解と比較する | 分割数ごとの誤差をCSVに出力する |
-| ガウス求積法 | `calculus/gaussian-quadrature` | `gauss_legendre_2`, `map_interval` | 3次以下の多項式で厳密性を確認する | 分点数を切り替えられる形にする |
-| 適応型積分 | `calculus/adaptive-integration` | `adaptive_simpson`, `estimate_local_error` | 滑らかな関数で許容誤差を確認する | 再帰回数と区間分割をmetadataとして保存する |
+| テーマ       | 作業ディレクトリ                | 構造化するコード                                     | ユニットテスト演習                      | 拡張演習                                   |
+| ------------ | ------------------------------- | ---------------------------------------------------- | --------------------------------------- | ------------------------------------------ |
+| 数値微分     | `calculus/differentiation`      | `forward_diff`, `central_diff`, `estimate_error`     | `sin(x)` や低次多項式で解析解と比較する | 刻み幅ごとの誤差をCSVに出力する            |
+| 数値積分     | `calculus/integration`          | `trapezoidal_rule`, `simpson_rule`, `estimate_error` | 低次多項式を解析解と比較する            | 分割数ごとの誤差をCSVに出力する            |
+| ガウス求積法 | `calculus/gaussian-quadrature`  | `gauss_legendre_2`, `map_interval`                   | 3次以下の多項式で厳密性を確認する       | 分点数を切り替えられる形にする             |
+| 適応型積分   | `calculus/adaptive-integration` | `adaptive_simpson`, `estimate_local_error`           | 滑らかな関数で許容誤差を確認する        | 再帰回数と区間分割をmetadataとして保存する |
 
 ## 検証と実装の観点
 

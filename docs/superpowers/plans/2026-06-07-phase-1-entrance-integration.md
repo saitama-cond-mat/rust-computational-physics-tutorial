@@ -34,6 +34,7 @@ Do not modify `src/SUMMARY.md` in Phase 1. Do not start Phase 2 topics such as m
 ### Task 1: Preflight And Baseline
 
 **Files:**
+
 - Read: `docs/refactoring/overall-design.md`
 - Read: `docs/superpowers/plans/2026-06-07-phase-1-entrance-integration.md`
 - Read: `src/README.md`
@@ -91,6 +92,7 @@ This task is orientation only. Do not create a commit.
 ### Task 2: Adjust `src/README.md`
 
 **Files:**
+
 - Modify: `src/README.md`
 
 - [ ] **Step 1: Soften the Rust prerequisite paragraph**
@@ -155,6 +157,7 @@ Expected: commit succeeds.
 ### Task 3: Add AI Agent Era Rationale To `why-rust.md`
 
 **Files:**
+
 - Modify: `src/ch01-introduction/why-rust.md`
 
 - [ ] **Step 1: Insert subsection after `モダンな開発環境`**
@@ -195,6 +198,7 @@ Expected: commit succeeds.
 ### Task 4: Add Optional AI Coding Agent Setup Guidance
 
 **Files:**
+
 - Modify: `src/ch01-introduction/setup.md`
 
 - [ ] **Step 1: Insert optional subsection before `次のステップ`**
@@ -241,6 +245,7 @@ Expected: commit succeeds.
 ### Task 5: Add Standard Agent Workflow To `how-to-use.md`
 
 **Files:**
+
 - Modify: `src/ch01-introduction/how-to-use.md`
 
 - [ ] **Step 1: Insert subsection after `コードを用いた実験の推奨`**
@@ -281,7 +286,7 @@ agent には、関数境界と module plan を先に出させるとよいでし�
 
 Run:
 
-```bash
+````bash
 python3 - <<'PY'
 from pathlib import Path
 p = Path("src/ch01-introduction/how-to-use.md")
@@ -289,7 +294,7 @@ count = sum(1 for line in p.read_text().splitlines() if line.startswith("```"))
 print(count)
 raise SystemExit(0 if count % 2 == 0 else 1)
 PY
-```
+````
 
 Expected: command prints an even number and exits 0.
 
@@ -317,6 +322,7 @@ Expected: commit succeeds.
 ### Task 6: Add Shared Agent Instruction Files
 
 **Files:**
+
 - Create: `AGENTS.md`
 - Create: `CLAUDE.md`
 
@@ -382,6 +388,7 @@ Expected: commit succeeds.
 ### Task 7: Final Verification And Review
 
 **Files:**
+
 - Verify: `src/README.md`
 - Verify: `src/ch01-introduction/why-rust.md`
 - Verify: `src/ch01-introduction/setup.md`

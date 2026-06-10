@@ -37,13 +37,13 @@
 作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
 ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
 
-| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
-|---|---|---|---|---|
-| イジング模型の基礎 | `statistical-mechanics/ising-basics` | `idx`, `neighbor`, `energy`, `magnetization` | 小さい格子でエネルギーと磁化を手計算と比較する | 周期境界条件を切り替えられる形にする |
-| メトロポリス法 | `statistical-mechanics/metropolis` | `delta_energy_flip`, `accept`, `sweep`, `measure` | 局所エネルギー差と全エネルギー再計算を比較する | 熱化と測定間隔をmetadataに保存する |
-| 相転移 | `statistical-mechanics/phase-transition` | `temperature_scan`, `susceptibility`, `specific_heat` | 固定seedで測定量の再現性を確認する | 温度走査結果をCSVに出力する |
-| 2D Ising総合演習 | `statistical-mechanics/ising-exercise` | 格子、更新、測定、保存、有限サイズスケーリングを相談して分ける | 決定的に確認できる性質と小さい格子の統計チェックをAI coding agentと選ぶ | Binder parameterの交差から転移点を推定し、厳密解と比較する |
-| その他の格子模型 | `statistical-mechanics/other-models` | `potts_energy`, `xy_energy`, `local_update` | 小さい格子で相互作用エネルギーを確認する | model enumで複数模型を切り替える |
+| テーマ             | 作業ディレクトリ                         | 構造化するコード                                               | ユニットテスト演習                                                      | 拡張演習                                                   |
+| ------------------ | ---------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------- |
+| イジング模型の基礎 | `statistical-mechanics/ising-basics`     | `idx`, `neighbor`, `energy`, `magnetization`                   | 小さい格子でエネルギーと磁化を手計算と比較する                          | 周期境界条件を切り替えられる形にする                       |
+| メトロポリス法     | `statistical-mechanics/metropolis`       | `delta_energy_flip`, `accept`, `sweep`, `measure`              | 局所エネルギー差と全エネルギー再計算を比較する                          | 熱化と測定間隔をmetadataに保存する                         |
+| 相転移             | `statistical-mechanics/phase-transition` | `temperature_scan`, `susceptibility`, `specific_heat`          | 固定seedで測定量の再現性を確認する                                      | 温度走査結果をCSVに出力する                                |
+| 2D Ising総合演習   | `statistical-mechanics/ising-exercise`   | 格子、更新、測定、保存、有限サイズスケーリングを相談して分ける | 決定的に確認できる性質と小さい格子の統計チェックをAI coding agentと選ぶ | Binder parameterの交差から転移点を推定し、厳密解と比較する |
+| その他の格子模型   | `statistical-mechanics/other-models`     | `potts_energy`, `xy_energy`, `local_update`                    | 小さい格子で相互作用エネルギーを確認する                                | model enumで複数模型を切り替える                           |
 
 ## 検証と実装の観点
 

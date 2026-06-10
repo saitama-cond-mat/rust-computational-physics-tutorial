@@ -37,11 +37,11 @@
 作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
 ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
 
-| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
-|---|---|---|---|---|
-| DFTの基礎 | `fourier/dft-basics` | `dft`, `idft`, `complex_exp` | impulseや定数列のDFTを確認する | DFTとIDFTの往復誤差を出力する |
-| FFT | `fourier/fft` | `run_fft`, `check_power_of_two`, `normalize` | 小さい入力でDFTとFFTを比較する | 入力サイズごとの実行時間をCSVに出力する |
-| スペクトル解析 | `fourier/spectral-analysis` | `frequency_axis`, `power_spectrum`, `window` | 既知周波数の正弦波でピーク位置を確認する | 窓関数の有無を比較する |
+| テーマ         | 作業ディレクトリ            | 構造化するコード                             | ユニットテスト演習                       | 拡張演習                                |
+| -------------- | --------------------------- | -------------------------------------------- | ---------------------------------------- | --------------------------------------- |
+| DFTの基礎      | `fourier/dft-basics`        | `dft`, `idft`, `complex_exp`                 | impulseや定数列のDFTを確認する           | DFTとIDFTの往復誤差を出力する           |
+| FFT            | `fourier/fft`               | `run_fft`, `check_power_of_two`, `normalize` | 小さい入力でDFTとFFTを比較する           | 入力サイズごとの実行時間をCSVに出力する |
+| スペクトル解析 | `fourier/spectral-analysis` | `frequency_axis`, `power_spectrum`, `window` | 既知周波数の正弦波でピーク位置を確認する | 窓関数の有無を比較する                  |
 
 ## 検証と実装の観点
 

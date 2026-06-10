@@ -55,12 +55,12 @@ ndarray-linalg = "0.18" # BLASバックエンドが必要
 作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
 ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
 
-| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
-|---|---|---|---|---|
-| 行列演算 | `linear-algebra/matrix-ops` | `matmul`, `transpose`, `norm` | 小さい行列の積とノルムを手計算と比較する | loop orderを変えて実行時間を比較する |
-| 連立一次方程式 | `linear-algebra/linear-systems` | `solve`, `residual_norm`, `is_square` | 既知解を持つ小さい行列で残差を確認する | 複数右辺を解く例へ拡張する |
-| 固有値問題 | `linear-algebra/eigenvalue` | `power_iteration`, `normalize`, `eigen_residual` | 対角行列や2x2行列で固有値を確認する | 収束履歴をCSVに出力する |
-| スパース行列 | `linear-algebra/sparse` | `build_laplacian_1d`, `matvec` | 小さい1次元ラプラシアンを手計算と比較する | dense表現とのメモリ量を比較する |
+| テーマ         | 作業ディレクトリ                | 構造化するコード                                 | ユニットテスト演習                        | 拡張演習                             |
+| -------------- | ------------------------------- | ------------------------------------------------ | ----------------------------------------- | ------------------------------------ |
+| 行列演算       | `linear-algebra/matrix-ops`     | `matmul`, `transpose`, `norm`                    | 小さい行列の積とノルムを手計算と比較する  | loop orderを変えて実行時間を比較する |
+| 連立一次方程式 | `linear-algebra/linear-systems` | `solve`, `residual_norm`, `is_square`            | 既知解を持つ小さい行列で残差を確認する    | 複数右辺を解く例へ拡張する           |
+| 固有値問題     | `linear-algebra/eigenvalue`     | `power_iteration`, `normalize`, `eigen_residual` | 対角行列や2x2行列で固有値を確認する       | 収束履歴をCSVに出力する              |
+| スパース行列   | `linear-algebra/sparse`         | `build_laplacian_1d`, `matvec`                   | 小さい1次元ラプラシアンを手計算と比較する | dense表現とのメモリ量を比較する      |
 
 ## 検証と実装の観点
 

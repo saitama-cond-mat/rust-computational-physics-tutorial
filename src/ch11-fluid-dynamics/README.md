@@ -29,11 +29,11 @@
 作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
 ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
 
-| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
-|---|---|---|---|---|
-| Navier-Stokes方程式 | `fluid-dynamics/navier-stokes` | `divergence`, `laplacian`, `pressure_gradient` | 小さい速度場で発散と差分を確認する | 無次元数やgrid spacingをmetadataに保存する |
-| 差分法によるCFD | `fluid-dynamics/finite-difference-cfd` | `advect`, `diffuse`, `project`, `apply_boundary` | 小さい格子で境界条件とprojectionを確認する | cavity flowの速度場をCSVに出力する |
-| 格子Boltzmann法 | `fluid-dynamics/lattice-boltzmann` | `equilibrium`, `collide`, `stream`, `macroscopic` | 一様分布で密度と速度が保たれることを確認する | 障害物まわりの流れを保存する |
+| テーマ              | 作業ディレクトリ                       | 構造化するコード                                  | ユニットテスト演習                           | 拡張演習                                   |
+| ------------------- | -------------------------------------- | ------------------------------------------------- | -------------------------------------------- | ------------------------------------------ |
+| Navier-Stokes方程式 | `fluid-dynamics/navier-stokes`         | `divergence`, `laplacian`, `pressure_gradient`    | 小さい速度場で発散と差分を確認する           | 無次元数やgrid spacingをmetadataに保存する |
+| 差分法によるCFD     | `fluid-dynamics/finite-difference-cfd` | `advect`, `diffuse`, `project`, `apply_boundary`  | 小さい格子で境界条件とprojectionを確認する   | cavity flowの速度場をCSVに出力する         |
+| 格子Boltzmann法     | `fluid-dynamics/lattice-boltzmann`     | `equilibrium`, `collide`, `stream`, `macroscopic` | 一様分布で密度と速度が保たれることを確認する | 障害物まわりの流れを保存する               |
 
 ## 検証と実装の観点
 

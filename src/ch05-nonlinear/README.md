@@ -46,11 +46,11 @@ $$ cases(
 作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
 ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
 
-| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
-|---|---|---|---|---|
-| 二分法とニュートン法 | `nonlinear/root-finding` | `bisection`, `newton`, `RootResult` | `x^2 - 2 = 0` で解と残差を確認する | 収束失敗を`Result`で返す |
-| 多変数ニュートン法 | `nonlinear/multivariable-newton` | `residual`, `jacobian`, `newton_step` | 小さい連立方程式で残差減少を確認する | 反復履歴をCSVに出力する |
-| 最適化 | `nonlinear/optimization` | `gradient_descent`, `line_search`, `grad_norm` | 二次関数の最小点を確認する | step sizeを変えた収束比較を追加する |
+| テーマ               | 作業ディレクトリ                 | 構造化するコード                               | ユニットテスト演習                   | 拡張演習                            |
+| -------------------- | -------------------------------- | ---------------------------------------------- | ------------------------------------ | ----------------------------------- |
+| 二分法とニュートン法 | `nonlinear/root-finding`         | `bisection`, `newton`, `RootResult`            | `x^2 - 2 = 0` で解と残差を確認する   | 収束失敗を`Result`で返す            |
+| 多変数ニュートン法   | `nonlinear/multivariable-newton` | `residual`, `jacobian`, `newton_step`          | 小さい連立方程式で残差減少を確認する | 反復履歴をCSVに出力する             |
+| 最適化               | `nonlinear/optimization`         | `gradient_descent`, `line_search`, `grad_norm` | 二次関数の最小点を確認する           | step sizeを変えた収束比較を追加する |
 
 ## 検証と実装の観点
 

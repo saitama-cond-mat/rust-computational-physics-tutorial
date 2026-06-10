@@ -35,12 +35,12 @@ $$ L dv(I, t) + R I = V(t) quad ("回路方程式") $$
 作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
 ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
 
-| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
-|---|---|---|---|---|
-| オイラー法 | `ode/euler` | `euler_step`, `integrate`, `max_error` | 指数関数の解析解と比較する | 刻み幅ごとの誤差をCSVに出力する |
-| ルンゲ＝クッタ法 | `ode/rk4` | `rk4_step`, `integrate`, `state_norm` | RK4の刻み幅依存を確認する | Euler法との誤差比較を追加する |
-| 適応型刻み幅 | `ode/adaptive-step` | `rk_embedded_step`, `accept_step`, `next_dt` | 許容誤差を変えたときの結果を確認する | rejected step数をmetadataに保存する |
-| 境界値問題 | `ode/boundary-value` | `shoot`, `boundary_residual`, `bisect_slope` | 線形な境界値問題で既知解と比較する | 初期推定を変えた収束比較を追加する |
+| テーマ           | 作業ディレクトリ     | 構造化するコード                             | ユニットテスト演習                   | 拡張演習                            |
+| ---------------- | -------------------- | -------------------------------------------- | ------------------------------------ | ----------------------------------- |
+| オイラー法       | `ode/euler`          | `euler_step`, `integrate`, `max_error`       | 指数関数の解析解と比較する           | 刻み幅ごとの誤差をCSVに出力する     |
+| ルンゲ＝クッタ法 | `ode/rk4`            | `rk4_step`, `integrate`, `state_norm`        | RK4の刻み幅依存を確認する            | Euler法との誤差比較を追加する       |
+| 適応型刻み幅     | `ode/adaptive-step`  | `rk_embedded_step`, `accept_step`, `next_dt` | 許容誤差を変えたときの結果を確認する | rejected step数をmetadataに保存する |
+| 境界値問題       | `ode/boundary-value` | `shoot`, `boundary_residual`, `bisect_slope` | 線形な境界値問題で既知解と比較する   | 初期推定を変えた収束比較を追加する  |
 
 ## 検証と実装の観点
 

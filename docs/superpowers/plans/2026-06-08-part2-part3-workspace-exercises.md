@@ -13,6 +13,7 @@
 ### Task 1: Add The Workspace Setup Chapter
 
 **Files:**
+
 - Create: `src/ch05-workspace-setup/README.md`
 - Modify: `src/SUMMARY.md`
 
@@ -20,7 +21,7 @@
 
 Create `src/ch05-workspace-setup/README.md` with:
 
-```markdown
+````markdown
 # 作業用ディレクトリのセットアップ
 
 第2部以降の演習では、教材リポジトリの外に作業用ディレクトリを作ります。
@@ -30,6 +31,7 @@ Create `src/ch05-workspace-setup/README.md` with:
 mkdir -p ~/rust-computational-physics-work
 cd ~/rust-computational-physics-work
 ```
+````
 
 ## 標準ディレクトリ構成
 
@@ -105,15 +107,15 @@ mkdir -p tests output
    収束表のCSV出力、保存量の記録、metadataの保存、別手法との比較などを追加します。
 
 AI coding agentに依頼する場合も、まず関数分割、入力、出力、検証方法を確認させてから実装に進みます。
-```
 
+````
 - [ ] **Step 2: Add setup chapter to summary**
 
 Insert this entry at the top of Part 2 in `src/SUMMARY.md`:
 
 ```markdown
 - [作業用ディレクトリのセットアップ](./ch05-workspace-setup/README.md)
-```
+````
 
 - [ ] **Step 3: Verify mdBook can see the new chapter**
 
@@ -124,6 +126,7 @@ Expected: command exits with status 0 and includes the new chapter in the render
 ### Task 2: Standardize Part 2 Chapter README Guidance
 
 **Files:**
+
 - Modify: `src/ch03-calculus/README.md`
 - Modify: `src/ch04-linear-algebra/README.md`
 - Modify: `src/ch05-nonlinear/README.md`
@@ -138,7 +141,7 @@ For each README, add a compact table with these columns:
 
 ```markdown
 | テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
-|---|---|---|---|---|
+| ------ | ---------------- | ---------------- | ------------------ | -------- |
 ```
 
 Use chapter-specific rows. Examples:
@@ -161,6 +164,7 @@ Expected: command exits with status 0. Existing unrelated warnings may remain, b
 ### Task 3: Standardize Part 3 Chapter README Guidance
 
 **Files:**
+
 - Modify: `src/ch10-classical-mechanics/README.md`
 - Modify: `src/ch11-fluid-dynamics/README.md`
 - Modify: `src/ch12-statistical-mechanics/README.md`
@@ -172,7 +176,7 @@ Use the same columns as Part 2:
 
 ```markdown
 | テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
-|---|---|---|---|---|
+| ------ | ---------------- | ---------------- | ------------------ | -------- |
 ```
 
 Use physics-project rows. Examples:
@@ -195,6 +199,7 @@ Expected: command exits with status 0. Existing unrelated warnings may remain.
 ### Task 4: Final Verification And Diff Review
 
 **Files:**
+
 - All files changed in Tasks 1-3.
 
 - [ ] **Step 1: Run Rust snippet test script**

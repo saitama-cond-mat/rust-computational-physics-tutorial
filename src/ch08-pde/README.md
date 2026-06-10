@@ -47,12 +47,12 @@
 作業ディレクトリは `~/rust-computational-physics-work/` からの相対パスです。
 ユニットテストで確認する具体的なケースは、解析解、境界条件、許容誤差の観点からAI coding agentと相談して決めます。
 
-| テーマ | 作業ディレクトリ | 構造化するコード | ユニットテスト演習 | 拡張演習 |
-|---|---|---|---|---|
-| 差分法の基礎 | `pde/finite-difference` | `idx`, `central_diff`, `laplacian_1d` | 小さい格子でstencilを手計算と比較する | 境界条件を切り替えられる形にする |
-| 拡散方程式 | `pde/diffusion` | `step_ftcs`, `check_cfl`, `mass` | 安定条件と質量保存の目安を確認する | 時間発展をCSVに出力する |
-| 波動方程式 | `pde/wave` | `step_wave`, `energy`, `apply_boundary` | 小さい格子で初期ステップを確認する | 反射境界と固定境界を比較する |
-| 楕円型方程式 | `pde/elliptic` | `jacobi_step`, `residual`, `apply_boundary` | 既知境界の小さい問題で残差を確認する | residual履歴をCSVに出力する |
+| テーマ       | 作業ディレクトリ        | 構造化するコード                            | ユニットテスト演習                    | 拡張演習                         |
+| ------------ | ----------------------- | ------------------------------------------- | ------------------------------------- | -------------------------------- |
+| 差分法の基礎 | `pde/finite-difference` | `idx`, `central_diff`, `laplacian_1d`       | 小さい格子でstencilを手計算と比較する | 境界条件を切り替えられる形にする |
+| 拡散方程式   | `pde/diffusion`         | `step_ftcs`, `check_cfl`, `mass`            | 安定条件と質量保存の目安を確認する    | 時間発展をCSVに出力する          |
+| 波動方程式   | `pde/wave`              | `step_wave`, `energy`, `apply_boundary`     | 小さい格子で初期ステップを確認する    | 反射境界と固定境界を比較する     |
+| 楕円型方程式 | `pde/elliptic`          | `jacobi_step`, `residual`, `apply_boundary` | 既知境界の小さい問題で残差を確認する  | residual履歴をCSVに出力する      |
 
 ## 検証と実装の観点
 
