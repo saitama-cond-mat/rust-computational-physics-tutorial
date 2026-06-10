@@ -15,4 +15,11 @@ exclude = [
     # Exclude GitHub repository sub-paths (edit, commit, blob, tree, etc.)
     # Only the root repository URL will be checked
     "^https://github\\.com/saitama-cond-mat/rust-computational-physics-tutorial/.+",
+    # APS journals block automated crawlers with 403
+    "journals\\.aps\\.org",
+    "link\\.aps\\.org",
+    "doi\\.org/10\\.1103/",
+    # JPS journals block automated crawlers with 403
+    "journals\\.jps\\.jp",
+    "doi\\.org/10\\.1143/",
 ]
