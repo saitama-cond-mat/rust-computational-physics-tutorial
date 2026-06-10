@@ -42,5 +42,8 @@ additional-css = [
 ]
 additional-js = ["theme/budoux-loader.js"]
 
+[output.html.playground]
+runnable = false
+
 [output.html.search]
 enable = false
