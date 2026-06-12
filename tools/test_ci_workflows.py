@@ -31,7 +31,12 @@ class CiWorkflowTest(unittest.TestCase):
         mise_toml = (ROOT / "mise.toml").read_text(encoding="utf-8")
 
         self.assertNotIn('"latest"', mise_toml)
-        self.assertNotIn("version = \"latest\"", mise_toml)
+        self.assertNotIn('version = "latest"', mise_toml)
+
+    def test_check_does_not_run_on_main_push(self) -> None:
+        check_workflow = (ROOT / ".github/workflows/check.yml").read_text(encoding="utf-8")
+
+        self.assertNotRegex(check_workflow, r"(?m)^  push:")
 
     def test_deploy_installs_only_book_build_tools(self) -> None:
         install_args = install_args_for(ROOT / ".github/workflows/deploy.yml")
