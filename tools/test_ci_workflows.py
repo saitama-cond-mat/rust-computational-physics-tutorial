@@ -56,6 +56,7 @@ class CiWorkflowTest(unittest.TestCase):
                 self.assertIn("Swatinem/rust-cache@v2", text)
                 self.assertIn("cache-all-crates: true", text)
                 self.assertIn("${{ hashFiles('mise.toml') }}", text)
+                self.assertIn("MISE_FETCH_REMOTE_VERSIONS_TIMEOUT", text)
 
         check_text = (ROOT / ".github/workflows/check.yml").read_text(encoding="utf-8")
         deploy_text = (ROOT / ".github/workflows/deploy.yml").read_text(encoding="utf-8")

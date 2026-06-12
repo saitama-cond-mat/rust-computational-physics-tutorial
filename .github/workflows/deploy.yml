@@ -22,6 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       CARGO_TARGET_DIR: ${{ github.workspace }}/target/cargo-install
+      MISE_FETCH_REMOTE_VERSIONS_TIMEOUT: "120"
     steps:
       - name: Checkout
         uses: actions/checkout@v5
