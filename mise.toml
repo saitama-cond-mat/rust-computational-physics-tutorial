@@ -1,11 +1,11 @@
 [tools]
-"cargo:mdbook" = "latest"
-"cargo:mdbook-typst-math" = "latest"
-"cargo:mdbook-last-changed" = "latest"
-"cargo:pagefind" = { version = "latest", features = "extended" }
-"cargo:lychee" = "latest"
-"cargo:miniserve" = "latest"
-"cargo:dprint" = "latest"
+"cargo:mdbook" = "0.5.3"
+"cargo:mdbook-typst-math" = "0.3.0"
+"cargo:mdbook-last-changed" = "0.4.0"
+"cargo:pagefind" = { version = "1.5.2", features = "extended" }
+"cargo:lychee" = "0.24.2"
+"cargo:miniserve" = "0.35.0"
+"cargo:dprint" = "0.54.0"
 
 [tasks.clean]
 description = "Clean build artifacts"
