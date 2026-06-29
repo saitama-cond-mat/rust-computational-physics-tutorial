@@ -99,7 +99,9 @@ Editing Modeを使います。
   LAPACK系の線形代数が主題の場合は `ndarray-linalg` を使います。
   その場合は、公式documentationやrepositoryでbackend featureと外部library要件を確認します。
   AD、GPU、einsum、linear algebra を含むtensor workflowが主題の場合は tenferro を使います。
-  tenferro はpre-1.0なので、公式documentationやrepositoryでAPI、crate名、import path、featureを確認します。
+  tenferro は単一クレートではなく `tenferro-tensor` や `tenferro-ad` などの複数クレートからなる
+  workspace で、crates.io に公開されています。
+  まだ pre-1.0 (0.x) なので、公式documentationやrepositoryでAPI、crate名、import path、featureを確認します。
 - notebookを必須にしないでください。Cargo test、小さいbinary、command-line runで確認できる例を優先します。
 - AI grading promptを教材本文に直接書かないでください。
   採点基準は `Notes` や演習の確認項目として自然に書きます。
